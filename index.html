@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <title>ICU Effectiveness</title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Droid+Sans+Mono" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        
+        <script src="./scripts/networkdiagram.js"></script>
+        <script src="./scripts/boxPlot.js"></script>
+        <script src="./scripts/heatMap.js"></script>
+        <script src="./scripts/bubbleChart.js"></script>
+        <script src="./scripts/linechart.js"></script>
+
+        <link rel="stylesheet" href="./styles/boxPlot.css">
+        <link rel="stylesheet" href="./styles/bubbleChart.css">
+        <link rel="stylesheet" href="./styles/heatMap.css">
+        <link rel="stylesheet" href="./styles/lineChart.css">
+        <link rel="stylesheet" href="./styles/networkDiagram.css">
+        
+    </head>
+    <body>
+        <div class="myContainer">
+            <h3 class="chart-title">ICU Effectiveness</h3>
+            <hr>
+            <div id="linechart_div">
+                <div id="controlpanel_div">
+                    <label for="stay_options">Choose the stay_id: </label>
+                    <select id="stay_select" name="stay_options" onchange="getData()">
+                    </select>
+                </div> 
+                <div id="outer_monitor">
+                    <div id="inner_monitor">
+                        <div id="heart_vitals">
+                            <div id="heart_chart">
+                                <svg id="hr_chart"></svg>
+                            </div>
+                            <div id="heart_metric">
+                                <h4 id="heart_abbr">HEART RATE</h6>
+                                <h1 id="heart_value">92</h1>
+                                <!-- <span id="heart_m">bpm</span> -->
+                            </div>
+                        </div>
+                        <div id="oxygen_vitals">
+                            <div id="heart_chart">
+                                <svg id="o2_chart"></svg>
+                            </div>
+                            <div id="oxygen_metric">
+                                <h4 id="oxygen_abbr">SPO2</h6>
+                                <h1 id="oxygen_value">98</h1>
+                            </div>
+                        </div>
+                        <div id="resp_vitals">
+                            <div id="resp_chart">
+                                <svg id="bp_chart"></svg>
+                            </div>
+                            <div id="resp_metric">
+                                <h4 id="syst_abbr">SYST</h6>
+                                <h2 id="syst_value">100</h2>
+                                <h4 id="dias_abbr">DIAS</h6>
+                                <h2 id="dias_value">70</h2>
+                                <span id="resp_m">mmHg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html> 

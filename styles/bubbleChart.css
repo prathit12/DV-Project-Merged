@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap'); /* Import futuristic font */
+        body {
+            font-family: 'Orbitron', sans-serif; /* Updated font style */
+            background-color: #ffffff; /* Light background for reversed theme */
+            color: #1a1a1a; /* Dark text color */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .legend {
+            font-size: 12px;
+            color: #1a1a1a; /* Dark text color */
+        }
+        .legend rect {
+            cursor: pointer;
+        }
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: #f4f4f9; /* Light background for header */
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+            z-index: 10;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .sticky label {
+            color: #1a1a1a; /* Dark text color */
+            margin-right: 10px;
+        }
+        .sticky select, .sticky input[type="range"] {
+            background-color: #fff; /* White background */
+            color: #000; /* Black text color */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .tooltip {
+            position: absolute;
+            opacity: 0;
+            background-color: #f4f4f9; /* Light background for tooltip */
+            color: #1a1a1a; /* Dark text color */
+            padding: 10px;
+            border: 1px solid #ccc; /* Light border */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .details-box {
+            width: 100%;
+            background-color: #f4f4f9; /* Light background for details box */
+            color: #1a1a1a; /* Dark text color */
+            border: none;
+            padding: 20px;
+            box-shadow: none;
+            display: none;
+            overflow-y: auto;
+            z-index: 20;
+            margin-top: 20px; /* Added margin to separate from chart */
+        }
+        .details-box p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .details-box button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .details-box button:hover {
+            background-color: #0056b3;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+        .chart-container {
+            position: relative;
+        }
+        .legend-container {
+            margin-left: 20px;
+            padding: 10px;
+            background-color: #f4f4f9; /* Light background for legend */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+            border-radius: 5px;
+        }

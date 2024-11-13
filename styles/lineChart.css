@@ -1,0 +1,126 @@
+*{
+    font-family:'Georgia', sans-serif; 
+}
+.chart-title{
+    margin-top: 20px;
+    text-align: center;
+}
+#linechart_div{
+    margin-bottom: 30px;
+    margin-left: 50px;
+    margin-right: 50px;
+    /* border: 5px solid black; */
+}
+#controlpanel_div{
+    margin-left: 70%;
+}
+#stay_select{
+    padding: 20px;
+    border: none;
+}
+#outer_monitor, #inner_monitor{
+    border: 1px solid black;
+    margin: 50px;
+}
+
+
+#heart_vitals, #oxygen_vitals, #resp_vitals{
+    
+    height: 200px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+}
+#heart_chart, #heart_chart, #resp_chart{
+    width: 1050px;
+    height: 200px;
+    border: 1px solid black;
+    font-size: 12px;
+    display: flex;
+    
+}
+
+
+[id$="value"]{
+    margin-left: 30%;
+}
+
+/*Needs to be adjusted*/
+#heart_metric, #oxygen_metric, #resp_metric{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin-left: 0px;
+    padding: 10px;
+    
+}
+
+#heart_value{
+    margin-top: 20px;
+    margin-left: 200px;
+    
+}
+#oxygen_value{
+    margin-top: 20px;
+    margin-left: 200px;
+    
+}
+#syst_value{
+    
+    margin-left: 200px;
+    
+}
+
+#dias_value{
+    
+    margin-left: 200px;
+}
+
+#heart_metric{
+    background-color: #D61C4E;
+   
+}
+
+#oxygen_metric{
+    background-color: #CAF4FF;
+}
+
+#resp_metric{
+    background-color: #B6FFA1;
+}
+
+#hr_chart{
+    background-color: #0B192C;
+}
+
+#o2_chart{
+    background-color: #0B192C;
+}
+
+#bp_chart{
+    background-color: #0B192C;
+
+}
+#heart_m{
+    margin-top: 150%;
+}
+
+#outer_monitor{
+    background: #393E46;
+}
+svg{
+    width: 1050px;
+    height: 200px;
+}
+
+@keyframes twinkle {
+    0%,100%{opacity: 1;}
+
+    50%{opacity: 0.2;}
+    
+}
+
+.meds-circle{
+    animation: twinkle 2s infinite ease-in-out alternate;
+    
+}
