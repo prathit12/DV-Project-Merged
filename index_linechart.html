@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <title>Line Chart</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Droid+Sans+Mono" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        
+        
+        <style>
+            *{
+                font-family:'Georgia', sans-serif; 
+            }
+            .chart-title{
+                margin-top: 20px;
+                text-align: center;
+            }
+            #linechart_div{
+                margin-bottom: 30px;
+                margin-left: 50px;
+                margin-right: 50px;
+                /* border: 5px solid black; */
+            }
+            #controlpanel_div{
+                margin-left: 70%;
+            }
+            #stay_select{
+                padding: 20px;
+                border: none;
+            }
+            #outer_monitor, #inner_monitor{
+                border: 1px solid black;
+                margin: 50px;
+            }
+
+            
+            #heart_vitals, #oxygen_vitals, #resp_vitals{
+                
+                height: 200px;
+                border: 1px solid black;
+                display: flex;
+                justify-content: space-between;
+            }
+            #heart_chart, #heart_chart, #resp_chart{
+                width: 1050px;
+                height: 200px;
+                border: 1px solid black;
+                font-size: 12px;
+                display: flex;
+                
+            }
+
+            
+            [id$="value"]{
+                margin-left: 30%;
+            }
+
+            /*Needs to be adjusted*/
+            #heart_metric, #oxygen_metric, #resp_metric{
+                display: flex;
+                flex-direction: column;
+                width: 40%;
+                margin-left: 0px;
+                padding: 10px;
+                
+            }
+
+            #heart_value{
+                margin-top: 20px;
+                margin-left: 200px;
+                
+            }
+            #oxygen_value{
+                margin-top: 20px;
+                margin-left: 200px;
+                
+            }
+            #syst_value{
+                
+                margin-left: 200px;
+                
+            }
+
+            #dias_value{
+                
+                margin-left: 200px;
+            }
+
+            #heart_metric{
+                background-color: #D61C4E;
+               
+            }
+
+            #oxygen_metric{
+                background-color: #CAF4FF;
+            }
+
+            #resp_metric{
+                background-color: #B6FFA1;
+            }
+
+            #hr_chart{
+                background-color: #0B192C;
+            }
+
+            #o2_chart{
+                background-color: #0B192C;
+            }
+
+            #bp_chart{
+                background-color: #0B192C;
+
+            }
+            #heart_m{
+                margin-top: 150%;
+            }
+
+            #outer_monitor{
+                background: #393E46;
+            }
+            svg{
+                width: 1050px;
+                height: 200px;
+            }
+
+            @keyframes twinkle {
+                0%,100%{opacity: 1;}
+
+                50%{opacity: 0.2;}
+                
+            }
+
+            .meds-circle{
+                animation: twinkle 2s infinite ease-in-out alternate;
+                
+            }
+        </style>
+
+
+<!-- <script src="sankey.js"></script>
+<script src="sankeydiagram.js"></script> -->
+<script src="linechart.js"></script>
+<style>
+    
+    /* *{
+        font: 18px/25px 'Droid Sans Mono', sans-serif; 
+    } */
+    /* .myContainer {
+        margin:auto;
+        width:120px;
+        /* font: 181px/25px 'Droid Sans Mono', sans-serif;
+        }
+    */
+    /* #treemap_div, #sankey_div {
+        float:left;
+        width:600px;
+        padding:10px;
+    } */
+    /* #sankey_div {
+        width: 1920px;
+        height:960px;
+        margin: 100px;
+    }
+    #sankey_svg {
+        width: 1920px;
+        height:960px;
+         background-color: white;
+        border: 1px solid lightgray; 
+        border-radius: 3px;
+    } */
+    /* .link {
+        fill: none;
+        stroke: #000;
+        stroke-opacity: .2;
+    }
+    .link:hover {
+        stroke-opacity: .5;
+    }
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 100px;
+        height: 40px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: whitesmoke;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    } */
+</style>
+
+    </head>
+    <body>
+        <div class="myContainer">
+            <h3 class="chart-title">Line Chart</h3>
+            <hr>
+            <div id="linechart_div">
+                <div id="controlpanel_div">
+                    <label for="stay_options">Choose the stay_id: </label>
+                    <select id="stay_select" name="stay_options" onchange="getData()">
+                    </select>
+                </div> 
+                <div id="outer_monitor">
+                    <div id="inner_monitor">
+                        <div id="heart_vitals">
+                            <div id="heart_chart">
+                                <svg id="hr_chart"></svg>
+                            </div>
+                            <div id="heart_metric">
+                                <h4 id="heart_abbr">HEART RATE</h6>
+                                <h1 id="heart_value">92</h1>
+                                <!-- <span id="heart_m">bpm</span> -->
+                            </div>
+                        </div>
+                        <div id="oxygen_vitals">
+                            <div id="heart_chart">
+                                <svg id="o2_chart"></svg>
+                            </div>
+                            <div id="oxygen_metric">
+                                <h4 id="oxygen_abbr">SPO2</h6>
+                                <h1 id="oxygen_value">98</h1>
+                            </div>
+                        </div>
+                        <div id="resp_vitals">
+                            <div id="resp_chart">
+                                <svg id="bp_chart"></svg>
+                            </div>
+                            <div id="resp_metric">
+                                <h4 id="syst_abbr">SYST</h6>
+                                <h2 id="syst_value">100</h2>
+                                <h4 id="dias_abbr">DIAS</h6>
+                                <h2 id="dias_value">70</h2>
+                                <span id="resp_m">mmHg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <h3 class="chart-title">Sankey Diagram</h3>
+            <hr>
+            <div id="sankey_div" class="border border-dark rounded bg-light shadow-sm">
+                <svg id="sankey_svg"></svg>
+        </div> -->
+        </div>
+    </body>
+</html> 

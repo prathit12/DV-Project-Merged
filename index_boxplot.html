@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <title>Box Plot - Age Group vs Length of Stays</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="boxPlot.js"></script>
+        <style>
+            .toggle-container {
+                margin-bottom: 20px;
+            }
+            .box {
+                fill-opacity: 0.7;
+            }
+            .median {
+                stroke: #000;
+                stroke-width: 2px;
+            }
+            .whisker {
+                stroke: #000;
+                stroke-width: 1px;
+            }
+            .outlier {
+                fill: #000;
+                fill-opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>Box Plot - Age Group vs Length of Stays</h1>
+                <hr>
+            </header>
+            <div class="toggle-container">
+                <label for="genderToggle">Show Gender Distribution:</label>
+                <input type="checkbox" id="genderToggle">
+            </div>
+            <div id="boxPlot"></div>
+        </div>
+    </body>
+</html>
