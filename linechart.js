@@ -147,76 +147,10 @@ function drawHeartChart(){
         .transition().duration(15000)
         .attr("stroke-dashoffset",0)                                                                                                                            
 
-        //update
-        // update=>update
-        // // .attr("stroke", "black")
-        // .transition().duration(15000)
-        // .attr("d", line_generator),
-
-        // //exit
-        // exit=>exit
-        // .attr("stroke","brown")
-        // .transition().duration(1000)
-        // .attr("stroke-dashoffset", function(){
-        //     return -this.getTotalLength();
-        // })
-        // .remove()
+       
 
     )
 
-    // //Joins Modification
-    // const line = svg.selectAll("path.line")
-    // .data([filtered_data]);
-
-    // line.enter()
-    // .append("path")
-    // .attr("class","line")
-    // .attr("fill","none")
-    // .attr("stroke","black")
-    // .attr("stroke-width",1)
-    // .attr("d", d3.line()
-    //     .x(d=>x(d.charttime))
-    //     .y(d=>y(d.valuenum))
-    // )
-
-    // line.transition()
-    // .duration(1000)
-    // .attr("d", d3.line()
-    //     .x(d=>x(d.charttime))
-    //     .y(d=>y(d.valuenum))
-    // )
-
-    // line.exit().remove()
-
-    // //Animations..
-    // svg.selectAll("path.line")
-    // .data([filtered_data])
-    // .join("path")
-    // .attr("class","line")
-    // .attr("fill","none")
-    // .attr("stroke","black")
-    // .attr("stroke-width",1)
-    // .transition().duration(1000)
-    // .attr("d",d3.line()
-    //     .x(function(d){return x(d.charttime)})
-    //     .y(function(d){return y(d.valuenum)})
-    // )
-    
-
-    // //Initial Code..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         )
-
-
-
-   
 
     // Create a lookup function to get valuenum for a specific charttime
     function getValuenumForTime(time) {
@@ -266,78 +200,6 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
 })
 .attr("class",d1=>color_scale(d1.ordercategoryname)?"meds-circle":" ")
 },15000)
-
-
-
-
-// Animate click circles
-// svg.selectAll("circle.click-circle")
-// .data(filtered_data, d => d.charttime)
-// .join(
-//     enter => enter.append("circle")
-//         .attr("class", "click-circle")
-//         .attr("r", 2)
-//         .attr("fill", "blue")
-//         .attr("opacity",0)
-//         .attr("cx", d => x(d.charttime))
-//         .attr("cy", d => y(d.valuenum))
-//         .on("click", function(event, d) {
-//             d3.select("#heart_value").text(d.valuenum);
-           
-//             console.log(d);
-//         }),
-
-//     update => update.transition().ease(d3.easeElastic).duration(3000)  // Slower, with bounce effect
-//         .attr("cx", d => x(d.charttime))
-//         .attr("cy", d => y(d.valuenum))
-//         .attr("fill", "#4682B4")  // Highlight color during transition
-//         .transition().duration(15000)
-//         .attr("fill", "blue"),  // Return to original color
-
-//     exit => exit.transition().duration(500)
-//         .attr("r", 0)
-//         .remove()
-// )
- 
-
-
-    
-//Initial plot of circles without animations..
-// Circles representing data points with matching y-attribute from the first graph
-    // svg.selectAll("circle")
-    // .data(medications_data)
-    // .enter()
-    // .append("circle")
-    // .attr("cx", d1 => x(d1.starttime))
-    // .attr("cy", d1 => {
-    //     const matchingValuenum = getValuenumForTime(d1.starttime);
-    //     return matchingValuenum ? y(matchingValuenum) : null;
-    // })
-    // .attr("r", 3)
-    // .attr("fill", d1=>color_scale(d1.ordercategoryname))
-    // // .attr("fill", "red")
-
-    // .on("mouseover", function(event,d1){
-    //     heart_tooltip.style("display","block").text(d1.ordercategoryname);
-    // })
-
-    // .on("mousemove", function(event){
-    //     heart_tooltip.style("left", (event.pageX+5)+"px")
-    //     .style("top",(event.pageY-5)+"px");
-
-    // })
-
-
-    // .on("mouseout", function(event){
-    //     heart_tooltip.style("display","none");
-    // })
-
-    // //Uncomment this out for on-click function of medication points.
-
-    // // .on("click", function(event, d1) {
-    // //     d3.select("#heart_value").text(d1.valuenum);
-    // //     console.log("D1: ",d1   )
-    // // }); 
 
     //Click Circle
     svg.selectAll("click_circle")
@@ -456,19 +318,7 @@ function drawOxygenChart(){
 
     )
     
-    //Initial Code for Line Chart..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         .curve(d3.curveMonotoneX)
     
-    //     )
-
         //Changes
         function getValuenumForTime(time) {
             // Find the data point with the closest `charttime` to the given `time`
@@ -636,17 +486,7 @@ function drawRespChart(){
         .remove()
 
     )
-    //Initial Code for the Line Chart..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         .curve(d3.curveCatmullRom.alpha(1)) //change this for display for 3rd graph.
-    //         )
+    
     
 
             function getValuenumForTime(time) {
@@ -672,6 +512,11 @@ function drawRespChart(){
                         return matchingValuenum ? y(matchingValuenum) : null;
                     })
                     .style("opacity",0)
+                    //Remove circles that go outside the x-axis.
+                    .filter(function(d1){
+                        const x_position = x(d1.starttime);
+                        return x_position >=0 && x_position<=width;
+                    })
                     .transition()
                     
                     
