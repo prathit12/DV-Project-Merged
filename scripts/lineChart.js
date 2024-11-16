@@ -7,6 +7,7 @@ let medications_data=[];
 
 
 
+
 document.addEventListener("DOMContentLoaded", function() {
     let setOfStays = new Set();
     d3.csv(vitals_path).then(data => {
@@ -47,7 +48,7 @@ function getData(){
         }));
         selected_data = individual_data;
         console.log("Selected id data : ", selected_data);
-
+        
         d3.csv(medicatons_path).then(data1 => {
             individual_data1 = data1.filter(d1=>d1["hadm_id"]==stay_id)
             .map(d1 => ({
@@ -60,10 +61,9 @@ function getData(){
             drawHeartChart();
             drawOxygenChart();
             drawRespChart();
+            
             console.log("Medications Data: ", medications_data);
-            // color_scale = d3.scaleOrdinal()
-            // .domain(medications_data.map(d1=>d1.ordercategoryname))
-            // .range(d3.schemeCategory10);
+            
 
         });
         
@@ -88,6 +88,7 @@ function drawHeartChart(){
     const filtered_data = selected_data.filter(data=>data["item_id"]==220045)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));;
     console.log("Heart Rate : " , filtered_data);
+    d3.select("#heart_value").text(filtered_data[0].valuenum)
     
     // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
@@ -123,7 +124,7 @@ function drawHeartChart(){
     .style("stroke","white")
 
     //Joins Modification 1
-    const line_generator = d3.line()
+    const heart_line = d3.line()
     .x(d=>x(d.charttime))
     .y(d=>y(d.valuenum))
 
@@ -135,7 +136,7 @@ function drawHeartChart(){
         .attr("fill","none")
         .attr("stroke","white")
         .attr("stroke-width", 1)
-        .attr("d", line_generator)
+        .attr("d", heart_line)
         // .call(enter=>enter.transition().duration(1000)),
         .attr("stroke-dasharray", function(){
             const length = this.getTotalLength();
@@ -148,76 +149,10 @@ function drawHeartChart(){
         .transition().duration(15000)
         .attr("stroke-dashoffset",0)                                                                                                                            
 
-        // //update
-        // update=>update
-        // // .attr("stroke", "black")
-        // .transition().duration(15000)
-        // .attr("d", line_generator),
-
-        // //exit
-        // exit=>exit
-        // .attr("stroke","brown")
-        // .transition().duration(1000)
-        // .attr("stroke-dashoffset", function(){
-        //     return -this.getTotalLength();
-        // })
-        // .remove()
+       
 
     )
 
-    // //Joins Modification
-    // const line = svg.selectAll("path.line")
-    // .data([filtered_data]);
-
-    // line.enter()
-    // .append("path")
-    // .attr("class","line")
-    // .attr("fill","none")
-    // .attr("stroke","black")
-    // .attr("stroke-width",1)
-    // .attr("d", d3.line()
-    //     .x(d=>x(d.charttime))
-    //     .y(d=>y(d.valuenum))
-    // )
-
-    // line.transition()
-    // .duration(1000)
-    // .attr("d", d3.line()
-    //     .x(d=>x(d.charttime))
-    //     .y(d=>y(d.valuenum))
-    // )
-
-    // line.exit().remove()
-
-    // //Animations..
-    // svg.selectAll("path.line")
-    // .data([filtered_data])
-    // .join("path")
-    // .attr("class","line")
-    // .attr("fill","none")
-    // .attr("stroke","black")
-    // .attr("stroke-width",1)
-    // .transition().duration(1000)
-    // .attr("d",d3.line()
-    //     .x(function(d){return x(d.charttime)})
-    //     .y(function(d){return y(d.valuenum)})
-    // )
-    
-
-    // //Initial Code..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         )
-
-
-
-   
 
     // Create a lookup function to get valuenum for a specific charttime
     function getValuenumForTime(time) {
@@ -268,78 +203,6 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
 .attr("class",d1=>color_scale(d1.ordercategoryname)?"meds-circle":" ")
 },15000)
 
-
-
-
-// Animate click circles
-// svg.selectAll("circle.click-circle")
-// .data(filtered_data, d => d.charttime)
-// .join(
-//     enter => enter.append("circle")
-//         .attr("class", "click-circle")
-//         .attr("r", 2)
-//         .attr("fill", "blue")
-//         .attr("opacity",0)
-//         .attr("cx", d => x(d.charttime))
-//         .attr("cy", d => y(d.valuenum))
-//         .on("click", function(event, d) {
-//             d3.select("#heart_value").text(d.valuenum);
-           
-//             console.log(d);
-//         }),
-
-//     update => update.transition().ease(d3.easeElastic).duration(3000)  // Slower, with bounce effect
-//         .attr("cx", d => x(d.charttime))
-//         .attr("cy", d => y(d.valuenum))
-//         .attr("fill", "#4682B4")  // Highlight color during transition
-//         .transition().duration(15000)
-//         .attr("fill", "blue"),  // Return to original color
-
-//     exit => exit.transition().duration(500)
-//         .attr("r", 0)
-//         .remove()
-// )
- 
-
-
-    
-//Initial plot of circles without animations..
-// Circles representing data points with matching y-attribute from the first graph
-    // svg.selectAll("circle")
-    // .data(medications_data)
-    // .enter()
-    // .append("circle")
-    // .attr("cx", d1 => x(d1.starttime))
-    // .attr("cy", d1 => {
-    //     const matchingValuenum = getValuenumForTime(d1.starttime);
-    //     return matchingValuenum ? y(matchingValuenum) : null;
-    // })
-    // .attr("r", 3)
-    // .attr("fill", d1=>color_scale(d1.ordercategoryname))
-    // // .attr("fill", "red")
-
-    // .on("mouseover", function(event,d1){
-    //     heart_tooltip.style("display","block").text(d1.ordercategoryname);
-    // })
-
-    // .on("mousemove", function(event){
-    //     heart_tooltip.style("left", (event.pageX+5)+"px")
-    //     .style("top",(event.pageY-5)+"px");
-
-    // })
-
-
-    // .on("mouseout", function(event){
-    //     heart_tooltip.style("display","none");
-    // })
-
-    // //Uncomment this out for on-click function of medication points.
-
-    // // .on("click", function(event, d1) {
-    // //     d3.select("#heart_value").text(d1.valuenum);
-    // //     console.log("D1: ",d1   )
-    // // }); 
-
     //Click Circle
     svg.selectAll("click_circle")
     .data(filtered_data )
@@ -349,7 +212,7 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
     .attr("cy", d=>y(d.valuenum))
     .attr("r",2)
     .attr("fill", "blue")
-    .attr("opacity",0)
+    //.attr("opacity",0)
     .on("click", function(event, d){
         d3.select("#heart_value").text(d.valuenum)
         
@@ -382,6 +245,7 @@ function drawOxygenChart(){
     const filtered_data = selected_data.filter(data=>data["item_id"]==220277)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
     console.log("Oxygen Rate : " , filtered_data);
+    d3.select("#oxygen_value").text(filtered_data[0].valuenum);
     
     // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
@@ -415,7 +279,7 @@ function drawOxygenChart(){
     .style("stroke","white")
 
     //New Code..
-    const line_generator = d3.line()
+    const o2_line = d3.line()
     .x(d=>x(d.charttime))
     .y(d=>y(d.valuenum))
     .curve(d3.curveMonotoneX)
@@ -428,7 +292,7 @@ function drawOxygenChart(){
         .attr("fill","none")
         .attr("stroke","white")
         .attr("stroke-width", 1)
-        .attr("d", line_generator)
+        .attr("d", o2_line)
         .attr("stroke-dasharray", function(){
             const length = this.getTotalLength();
             return `${length} ${length}`;
@@ -444,7 +308,7 @@ function drawOxygenChart(){
         update=>update
         .attr("stroke", "black")
         .transition().duration(5000)
-        .attr("d", line_generator),
+        .attr("d", o2_line),
 
         //exit
         exit=>exit
@@ -457,19 +321,7 @@ function drawOxygenChart(){
 
     )
     
-    //Initial Code for Line Chart..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         .curve(d3.curveMonotoneX)
     
-    //     )
-
         //Changes
         function getValuenumForTime(time) {
             // Find the data point with the closest `charttime` to the given `time`
@@ -534,7 +386,7 @@ function drawOxygenChart(){
     .enter()
     .append("circle")
     .attr("fill", "blue")
-    .attr("opacity",0)
+    //.attr("opacity",0)
     .attr("r",2)
     
     .attr("cx", d=>x(d.charttime))
@@ -554,11 +406,13 @@ function drawRespChart(){
     var margin = {top: 20, right: 50, bottom: 20, left: 60},
     width = 1050 - margin.left - margin.right,
     height = 200 - margin.top - margin.bottom;
-    const filtered_data = selected_data.filter(data=>data["item_id"]==220179 || data["item_id"]==220180)
+    const filtered_data = selected_data.filter(data=>data["item_id"]==220179 || data["item_id"]==220180 )
+    
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
     console.log("Resp_Chart Filtered Data: ", filtered_data);
     
-    // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
+    
+    //console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
     
     var svg = d3.select("#bp_chart")
@@ -570,7 +424,7 @@ function drawRespChart(){
         .domain(d3.extent(filtered_data, function(d) { return d.charttime; }))
         .range([ 0, width ]);
     svg.append("g")
-        .attr("transform", "translate(-10," + (height-10) + ")")
+        .attr("transform", "translate(-10," + (height) + ")")
         .attr("stroke","white")
         .call(d3.axisBottom(x))
         .selectAll("path")
@@ -582,7 +436,7 @@ function drawRespChart(){
     var y = d3.scaleLinear()
         .domain([0, d3.max(filtered_data, function(d) { return +d.valuenum; })])
         
-        .range([ height-10, 0 ]);
+        .range([ height, 0 ]);
     svg.append("g")
         .attr("transform",`translate(-10)`)
         .attr("stroke","white")
@@ -594,10 +448,10 @@ function drawRespChart(){
     
 
     //New Code for Line Chart..
-    const line_generator = d3.line()
+    const resp_line = d3.line()
     .x(d=>x(d.charttime))
     .y(d=>y(d.valuenum))
-    .curve(d3.curveCatmullRom.alpha(1))
+    .curve(d3.curveMonotoneX)
 
     svg.selectAll("path.line")
     .data([filtered_data],d=>d.charttime)
@@ -607,7 +461,7 @@ function drawRespChart(){
         .attr("fill","none")
         .attr("stroke","white")
         .attr("stroke-width", 1)
-        .attr("d", line_generator)
+        .attr("d", resp_line)
         .attr("stroke-dasharray", function(){
             const length = this.getTotalLength();
             return `${length} ${length}`;
@@ -623,7 +477,7 @@ function drawRespChart(){
         update=>update
         .attr("stroke", "black")
         .transition().duration(5000)
-        .attr("d", line_generator),
+        .attr("d", resp_line),
 
         //exit
         exit=>exit
@@ -635,17 +489,7 @@ function drawRespChart(){
         .remove()
 
     )
-    //Initial Code for the Line Chart..
-    // svg.append("path")
-    //     .datum(filtered_data)
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("d", d3.line()
-    //         .x(function(d) { return x(d.charttime)})
-    //         .y(function(d) { return y(d.valuenum) })
-    //         .curve(d3.curveCatmullRom.alpha(1)) //change this for display for 3rd graph.
-    //         )
+    
     
 
             function getValuenumForTime(time) {
@@ -671,6 +515,11 @@ function drawRespChart(){
                         return matchingValuenum ? y(matchingValuenum) : null;
                     })
                     .style("opacity",0)
+                    //Remove circles that go outside the x-axis.
+                    .filter(function(d1){
+                        const x_position = x(d1.starttime);
+                        return x_position >=0 && x_position<=width;
+                    })
                     .transition()
                     
                     
@@ -713,7 +562,7 @@ function drawRespChart(){
     .attr("cx",d=>x(d.charttime))
     .attr("cy",d=>y(d.valuenum))
     .attr("fill","blue")
-    .attr("opacity",0)
+    // .attr("opacity",0)
     .attr("r","2")
     .on("click",function(event,d){  
         if(d.item_id==220179)
