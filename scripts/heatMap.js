@@ -1,5 +1,5 @@
-
 d3.csv('./Dataset/Processed/data_heatmap.csv').then(function(data) {
+  console.log('Loaded data:', data); // Debugging statement
   data.forEach(d => d.duration_hrs = +d.duration_hrs);
 
   let minDuration = 0;
