@@ -1,4 +1,3 @@
-
 const width = 1200; // Increased width
 const height = 800; // Increased height
 const margin = { top: 20, right: 20, bottom: 50, left: 70 };
@@ -62,6 +61,8 @@ Promise.all([
             updateChart(selectedStayId);
         }
     });
+
+    initializeChart(); // Call initializeChart after data is loaded
 }).catch(error => {
     console.error("Error loading data:", error);
 });
@@ -296,4 +297,12 @@ function updateChart(stayId) {
     }
 
     updateLegend(combinedData);
+}
+
+function initializeChart() {
+    const firstStayId = d3.select("#stayDropdown option:nth-child(2)").property("value");
+    if (firstStayId) {
+        d3.select("#stayDropdown").property("value", firstStayId);
+        updateChart(firstStayId);
+    }
 }
