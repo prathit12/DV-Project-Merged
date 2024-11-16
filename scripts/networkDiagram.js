@@ -14,9 +14,9 @@ class Link {
     this.value = value;
   }
 }
-collectData();
+collectData1();
 
-function createCurvedPath(link) {
+function createCurvedPath1(link) {
   const sourceNode = nodes_arr.find((node) => node.id === link.source);
   const targetNode = nodes_arr.find((node) => node.id === link.target);
 
@@ -124,7 +124,7 @@ function drawGraph() {
     .attr("class", "link")
     .attr("d", (d) => {
       //   console.log(d);
-      return createCurvedPath(d);
+      return createCurvedPath1(d);
     })
     .attr("stroke-width", 1)
     .attr("marker-end", "url(#arrow)")
@@ -213,9 +213,9 @@ function drawGraph() {
   });
 }
 
-function collectData() {
-  const transfers_path = "./Dataset/hospital/transfers.csv";
-  const admissions_path = "./Dataset/hospital/admissions.csv";
+function collectData1() {
+  const transfers_path = "/Dataset/hospital/transfers.csv";
+  const admissions_path = "/Dataset/hospital/admissions.csv";
   let set_of_dead = new Set();
 
   const freqMap = new Map();
