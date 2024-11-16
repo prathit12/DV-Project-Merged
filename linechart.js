@@ -409,7 +409,7 @@ function drawRespChart(){
     console.log("Resp_Chart Filtered Data: ", filtered_data);
     
     
-    // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
+    //console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
     
     var svg = d3.select("#bp_chart")
