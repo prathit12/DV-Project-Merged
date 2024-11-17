@@ -1,7 +1,4 @@
 
-// d3.csv('/Dataset/Processed/data_heatmap.csv').then(function(data) {
-//   data.forEach(d => d.duration_hrs = +d.duration_hrs);
-
 d3.csv('Dataset/Processed/final_data_heatmap.csv').then(function(data) {
     const tooltip = d3.select("#tooltip");
 
