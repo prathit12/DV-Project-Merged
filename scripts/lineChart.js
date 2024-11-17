@@ -278,7 +278,7 @@ function drawOxygenChart(){
     svg.selectAll(".tick line")
     .style("stroke","white")
 
-    //New Code..
+    //Line Chart
     const o2_line = d3.line()
     .x(d=>x(d.charttime))
     .y(d=>y(d.valuenum))
@@ -322,7 +322,7 @@ function drawOxygenChart(){
     )
     
     
-        //Changes
+        
         function getValuenumForTime(time) {
             // Find the data point with the closest `charttime` to the given `time`
             const closest = filtered_data.reduce((prev, curr) => {
@@ -410,6 +410,8 @@ function drawRespChart(){
     
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
     console.log("Resp_Chart Filtered Data: ", filtered_data);
+    d3.select("#syst_value").text(filtered_data[0].valuenum)
+    d3.select("#dias_value").text(filtered_data[1].valuenum)
     
     
     //console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
@@ -447,7 +449,7 @@ function drawRespChart(){
     .style("stroke","white")
     
 
-    //New Code for Line Chart..
+    //Line Chart..
     const resp_line = d3.line()
     .x(d=>x(d.charttime))
     .y(d=>y(d.valuenum))
