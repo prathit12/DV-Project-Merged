@@ -1,38 +1,112 @@
-d3.csv('./Dataset/Processed/data_heatmap.csv').then(function(data) {
-  console.log('Loaded data:', data); // Debugging statement
-  data.forEach(d => d.duration_hrs = +d.duration_hrs);
 
-  let minDuration = 0;
-  let maxDuration = 500;
+d3.csv('Dataset/Processed/final_data_heatmap.csv').then(function(data) {
+    const tooltip = d3.select("#tooltip");
 
-  const tooltip = d3.select("#tooltip");
-
-  function renderHeatmap(filteredData) {
-    const categoryData = Array.from({ length: 11 }, (_, i) => ({ index: i, alive: 0, dead: 0 }));
-
-    filteredData.forEach(d => {
-      const categoryIndex = +d.category_index;
-      const expireFlag = +d.hospital_expire_flag;
-
-      if (expireFlag === 0) {
-        categoryData[categoryIndex].alive += 1;
-      } else {
-        categoryData[categoryIndex].dead += 1;
-      }
+    data.forEach(d => {
+    d.surgery_type_index = +d.surgery_type_index; // Convert to number
+    d.hospital_expire_flag = +d.hospital_expire_flag; // Convert to number
+    d.severity_level = +d.severity_level; // Convert to number
     });
 
-    categoryData.sort((a, b) => b.alive - a.alive || b.dead - a.dead);
+    let sortBy = "dead";
+    let filterBy = "all";
+    let filterChanged = true;
+
+    const procedures = [
+    "cardiovascular",
+    "kidney",
+    "gastrointestinal",
+    "musculoskeletal",
+    "respiratory",
+    "neurological",
+    "others"
+    ];
+
+    function filterData() {
+    return data.filter(d => {
+        if (filterBy === "low" && (d.severity_level < 1 || d.severity_level > 3)) return false;
+        if (filterBy === "medium" && (d.severity_level < 4 || d.severity_level > 6)) return false;
+        if (filterBy === "high" && (d.severity_level < 7 || d.severity_level > 10)) return false;
+        return true;
+    });
+    }
+
+    function renderHeatmap(filteredData) {
+    const categoryData = Array.from({ length: 7 }, (_, i) => ({ index: i, alive: 0, dead: 0 }));
+
+    filteredData.forEach(d => {
+        const surgeryType = +d.surgery_type_index;
+        const expireFlag = +d.hospital_expire_flag;
+
+        if (surgeryType >= 0 && surgeryType < 7) {
+        if (expireFlag === 0) {
+            categoryData[surgeryType].alive += 1;
+        } else {
+            categoryData[surgeryType].dead += 1;
+        }
+        }
+    });
+
+    categoryData.sort((a, b) => b[sortBy] - a[sortBy]);
 
     d3.select("#heatmap").selectAll(".cell").remove();
     d3.select(".x-axis-labels").selectAll("div").remove();
 
-    const aliveColor = d3.scaleSequential(d3.interpolateBlues)
-      .domain([0, d3.max(categoryData, d => d.alive)]);
-    const deadColor = d3.scaleSequential(d3.interpolateReds)
-      .domain([0, d3.max(categoryData, d => d.dead)]);
+    const maxAlive = d3.max(categoryData, d => d.alive) || 0;
+    const maxDead = d3.max(categoryData, d => d.dead) || 0;
 
-    categoryData.forEach((category) => {
-      d3.select("#heatmap").append("div")
+    if (filterChanged) {
+        d3.select("#aliveScale svg").html("");
+        d3.select("#deadScale svg").html("");
+        d3.select("#aliveMax").text(maxAlive);
+        d3.select("#deadMax").text(maxDead);
+
+        const aliveGradient = d3.select("#aliveScale svg")
+        .append("defs")
+        .append("linearGradient")
+        .attr("id", "aliveGradient")
+        .attr("x1", "0%")
+        .attr("x2", "100%");
+        aliveGradient.selectAll("stop")
+        .data(d3.range(0, 1.01, 0.01))
+        .enter()
+        .append("stop")
+        .attr("offset", d => `${d * 100}%`)
+        .attr("stop-color", d => d3.interpolateBlues(d));
+
+        d3.select("#aliveScale svg")
+        .append("rect")
+        .attr("width", 150)
+        .attr("height", 20)
+        .style("fill", "url(#aliveGradient)");
+
+        const deadGradient = d3.select("#deadScale svg")
+        .append("defs")
+        .append("linearGradient")
+        .attr("id", "deadGradient")
+        .attr("x1", "0%")
+        .attr("x2", "100%");
+        deadGradient.selectAll("stop")
+        .data(d3.range(0, 1.01, 0.01))
+        .enter()
+        .append("stop")
+        .attr("offset", d => `${d * 100}%`)
+        .attr("stop-color", d => d3.interpolateReds(d));
+
+        d3.select("#deadScale svg")
+        .append("rect")
+        .attr("width", 150)
+        .attr("height", 20)
+        .style("fill", "url(#deadGradient)");
+    
+    filterChanged = false;
+    }
+
+    const aliveColor = d3.scaleSequential(d3.interpolateBlues).domain([0, maxAlive]);
+    const deadColor = d3.scaleSequential(d3.interpolateReds).domain([0, maxDead]);
+
+    categoryData.forEach(category => {
+        d3.select("#heatmap").append("div")
         .attr("class", "cell")
         .style("background-color", category.alive === 0 ? "#FFFFFF" : aliveColor(category.alive))
         .on("mouseover", (event) => showTooltip(event, `Alive: ${category.alive}`))
@@ -40,8 +114,8 @@ d3.csv('./Dataset/Processed/data_heatmap.csv').then(function(data) {
         .on("mouseout", hideTooltip);
     });
 
-    categoryData.forEach((category) => {
-      d3.select("#heatmap").append("div")
+    categoryData.forEach(category => {
+        d3.select("#heatmap").append("div")
         .attr("class", "cell")
         .style("background-color", category.dead === 0 ? "#FFFFFF" : deadColor(category.dead))
         .on("mouseover", (event) => showTooltip(event, `Dead: ${category.dead}`))
@@ -49,92 +123,46 @@ d3.csv('./Dataset/Processed/data_heatmap.csv').then(function(data) {
         .on("mouseout", hideTooltip);
     });
 
-    const procedures = [
-      "Other", "Infectious Diseases", "Injuries and Fractures", "Pregnancy and Perinatal Conditions",
-      "Mental Health and Behavioral Disorders", "Musculoskeletal Disorders", "Blood and Lymphatic Disorders",
-      "Neurological Conditions", "Respiratory Disorders", "Digestive System Disorders", "Cancer and Neoplastic Diseases"
-    ];
-
     d3.select(".x-axis-labels")
-      .selectAll("div")
-      .data(categoryData)
-      .enter()
-      .append("div")
-      .text(d => procedures[d.index]);
-  }
+        .selectAll("div")
+        .data(categoryData)
+        .enter()
+        .append("div")
+        .text(d => procedures[d.index]);
+    }
 
-  function showTooltip(event, text) {
-    tooltip.style("opacity", 1)
-      .html(text);
-  }
-
-  function moveTooltip(event) {
-    tooltip.style("top", (event.pageY - 10) + "px")
-      .style("left", (event.pageX + 10) + "px");
-  }
-
-  function hideTooltip() {
-    tooltip.style("opacity", 0);
-  }
-
-  renderHeatmap(data);
-
-  const sliderWidth = 400;
-  const slider = d3.select("#slider-container").append("svg")
-    .attr("width", sliderWidth)
-    .attr("height", 60);
-
-  const xScale = d3.scaleLinear().domain([0, 500]).range([10, sliderWidth - 10]);
-
-  const brush = d3.brushX()
-    .extent([[0, 0], [sliderWidth, 40]])
-    .on("brush end", updateHeatmap);
-
-  const brushG = slider.append("g")
-    .attr("class", "brush")
-    .call(brush)
-    .call(brush.move, [xScale(minDuration), xScale(maxDuration)]);
-
-  const handleLeft = slider.append("circle")
-    .attr("class", "handle")
-    .attr("r", 8)
-    .attr("cy", 20)
-    .attr("cx", xScale(minDuration));
-
-  const handleRight = slider.append("circle")
-    .attr("class", "handle")
-    .attr("r", 8)
-    .attr("cy", 20)
-    .attr("cx", xScale(maxDuration));
-
-  slider.append("text")
-    .attr("x", 0)
-    .attr("y", 55)
-    .attr("id", "slider-label-min")
-    .text("0 hrs");
-
-  slider.append("text")
-    .attr("x", sliderWidth - 30)
-    .attr("y", 55)
-    .text("500 hrs");
-
-  function updateHeatmap(event) {
-    if (!event.selection) return;
-
-
-    const [minX, maxX] = event.selection.map(xScale.invert);
-    minDuration = Math.max(0, Math.min(500, Math.round(minX))); 
-    maxDuration = Math.max(0, Math.min(500, Math.round(maxX))); 
-
-    d3.select("#durationRange").text(`(${minDuration} - ${maxDuration} hrs)`);
-
-    const filteredData = data.filter(d => d.duration_hrs >= minDuration && d.duration_hrs <= maxDuration);
+    function updateHeatmap() {
+    const filteredData = filterData();
     renderHeatmap(filteredData);
+    }
 
-    handleLeft.attr("cx", xScale(minDuration));
-    handleRight.attr("cx", xScale(maxDuration));
-  }
-}).catch(function(error) {
-  console.error('Error loading the CSV data:', error);
+    d3.select("#sortDropdown").on("change", function() {
+    sortBy = this.value;
+    filterChanged = false; // No scale update
+    updateHeatmap();
+    });
+
+    d3.select("#filterDropdown").on("change", function() {
+    filterBy = this.value;
+    filterChanged = true; // Scale update required
+    updateHeatmap();
+    });
+
+    updateHeatmap();
+
+    function showTooltip(event, text) {
+    tooltip.style("opacity", 1)
+        .text(text)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 10) + "px");
+    }
+
+    function moveTooltip(event) {
+    tooltip.style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 10) + "px");
+    }
+
+    function hideTooltip() {
+    tooltip.style("opacity", 0);
+    }
 });
-
