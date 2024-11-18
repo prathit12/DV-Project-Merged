@@ -9,20 +9,53 @@
 
         <script src="https://d3js.org/d3.v7.min.js"></script>
         
-        <!-- <script src="./scripts/networkdiagram.js"></script> -->
-        <!-- <script src="./scripts/boxPlot.js"></script>
-        <script src="./scripts/heatMap.js"></script>
+        <script src="./scripts/networkdiagram.js"></script>
+        <!-- <script src="./scripts/boxPlot.js"></script> -->
+        <!-- <script src="./scripts/heatMap.js"></script> -->
         <script src="./scripts/bubbleChart.js"></script>
-        <script src="./scripts/linechart.js"></script> -->
+        <!-- <script src="./scripts/linechart.js"></script>  -->
+        
+            <!-- Network - Transfers
 
-        <!-- <link rel="stylesheet" href="./styles/boxPlot.css">
+            bubble - treatments
+            line chart - vitals
+            
+            Boxplot - age/gender
+            HeatMap - procedure Severity -->
+       
+
+        <!-- <link rel="stylesheet" href="./styles/boxPlot.css"> -->
         <link rel="stylesheet" href="./styles/bubbleChart.css">
-        <link rel="stylesheet" href="./styles/heatMap.css">
-         -->
-        <!-- <link rel="stylesheet" href="./styles/networkDiagram.css"> -->
+        <!-- <link rel="stylesheet" href="./styles/heatMap.css">  -->
+        <link rel="stylesheet" href="./styles/networkDiagram.css">
+        <!-- <link rel="stylesheet" href="./styles/lineChart.css"> -->
         
     </head>
-    <body>
-
+    <body onload="initializeChart()">
+        <h1>Network</h1>
+        <svg id="networkSvg" width="1700" height="900"></svg>
+        <h1>Bubble</h1>
+        <div class="bubbleChart">
+            <div class="sticky">
+              <label for="stayDropdown">Choose Patient's Stay:</label>
+              <select id="stayDropdown">
+                <option value="">Select Stay ID</option>
+              </select>
+              <label for="timeRange">Time Range:</label>
+              <input type="range" id="timeRange" min="0" max="100" value="50" />
+            </div>
+      
+            <div class="container">
+              <div class="chart-container">
+                <svg width="1200" height="800">
+                  <g id="chartArea" transform="translate(50, 40)"></g>
+                </svg>
+                <div id="bubbleTooltip" class="bubbleTooltip"></div>
+              </div>
+              <div id="legendContainer" class="legend-container"></div>
+              <div id="detailsBox" class="details-box"></div>
+              <!-- Moved details box here -->
+            </div>
+          </div>
     </body>
 </html> 

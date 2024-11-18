@@ -9,7 +9,7 @@ const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 const svg = d3.select("svg").attr("width", width).attr("height", height);
 const chartArea = svg.select("#chartArea");
-const tooltip = d3.select("#tooltip");
+const tooltip = d3.select("#bubbleTooltip");
 const detailsBox = d3.select("#detailsBox");
 const legendContainer = d3.select("#legendContainer");
 
@@ -18,6 +18,7 @@ let activeCircle = null;
 
 // Load data
 console.log("Loading data...");
+
 Promise.all([
     d3.csv('./Dataset/icu/inputevents.csv'),
     d3.csv('./Dataset/icu/d_items.csv')

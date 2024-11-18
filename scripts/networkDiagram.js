@@ -50,7 +50,7 @@ function createCurvedPath1(link) {
 }
 
 function drawGraph() {
-  const svg = d3.select("svg"),
+  const svg = d3.select("#networkSvg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
   const centerX = width / 2 + 100;
@@ -114,7 +114,7 @@ function drawGraph() {
   var div = d3
     .select("body")
     .append("div")
-    .attr("class", "tooltip")
+    .attr("class", "tooltipNetwork")
     .style("opacity", 0);
 
   const links = svg
