@@ -7,8 +7,9 @@ const yScale = d3.scaleTime().range([margin.top + (height * 0.05) -10, height - 
 const sizeScale = d3.scaleSqrt().range([5, 15]); // Adjusted to make bubbles smaller to fit within the chart area
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-const svg = d3.select("svg").attr("width", width).attr("height", height);
-const chartArea = svg.select("#chartArea");
+const svg = d3.select("#bubbleSvg").attr("width", width).attr("height", height);
+// Removed chartArea variable
+// const chartArea = svg.select("#chartArea");
 const tooltip = d3.select("#bubbleTooltip");
 const detailsBox = d3.select("#detailsBox");
 const legendContainer = d3.select("#legendContainer");
@@ -18,7 +19,6 @@ let activeCircle = null;
 
 // Load data
 console.log("Loading data...");
-
 Promise.all([
     d3.csv('./Dataset/icu/inputevents.csv'),
     d3.csv('./Dataset/icu/d_items.csv')
@@ -50,7 +50,7 @@ Promise.all([
         if (selectedStayId) {
             updateChart(selectedStayId);
         } else {
-            chartArea.selectAll("circle").remove();
+            svg.selectAll("circle").remove();
             legendContainer.selectAll(".legend").remove();
             console.log("Cleared chart.");
         }
@@ -141,8 +141,8 @@ function updateChart(stayId) {
     console.log("X Scale Domain:", xScale.domain());
     console.log("Y Scale Domain:", yScale.domain());
 
-    chartArea.selectAll("circle").remove();
-    chartArea.selectAll("text.abbreviation").remove();
+    svg.selectAll("circle").remove();
+    svg.selectAll("text.abbreviation").remove();
 
     const simulation = d3.forceSimulation(combinedData)
         .force("x", d3.forceX(d => xScale(d.order_category_name)).strength(1)) // Use category for x position
@@ -153,7 +153,7 @@ function updateChart(stayId) {
     for (let i = 0; i < 300; i++) simulation.tick();
     console.log("Simulation complete. Node positions updated.");
 
-    const circles = chartArea.selectAll("circle")
+    const circles = svg.selectAll("circle")
         .data(combinedData);
 
     circles.enter()
@@ -186,7 +186,7 @@ function updateChart(stayId) {
         .on('click', function(event, d) {
             if (activeCircle === this) {
                 // Restore circles
-                chartArea.selectAll("circle")
+                svg.selectAll("circle")
                     .transition()
                     .duration(500)
                     .style("opacity", 0.8)
@@ -202,7 +202,7 @@ function updateChart(stayId) {
                 activeCircle = null;
             } else {
                 // Dim other circles
-                chartArea.selectAll("circle")
+                svg.selectAll("circle")
                     .filter(circleData => circleData !== d)
                     .transition()
                     .duration(500)
@@ -235,7 +235,7 @@ function updateChart(stayId) {
                     detailsBox.style('display', 'none');
 
                     // Restore circles
-                    chartArea.selectAll("circle")
+                    svg.selectAll("circle")
                         .transition()
                         .duration(500)
                         .style("opacity", 0.8)
@@ -284,7 +284,7 @@ function updateChart(stayId) {
                 const isActive = d3.select(this).classed("active");
                 d3.select(this).classed("active", !isActive);
                 const opacity = isActive ? 0.8 : 0.2;
-                chartArea.selectAll("circle")
+                svg.selectAll("circle")
                     .filter(circleData => circleData.order_category_name === d)
                     .transition()
                     .style("opacity", opacity);
@@ -300,10 +300,11 @@ function updateChart(stayId) {
     updateLegend(combinedData);
 }
 
-function initializeChart() {
+// Correctly define initializeChart and attach it to the window object
+window.initializeChart = function() {
     const firstStayId = d3.select("#stayDropdown option:nth-child(2)").property("value");
     if (firstStayId) {
         d3.select("#stayDropdown").property("value", firstStayId);
         updateChart(firstStayId);
     }
-}
+};

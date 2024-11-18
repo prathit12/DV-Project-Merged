@@ -12,7 +12,7 @@
         <script src="./scripts/networkdiagram.js"></script>
         <!-- <script src="./scripts/boxPlot.js"></script> -->
         <!-- <script src="./scripts/heatMap.js"></script> -->
-        <script src="./scripts/bubbleChart.js"></script>
+        <!-- <script src="./scripts/bubbleChart.js"></script> -->
         <!-- <script src="./scripts/linechart.js"></script>  -->
         
             <!-- Network - Transfers
@@ -34,7 +34,7 @@
     <body onload="initializeChart()">
         <h1>Network</h1>
         <svg id="networkSvg" width="1700" height="900"></svg>
-        <h1>Bubble</h1>
+        <h1>Bubble Chart</h1>
         <div class="bubbleChart">
             <div class="sticky">
               <label for="stayDropdown">Choose Patient's Stay:</label>
@@ -47,15 +47,14 @@
       
             <div class="container">
               <div class="chart-container">
-                <svg width="1200" height="800">
-                  <g id="chartArea" transform="translate(50, 40)"></g>
-                </svg>
-                <div id="bubbleTooltip" class="bubbleTooltip"></div>
+                <svg id="bubbleSvg" width="1200" height="800"></svg>
+                <div id="bubbleTooltip" class="tooltip"></div>
               </div>
               <div id="legendContainer" class="legend-container"></div>
               <div id="detailsBox" class="details-box"></div>
-              <!-- Moved details box here -->
             </div>
           </div>
+        <!-- Ensure that bubbleChart.js is loaded after all HTML elements -->
+        <script src="./scripts/bubbleChart.js"></script>
     </body>
-</html> 
+</html>
