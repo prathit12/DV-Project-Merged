@@ -10,10 +10,9 @@
         <script src="https://d3js.org/d3.v7.min.js"></script>
         
         <script src="./scripts/networkdiagram.js"></script>
-        <!-- <script src="./scripts/boxPlot.js"></script> -->
-        <!-- <script src="./scripts/heatMap.js"></script> -->
-        <!-- <script src="./scripts/bubbleChart.js"></script> -->
-        <!-- <script src="./scripts/linechart.js"></script>  -->
+        <script src="./scripts/boxPlot.js"></script>
+        <script src="./scripts/heatMap.js"></script>
+        <script src="./scripts/linechart.js"></script> 
         
             <!-- Network - Transfers
 
@@ -24,11 +23,11 @@
             HeatMap - procedure Severity -->
        
 
-        <!-- <link rel="stylesheet" href="./styles/boxPlot.css"> -->
+        <link rel="stylesheet" href="./styles/boxPlot.css">
         <link rel="stylesheet" href="./styles/bubbleChart.css">
-        <!-- <link rel="stylesheet" href="./styles/heatMap.css">  -->
+        <link rel="stylesheet" href="./styles/heatMap.css"> 
         <link rel="stylesheet" href="./styles/networkDiagram.css">
-        <!-- <link rel="stylesheet" href="./styles/lineChart.css"> -->
+        <link rel="stylesheet" href="./styles/lineChart.css">
         
     </head>
     <body onload="initializeChart()">
@@ -54,7 +53,118 @@
               <div id="detailsBox" class="details-box"></div>
             </div>
           </div>
-        <!-- Ensure that bubbleChart.js is loaded after all HTML elements -->
+
+        <div class="lineChartContainer">
+            <div class="myContainer">
+                <h3 class="chart-title">Line Chart</h3>
+                <hr>
+                <div id="linechart_div">
+                    <div id="controlpanel_div">
+                        <label for="stay_options">Choose the stay_id: </label>
+                        <select id="stay_select" name="stay_options" onchange="getData()">
+                        </select>
+                    </div> 
+                    <div id="outer_monitor">
+                        <div id="inner_monitor">
+                            <div id="heart_vitals">
+                                <div id="heart_chart">
+                                    <svg id="hr_chart"></svg>
+                                </div>
+                                <div id="heart_metric">
+                                    <h4 id="heart_abbr">HEART RATE</h6>
+                                    <h1 id="heart_value">92</h1>
+                                    <!-- <span id="heart_m">bpm</span> -->
+                                </div>
+                            </div>
+                            <div id="oxygen_vitals">
+                                <div id="heart_chart">
+                                    <svg id="o2_chart"></svg>
+                                </div>
+                                <div id="oxygen_metric">
+                                    <h4 id="oxygen_abbr">SPO2</h6>
+                                    <h1 id="oxygen_value">98</h1>
+                                </div>
+                            </div>
+                            <div id="resp_vitals">
+                                <div id="resp_chart">
+                                    <svg id="bp_chart"></svg>
+                                </div>
+                                <div id="resp_metric">
+                                    <h4 id="syst_abbr">SYST</h6>
+                                    <h2 id="syst_value">100</h2>
+                                    <h4 id="dias_abbr">DIAS</h6>
+                                    <h2 id="dias_value">70</h2>
+                                    <span id="resp_m">mmHg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="boxPlotContainer">
+            <header>
+                <h1>Box Plot - Age Group vs Length of Stays</h1>
+                <hr>
+            </header>
+            <div class="toggle-container">
+                <label for="genderToggle">Show Gender Distribution:</label>
+                <input type="checkbox" id="genderToggle">
+            </div>
+            <div id="boxPlot"></div>
+        </div>
+
+        <div class="heatMapContainer">
+            <h2 class="text-center">Heatmap</h2>
+          
+            <div class="heatMaptooltip" id="heatMaptooltip"></div>
+          
+            
+            <div class="container dropdown-container">
+              <div class="row">
+                <div class="col-md-6">
+                  <label for="sortDropdown" class="form-label">Sort By:</label>
+                  <select id="sortDropdown" class="form-select">
+                    <option value="dead">Dead</option>
+                    <option value="alive">Alive</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="filterDropdown" class="form-label">Filter by Severity:</label>
+                  <select id="filterDropdown" class="form-select">
+                    <option value="all">All</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          
+            <div class="container scale-container">
+              <div id="aliveScale" class="scale">
+                <strong>Alive Scale</strong><br>
+                <span>0</span>
+                <svg width="150" height="20"></svg>
+                <span id="aliveMax"></span>
+              </div>
+              <div id="deadScale" class="scale">
+                <strong>Dead Scale</strong><br>
+                <span>0</span>
+                <svg width="150" height="20"></svg>
+                <span id="deadMax"></span>
+              </div>
+            </div>
+          
+            <div class="container mt-4">
+              <div class="heatmap-container">
+                <div id="heatmap" class="heatmap"></div>
+                <div class="x-axis-labels"></div>
+              </div>
+            </div>
+          </div>
+
         <script src="./scripts/bubbleChart.js"></script>
     </body>
 </html>
