@@ -39,9 +39,8 @@ Promise.all([
     });
 
     if (uniqueStayIds.length > 0) {
-        const firstStayId = uniqueStayIds[0];
-        dropdown.property("value", firstStayId);
-        updateChart(firstStayId);
+        dropdown.property("value", "overall");
+        showOverallChart();
     } else {
         showOverallChart();
     }
