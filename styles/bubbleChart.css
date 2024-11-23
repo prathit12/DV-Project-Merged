@@ -41,7 +41,7 @@ body {
   padding: 5px;
   margin-right: 10px;
 }
-.tooltip {
+.bubble-tooltip {
   position: absolute;
   opacity: 0;
   background-color: #f4f4f9; /* Light background for tooltip */
@@ -52,6 +52,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Lighter shadow */
   pointer-events: none;
   transition: opacity 0.3s;
+  z-index: 100; /* Add z-index to ensure tooltip appears above other elements */
 }
 .details-box {
   width: 100%;
