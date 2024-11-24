@@ -1,169 +1,213 @@
+d3.csv('final_data_heatmap.csv').then(function(data) {
+    const tooltip = d3.select("#tooltip");
 
-d3.csv('Dataset/Processed/final_data_heatmap.csv').then(function(data) {
-    const tooltip = d3.select("#heatMaptooltip");
-
+    console.log("Data loaded:", data);
 
     data.forEach(d => {
-    d.surgery_type_index = +d.surgery_type_index; // Convert to number
-    d.hospital_expire_flag = +d.hospital_expire_flag; // Convert to number
-    d.severity_level = +d.severity_level; // Convert to number
+        d.surgery_type_index = +d.surgery_type_index;
+        d.hospital_expire_flag = +d.hospital_expire_flag;
+        d.severity_level = +d.severity_level;
     });
-
-    let sortBy = "dead";
-    let filterBy = "all";
-    let filterChanged = true;
 
     const procedures = [
-    "cardiovascular",
-    "kidney",
-    "gastrointestinal",
-    "musculoskeletal",
-    "respiratory",
-    "neurological",
-    "others"
+        "cardiovascular", "kidney", "gastrointestinal", 
+        "musculoskeletal", "respiratory", "neurological", "others"
     ];
 
-    function filterData() {
-    return data.filter(d => {
-        if (filterBy === "low" && (d.severity_level < 1 || d.severity_level > 3)) return false;
-        if (filterBy === "medium" && (d.severity_level < 4 || d.severity_level > 6)) return false;
-        if (filterBy === "high" && (d.severity_level < 7 || d.severity_level > 10)) return false;
-        return true;
-    });
+    function renderHeatmap(filterType = "all") {
+        const categoryData = [
+            { severity: 'Low Severity Dead', counts: Array(7).fill(0) },
+            { severity: 'Low Severity Alive', counts: Array(7).fill(0) },
+            { severity: 'Medium Severity Dead', counts: Array(7).fill(0) },
+            { severity: 'Medium Severity Alive', counts: Array(7).fill(0) },
+            { severity: 'High Severity Dead', counts: Array(7).fill(0) },
+            { severity: 'High Severity Alive', counts: Array(7).fill(0) },
+        ];
+
+        data.forEach(d => {
+            const surgeryType = +d.surgery_type_index;
+            const expireFlag = +d.hospital_expire_flag;
+            const severity = d.severity_level;
+
+            let row = -1;
+            if (severity >= 1 && severity <= 3) {
+                row = expireFlag === 0 ? 1 : 0;
+            } else if (severity >= 4 && severity <= 6) {
+                row = expireFlag === 0 ? 3 : 2;
+            } else if (severity >= 7 && severity <= 10) {
+                row = expireFlag === 0 ? 5 : 4;
+            }
+
+            if (row !== -1 && surgeryType >= 0 && surgeryType < 7) {
+                categoryData[row].counts[surgeryType] += 1;
+            }
+        });
+
+        let filteredCategoryData;
+        if (filterType === "alive") {
+            filteredCategoryData = categoryData.filter(d => d.severity.includes("Alive"));
+        } else if (filterType === "dead") {
+            filteredCategoryData = categoryData.filter(d => d.severity.includes("Dead"));
+        } else {
+            filteredCategoryData = categoryData;
+        }
+
+        const highSeverityDeadCounts = categoryData[4]?.counts || [];
+        const sortedIndices = highSeverityDeadCounts
+            .map((count, index) => ({ count, index }))
+            .sort((a, b) => b.count - a.count)
+            .map(d => d.index);
+        const sortedProcedures = sortedIndices.map(index => procedures[index]);
+
+        d3.select("#heatmap").selectAll(".cell").remove();
+        d3.select(".x-axis-labels").selectAll("div").remove();
+        d3.select(".y-axis-labels").selectAll("div").remove();
+
+        const yLabels = filterType === "all" 
+            ? ["Low Severity Dead", "Low Severity Cured", "Medium Severity Dead", "Medium Severity Cured", "High Severity Dead", "High Severity Cured"]
+            : ["Low Severity", "Medium Severity", "High Severity"];
+        d3.select(".y-axis-labels")
+            .selectAll("div")
+            .data(yLabels)
+            .enter()
+            .append("div")
+            .attr("class", "y-label")
+            .text(d => d)
+            .style("grid-row", (d, i) => `${i + 1}`);
+
+        const rowCount = filterType === "all" ? 6 : 3;
+        const heatmapHeight = filterType === "all" ? "500px" : "250px";
+        d3.select(".heatmap")
+            .style("grid-template-rows", `repeat(${rowCount}, 1fr)`)
+            .style("height", heatmapHeight);
+
+        d3.select(".y-axis-labels")
+            .style("grid-template-rows", `repeat(${rowCount}, 1fr)`);
+
+        const maxCount = d3.max(filteredCategoryData.flatMap(d => d.counts)) || 1;
+        const aliveColor = d3.scaleSequential(d3.interpolateBlues).domain([0, 61]);
+        const deadColor = d3.scaleSequential(d3.interpolateReds).domain([0, 7]);
+
+        filteredCategoryData.forEach((row, rowIndex) => {
+            sortedIndices.forEach(colIndex => {
+                const count = row.counts[colIndex];
+                const isDead = row.severity.includes("Dead");
+
+                const cell = d3.select("#heatmap").append("div")
+                    .attr("class", "cell")
+                    .style("background-color", count === 0 ? "#FFFFFF" : isDead ? deadColor(count) : aliveColor(count))
+                    .style("opacity", 0)
+                    .on("mouseover", (event) => showTooltip(event, `${row.severity}: ${procedures[colIndex]} - ${count} cases`))
+                    .on("mousemove", moveTooltip)
+                    .on("mouseout", hideTooltip)
+                    .style("grid-row", `${rowIndex + 1}`);
+
+                cell.transition()
+                    .duration(2000)
+                    .style("opacity", 1);
+            });
+        });
+
+        d3.select(".x-axis-labels")
+            .selectAll("div")
+            .data(sortedProcedures)
+            .enter()
+            .append("div")
+            .text(d => d);
+        
+        renderScales(maxCount, filterType);
+        adjustXAxisAlignment();
+    
     }
 
-    function renderHeatmap(filteredData) {
-    const categoryData = Array.from({ length: 7 }, (_, i) => ({ index: i, alive: 0, dead: 0 }));
+    function adjustXAxisAlignment() {
+        const yLabels = document.querySelectorAll('.y-label');
+        let maxWidth = 0;
 
-    filteredData.forEach(d => {
-        const surgeryType = +d.surgery_type_index;
-        const expireFlag = +d.hospital_expire_flag;
+        yLabels.forEach(label => {
+            const labelWidth = label.offsetWidth;
+            if (labelWidth > maxWidth) {
+                maxWidth = labelWidth;
+            }
+        });
 
-        if (surgeryType >= 0 && surgeryType < 7) {
-        if (expireFlag === 0) {
-            categoryData[surgeryType].alive += 1;
-        } else {
-            categoryData[surgeryType].dead += 1;
-        }
-        }
-    });
+        const xAxisLabels = document.querySelector('.x-axis-labels');
+        xAxisLabels.style.marginLeft = `${maxWidth}px`;
+    }
 
-    categoryData.sort((a, b) => b[sortBy] - a[sortBy]);
 
-    d3.select("#heatmap").selectAll(".cell").remove();
-    d3.select(".x-axis-labels").selectAll("div").remove();
-
-    const maxAlive = d3.max(categoryData, d => d.alive) || 0;
-    const maxDead = d3.max(categoryData, d => d.dead) || 0;
-
-    if (filterChanged) {
+    function renderScales(maxCount, filterType) {
         d3.select("#aliveScale svg").html("");
         d3.select("#deadScale svg").html("");
-        d3.select("#aliveMax").text(maxAlive);
-        d3.select("#deadMax").text(maxDead);
-
-        const aliveGradient = d3.select("#aliveScale svg")
-        .append("defs")
-        .append("linearGradient")
-        .attr("id", "aliveGradient")
-        .attr("x1", "0%")
-        .attr("x2", "100%");
-        aliveGradient.selectAll("stop")
-        .data(d3.range(0, 1.01, 0.01))
-        .enter()
-        .append("stop")
-        .attr("offset", d => `${d * 100}%`)
-        .attr("stop-color", d => d3.interpolateBlues(d));
-
-        d3.select("#aliveScale svg")
-        .append("rect")
-        .attr("width", 150)
-        .attr("height", 20)
-        .style("fill", "url(#aliveGradient)");
-
-        const deadGradient = d3.select("#deadScale svg")
-        .append("defs")
-        .append("linearGradient")
-        .attr("id", "deadGradient")
-        .attr("x1", "0%")
-        .attr("x2", "100%");
-        deadGradient.selectAll("stop")
-        .data(d3.range(0, 1.01, 0.01))
-        .enter()
-        .append("stop")
-        .attr("offset", d => `${d * 100}%`)
-        .attr("stop-color", d => d3.interpolateReds(d));
-
-        d3.select("#deadScale svg")
-        .append("rect")
-        .attr("width", 150)
-        .attr("height", 20)
-        .style("fill", "url(#deadGradient)");
+        d3.select("#aliveScale").style("display", filterType === "dead" ? "none" : "block");
+        d3.select("#deadScale").style("display", filterType === "alive" ? "none" : "block");
     
-    filterChanged = false;
+        if (filterType !== "dead") {
+            d3.select("#aliveMax").text(61); 
+            const aliveGradient = d3.select("#aliveScale svg")
+                .append("defs")
+                .append("linearGradient")
+                .attr("id", "aliveGradient")
+                .attr("x1", "0%")
+                .attr("x2", "100%");
+            aliveGradient.selectAll("stop")
+                .data(d3.range(0, 1.01, 0.01))
+                .enter()
+                .append("stop")
+                .attr("offset", d => `${d * 100}%`)
+                .attr("stop-color", d => d3.interpolateBlues(d));
+            d3.select("#aliveScale svg")
+                .append("rect")
+                .attr("width", 150)
+                .attr("height", 20)
+                .style("fill", "url(#aliveGradient)");
+        }
+    
+        if (filterType !== "alive") {
+            d3.select("#deadMax").text(7); 
+            const deadGradient = d3.select("#deadScale svg")
+                .append("defs")
+                .append("linearGradient")
+                .attr("id", "deadGradient")
+                .attr("x1", "0%")
+                .attr("x2", "100%");
+            deadGradient.selectAll("stop")
+                .data(d3.range(0, 1.01, 0.01))
+                .enter()
+                .append("stop")
+                .attr("offset", d => `${d * 100}%`)
+                .attr("stop-color", d => d3.interpolateReds(d));
+            d3.select("#deadScale svg")
+                .append("rect")
+                .attr("width", 150)
+                .attr("height", 20)
+                .style("fill", "url(#deadGradient)");
+
+                
+        }
     }
-
-    const aliveColor = d3.scaleSequential(d3.interpolateBlues).domain([0, maxAlive]);
-    const deadColor = d3.scaleSequential(d3.interpolateReds).domain([0, maxDead]);
-
-    categoryData.forEach(category => {
-        d3.select("#heatmap").append("div")
-        .attr("class", "cell")
-        .style("background-color", category.alive === 0 ? "#FFFFFF" : aliveColor(category.alive))
-        .on("mouseover", (event) => showTooltip(event, `Alive: ${category.alive}`))
-        .on("mousemove", moveTooltip)
-        .on("mouseout", hideTooltip);
-    });
-
-    categoryData.forEach(category => {
-        d3.select("#heatmap").append("div")
-        .attr("class", "cell")
-        .style("background-color", category.dead === 0 ? "#FFFFFF" : deadColor(category.dead))
-        .on("mouseover", (event) => showTooltip(event, `Dead: ${category.dead}`))
-        .on("mousemove", moveTooltip)
-        .on("mouseout", hideTooltip);
-    });
-
-    d3.select(".x-axis-labels")
-        .selectAll("div")
-        .data(categoryData)
-        .enter()
-        .append("div")
-        .text(d => procedures[d.index]);
-    }
-
-    function updateHeatmap() {
-    const filteredData = filterData();
-    renderHeatmap(filteredData);
-    }
-
-    d3.select("#sortDropdown").on("change", function() {
-    sortBy = this.value;
-    filterChanged = false; // No scale update
-    updateHeatmap();
-    });
-
-    d3.select("#filterDropdown").on("change", function() {
-    filterBy = this.value;
-    filterChanged = true; // Scale update required
-    updateHeatmap();
-    });
-
-    updateHeatmap();
-
+    
     function showTooltip(event, text) {
-    tooltip.style("opacity", 1)
-        .text(text)
-        .style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 10) + "px");
+        tooltip.style("opacity", 1)
+            .text(text)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
     }
 
     function moveTooltip(event) {
-    tooltip.style("left", (event.pageX + 10) + "px")
-        .style("top", (event.pageY - 10) + "px");
+        tooltip.style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
     }
 
     function hideTooltip() {
-    tooltip.style("opacity", 0);
+        tooltip.style("opacity", 0);
     }
+
+    renderHeatmap();
+
+    d3.select("#filter").on("change", function() {
+        const filterValue = this.value;
+        renderHeatmap(filterValue);
+    });
+
 });

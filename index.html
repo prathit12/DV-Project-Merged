@@ -128,53 +128,37 @@
         </div>
 
         <div class="heatMapContainer">
-            <h2 class="text-center">Heatmap</h2>
-          
-            <div class="heatMaptooltip" id="heatMaptooltip"></div>
-          
-            
-            <div class="container dropdown-container">
-              <div class="row">
-                <div class="col-md-6">
-                  <label for="sortDropdown" class="form-label">Sort By:</label>
-                  <select id="sortDropdown" class="form-select">
-                    <option value="dead">Dead</option>
-                    <option value="alive">Alive</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label for="filterDropdown" class="form-label">Filter by Severity:</label>
-                  <select id="filterDropdown" class="form-select">
-                    <option value="all">All</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
+          <h2 class="text-center">Heatmap</h2>
+          <div class="tooltip" id="tooltip"></div>
+        
+          <div class="container mt-4">
+            <div id="controls">
+              <div class="col-md-2">
+              <label for="filter" class="form-label">Filter:</label>
+              <select id="filter" class="form-select">
+                  <option value="all">All</option>
+                  <option value="alive">Alive</option>
+                  <option value="dead">Dead</option>
+              </select>
               </div>
+              <div id="aliveScale" class="scale-container">
+                  <span>Alive Scale:</span>
+                  <svg></svg>
+                  <span id="aliveMax">0</span>
+              </div>
+              <div id="deadScale" class="scale-container">
+                  <span>Dead Scale:</span>
+                  <svg></svg>
+                  <span id="deadMax">0</span>
+              </div>
+          </div>
+            <div class="heatmap-container">
+              <div class="y-axis-labels"></div>
+              <div id="heatmap" class="heatmap"></div>  
             </div>
-          
-            <div class="container scale-container">
-              <div id="aliveScale" class="scale">
-                <strong>Alive Scale</strong><br>
-                <span>0</span>
-                <svg width="150" height="20"></svg>
-                <span id="aliveMax"></span>
-              </div>
-              <div id="deadScale" class="scale">
-                <strong>Dead Scale</strong><br>
-                <span>0</span>
-                <svg width="150" height="20"></svg>
-                <span id="deadMax"></span>
-              </div>
-            </div>
-          
-            <div class="container mt-4">
-              <div class="heatmap-container">
-                <div id="heatmap" class="heatmap"></div>
-                <div class="x-axis-labels"></div>
-              </div>
-            </div>
+              
+          <div class="x-axis-labels"></div> 
+          </div>
           </div>
 
         <script src="./scripts/bubbleChart.js"></script>
