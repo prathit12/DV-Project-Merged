@@ -27,15 +27,15 @@ function createCurvedPath1(link) {
 
   if (link.source === "Admit" && link.target === "Emergency Department") {
     const offsetX = 600;
-    return `M${sx},${sy + 150} L${sx - offsetX},${sy + 150} L${sx - offsetX},${
-      ty + 200
+    return `M${sx},${sy + 75} L${sx - offsetX},${sy + 75} L${sx - offsetX},${
+      ty + 150
     }  }`;
   } else if (
     (link.source === "Admit" && link.target === "Care Units") ||
     (link.source === "Care Units" && link.target === "Discharge")
   ) {
     const offsetY = 150;
-    return `M${sx + offsetY},${sy}  L${sx + offsetY},${ty + 200}  }`;
+    return `M${sx + offsetY},${sy}  L${sx + offsetY},${ty + 150}  }`;
   } else if (
     link.source === "Emergency Department" &&
     link.target === "Care Units"
@@ -44,8 +44,8 @@ function createCurvedPath1(link) {
     return `M${sx + 300},${sy + 50}  L${sx + 750},${sy + 50}  }`;
   }
   const offsetX = 600;
-  return `M${sx},${sy + 50} L${sx - offsetX},${sy + 50} L${sx - offsetX},${
-    ty + 200
+  return `M${sx},${sy + 25} L${sx - offsetX},${sy + 25} L${sx - offsetX},${
+    ty + 150
   }  }`;
 }
 
@@ -53,8 +53,8 @@ function drawGraph() {
   const svg = d3.select("#networkSvg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
-  const centerX = width / 2 + 100;
-  const centerY = height - 200;
+  const centerX = width / 2 + 250;
+  const centerY = height - 175;
   const radius = 200;
 
   nodes_arr.forEach((node, i) => {
@@ -65,14 +65,14 @@ function drawGraph() {
       node.x = centerX - 750;
       node.y = centerY - 200;
     } else if (node.id == "Care Units") {
-      node.x = centerX;
-      node.y = centerY - 300;
+      node.x = centerX ;
+      node.y = centerY - 250;
     } else if (node.id == "Dead") {
       node.x = centerX - 750;
-      node.y = centerY - 600;
+      node.y = centerY - 500;
     } else if (node.id == "Discharge") {
       node.x = centerX;
-      node.y = centerY - 600;
+      node.y = centerY - 500;
     }
   });
   //   console.log(nodes_arr);
@@ -90,12 +90,14 @@ function drawGraph() {
     .join("rect")
     .attr("class", "node")
     .attr("width", 300)
-    .attr("height", 200)
+    .attr("height", 150)
     .attr("x", (d) => d.x)
     .attr("y", (d) => d.y)
-    .style("fill", "#666666")
-    .attr("rx", 50)
-    .attr("ry", 50);
+    .style("fill", "#B3CDE3")
+    .style("stroke-width", "2px")
+    .style("stroke", "#b3c7c6")
+    .attr("rx", 20)
+    .attr("ry", 20);
 
   const labels = svg
     .append("g")
@@ -103,11 +105,11 @@ function drawGraph() {
     .data(nodes_arr)
     .join("text")
     .attr("class", "node-label")
-    .attr("x", (d) => d.x + 150) // Centering the label horizontally
-    .attr("y", (d) => d.y + 100) // Centering the label vertically
+    .attr("x", (d) => d.x + 150)
+    .attr("y", (d) => d.y + 75) 
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
-    .style("fill", "#ffffff")
+    .style("fill", "#000000")
     .style("font-size", "24px")
     .text((d) => d.id);
 
@@ -123,14 +125,11 @@ function drawGraph() {
     .join("path")
     .attr("class", "link")
     .attr("d", (d) => {
-      //   console.log(d);
       return createCurvedPath1(d);
     })
+    .style("stroke","#b3c7c6")
     .attr("stroke-width", 1)
     .attr("marker-end", "url(#arrow)")
-    .on("mouseover", function (event, d) {
-      // console.log('ín here!')
-    })
     .on("mousemove", function (event, d) {
       div.transition().duration(100).style("opacity", 0.9);
       div
@@ -151,9 +150,6 @@ function drawGraph() {
     const pathLength = path.getTotalLength();
 
     let further_delay = 0;
-    // if (link.source == "Care Units") {
-    //   further_delay = 18000;
-    // }
 
     for (let i = 0; i < link.value; i++) {
       const circle = svg.append("circle").attr("class", "flow-circle");
