@@ -47,7 +47,7 @@ function getData(){
             charttime: parseTime(d["charttime"])
         }));
         selected_data = individual_data;
-        console.log("Selected id data : ", selected_data);
+        // console.log("Selected id data : ", selected_data);
         
         d3.csv(medicatons_path).then(data1 => {
             individual_data1 = data1.filter(d1=>d1["hadm_id"]==stay_id)
@@ -62,7 +62,7 @@ function getData(){
             drawOxygenChart();
             drawRespChart();
             
-            console.log("Medications Data: ", medications_data);
+            // console.log("Medications Data: ", medications_data);
             
 
         });
@@ -73,7 +73,7 @@ function getData(){
     
 }
 const categories = Array.from(new Set(medications_data.map(d1=>d1[ordercategoryname])))
-console.log("Categories: ", categories)
+// console.log("Categories: ", categories)
 const color_scale=d3.scaleOrdinal()
 .domain(categories)
 .range(d3.schemeCategory10)
@@ -87,7 +87,7 @@ function drawHeartChart(){
     height = 175 - margin.top - margin.bottom; 
     const filtered_data = selected_data.filter(data=>data["item_id"]==220045)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));;
-    console.log("Heart Rate : " , filtered_data);
+    // console.log("Heart Rate : " , filtered_data);
     d3.select("#heart_value").text(filtered_data[0].valuenum)
     
     // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
@@ -215,7 +215,7 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
     //.attr("opacity",0)
     click_circle.on("click", function(event, d){
         d3.select("#heart_value").text(d.valuenum)
-        console.log(d)
+        // console.log(d)
         d3.select(this)
         .transition()
         .duration(10)
@@ -253,7 +253,7 @@ function drawOxygenChart(){
     height = 175 - margin.top - margin.bottom; 
     const filtered_data = selected_data.filter(data=>data["item_id"]==220277)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
-    console.log("Oxygen Rate : " , filtered_data);
+    // console.log("Oxygen Rate : " , filtered_data);
     d3.select("#oxygen_value").text(filtered_data[0].valuenum);
     
     // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
@@ -428,7 +428,7 @@ function drawRespChart(){
     const filtered_data = selected_data.filter(data=>data["item_id"]==220179 || data["item_id"]==220180 )
     
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
-    console.log("Resp_Chart Filtered Data: ", filtered_data);
+    // console.log("Resp_Chart Filtered Data: ", filtered_data);
     d3.select("#syst_value").text(filtered_data[0].valuenum)
     d3.select("#dias_value").text(filtered_data[1].valuenum)
     
