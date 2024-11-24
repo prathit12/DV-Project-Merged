@@ -1,4 +1,4 @@
-d3.csv('./Dataset/Processed/final_data_heatmap.csv').then(function(data) {
+d3.csv('/Dataset/Processed/final_data_heatmap.csv').then(function(data) {
     const tooltip = d3.select("#tooltip");
 
     console.log("Data loaded:", data);
