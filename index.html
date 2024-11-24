@@ -35,24 +35,33 @@
         <svg id="networkSvg" width="1700" height="900"></svg>
         <h1>Bubble Chart</h1>
         <div class="bubbleChart">
-            <div class="sticky">
+            <div class="controls-container">
+                <div class="stay-selector">
               <label for="stayDropdown">Choose Patient's Stay:</label>
               <select id="stayDropdown">
-                <option value="">Overall Frequency</option>
+                        <option value="overall">Overall Frequency</option>
               </select>
-              <label for="timeRange">Time Range:</label>
-              <input type="range" id="timeRange" min="0" max="100" value="50" />
+                </div>
+                <div id="timeRangeContainer" style="display: none;">
+                    <label for="timeRange"></label>
+                    <input type="range" id="timeRange" min="0" max="100" value="0" step="1">
+                    <div class="time-labels">
+                        <span>Start: <span id="minTime"></span></span>
+                        <span style="margin-left: 20px;">End: <span id="maxTime"></span></span>
+                    </div>
+                </div>
             </div>
       
-            <div class="container">
+            <div class="visualization-container">
               <div class="chart-container">
-                <svg id="bubbleSvg" width="1200" height="800"></svg>
-                <div id="bubbleTooltip" class="tooltip"></div>
+                    <svg id="bubbleSvg" width="1200" height="600"></svg>
               </div>
+                <div class="sidebar">
               <div id="legendContainer" class="legend-container"></div>
               <div id="detailsBox" class="details-box"></div>
             </div>
           </div>
+        </div>
 
         <div class="lineChartContainer">
             <div class="myContainer">

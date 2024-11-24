@@ -1,7 +1,7 @@
 const width = 1200;
-const height = 800;
+const height = 600; 
 const margin = { top: 20, right: 20, bottom: 50, left: 70 };
-const maxRadius = 15;
+const maxRadius = 15;  // Controls the maximum size of any bubble
 
 const xScale = d3.scalePoint().range([margin.left - 30, width - 30 - margin.right]).padding(2);
 const yScale = d3.scaleTime().range([margin.top + (height * 0.05) - 10, height - margin.bottom - 20]);
@@ -47,9 +47,26 @@ Promise.all([
 
     dropdown.on("change", function() {
         const selectedStayId = this.value;
+        const timeRangeContainer = d3.select("#timeRangeContainer");
+        
         if (selectedStayId === "overall") {
+            timeRangeContainer.style("display", "none");
             showOverallChart();
         } else {
+            const filteredData = inputEvents.filter(d => d.stay_id === selectedStayId);
+            const minTime = d3.min(filteredData, d => new Date(d.starttime));
+            const maxTime = d3.max(filteredData, d => new Date(d.endtime));
+            
+            // Update time range slider to middle position
+            const timeSlider = d3.select("#timeRange");
+            timeSlider.property("value", 50); // Set to middle of range
+            d3.select("#timeOutput").text("50");
+            
+            // Update time labels
+            d3.select("#minTime").text(minTime.toLocaleString());
+            d3.select("#maxTime").text(maxTime.toLocaleString());
+            
+            timeRangeContainer.style("display", "block");
             updateChart(selectedStayId);
         }
     });
@@ -59,7 +76,10 @@ Promise.all([
         if (selectedStayId) {
             updateChart(selectedStayId);
         }
+        updateMinMaxTime();
     });
+
+    updateMinMaxTime();
 
 }).catch(error => {
     console.error("Error loading data:", error);
@@ -116,14 +136,15 @@ function updateChart(stayId) {
             times: combinedTimes.sort((a, b) => a.starttime - b.starttime)
         };
     });
-
-    const maxBubbleCount = 20;
+    
     const bubbleCount = combinedData.length;
     const availableWidth = width - margin.left - margin.right;
     const availableHeight = height - margin.top - margin.bottom;
-    const maxBubbleSize = Math.min(availableWidth / bubbleCount, availableHeight / bubbleCount) / 2;
+    const maxBubbleSize = Math.min(availableWidth / bubbleCount, availableHeight / bubbleCount) / 1.5; // Changed from 2.2 to 1.5
 
-    const sizeScale = d3.scaleSqrt().range([5, Math.min(maxBubbleSize, 15)]);
+    const sizeScale = d3.scaleSqrt()
+        .domain([0, d3.max(combinedData, d => d.frequency)])
+        .range([5, Math.min(maxBubbleSize, 20)]); // Changed maxRadius to 20
 
     xScale.domain([...new Set(combinedData.map(d => d.order_category_name))]);
     yScale.domain([minTime, maxTime])
@@ -233,7 +254,7 @@ function updateChart(stayId) {
                 d3.select(this)
                     .transition()
                     .duration(500)
-                    .attr("r", sizeScale(d.frequency) * 2)
+                    .attr("r", sizeScale(d.frequency) * 2)  // Controls how much bigger bubbles get when clicked
                     .attr("stroke", "blue")
                     .attr("stroke-width", 2);
 
@@ -291,7 +312,10 @@ function showOverallChart() {
         };
     });
 
-    const sizeScale = d3.scaleSqrt().range([2, 4]);
+    // Update size scale to be more constrained
+    const sizeScale = d3.scaleSqrt()
+        .domain([0, d3.max(aggregatedData, d => d.frequency)])
+        .range([3, Math.min(15, maxRadius)]);  // Increased from [2, 10] to [3, 15]
 
     svg.selectAll("circle").remove();
     svg.selectAll("text.abbreviation").remove();
@@ -299,9 +323,17 @@ function showOverallChart() {
     const simulation = d3.forceSimulation(aggregatedData)
         .force("x", d3.forceX(width / 2).strength(0.05))
         .force("y", d3.forceY(height / 2).strength(0.05))
-        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 1).strength(2))
+        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 1).strength(1))
+        .force("boundary", function() {
+            for (let node of aggregatedData) {
+                const r = sizeScale(node.frequency);
+                node.x = Math.max(margin.left + r, Math.min(width - margin.right - r, node.x || width/2));
+                node.y = Math.max(margin.top + r, Math.min(height - margin.bottom - r, node.y || height/2));
+            }
+        })
         .stop();
 
+    // Increase simulation iterations for better layout
     for (let i = 0; i < 300; i++) simulation.tick();
 
     const circles = svg.selectAll("circle")
@@ -419,7 +451,31 @@ d3.select("#timeRange").on("input", function() {
         resetVisualization();
         updateChart(selectedStayId);
     }
+    updateMinMaxTime();
 });
+
+// Add label for time range slider
+d3.select("#timeRangeContainer")
+    .insert("label", "#timeRange")
+    .attr("for", "timeRange")
+    .text("Time Range:");
+
+function updateMinMaxTime() {
+    const selectedStayId = d3.select("#stayDropdown").property("value");
+    const timeRangeValue = +d3.select("#timeRange").property("value");
+    
+    if (!selectedStayId || selectedStayId === "overall") return;
+
+    const filteredData = inputEvents.filter(d => d.stay_id === selectedStayId);
+    const minTime = d3.min(filteredData, d => new Date(d.starttime));
+    const maxTime = d3.max(filteredData, d => new Date(d.endtime));
+    
+    const currentTime = new Date(minTime.getTime() + (maxTime.getTime() - minTime.getTime()) * (timeRangeValue / 100));
+    
+    d3.select("#minTime").text(minTime.toLocaleString());
+    d3.select("#maxTime").text(maxTime.toLocaleString());
+    d3.select("#timeOutput").text(timeRangeValue);
+}
 
 const styleSheet = document.createElement('style');
 styleSheet.textContent = `
