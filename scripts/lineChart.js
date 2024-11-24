@@ -83,8 +83,8 @@ const color_scale=d3.scaleOrdinal()
 function drawHeartChart(){
     // console.log('here!');
     var margin = {top: 20, right: 50, bottom: 20, left: 60},
-    width = 1050 - margin.left - margin.right,
-    height = 175 - margin.top - margin.bottom;
+    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
+    height = 175 - margin.top - margin.bottom; 
     const filtered_data = selected_data.filter(data=>data["item_id"]==220045)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));;
     console.log("Heart Rate : " , filtered_data);
@@ -154,7 +154,7 @@ function drawHeartChart(){
     )
 
 
-    // Create a lookup function to get valuenum for a specific charttime
+    // Created a lookup function to get valuenum for a specific charttime
     function getValuenumForTime(time) {
         // Find the data point with the closest `charttime` to the given `time`
         const closest = filtered_data.reduce((prev, curr) => {
@@ -204,7 +204,7 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
 },15000)
 
     //Click Circle
-    svg.selectAll("click_circle")
+    const click_circle = svg.selectAll("click_circle")
     .data(filtered_data )
     .enter()
     .append("circle")
@@ -213,10 +213,19 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
     .attr("r",2)
     .attr("fill", "blue")
     //.attr("opacity",0)
-    .on("click", function(event, d){
+    click_circle.on("click", function(event, d){
         d3.select("#heart_value").text(d.valuenum)
-        
         console.log(d)
+        d3.select(this)
+        .transition()
+        .duration(10)
+        .attr("r",4)
+        .attr("fill","yellow")
+
+        .transition()
+        .duration(1000)
+        .attr("r",2)
+        .attr("fill","blue")
     })
 
 
@@ -240,8 +249,8 @@ setTimeout(()=>{svg.selectAll("circle.data-point")
 
 function drawOxygenChart(){
     var margin = {top: 20, right: 50, bottom: 20, left: 60},
-    width = 1050 - margin.left - margin.right,
-    height = 175 - margin.top - margin.bottom;
+    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
+    height = 175 - margin.top - margin.bottom; 
     const filtered_data = selected_data.filter(data=>data["item_id"]==220277)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
     console.log("Oxygen Rate : " , filtered_data);
@@ -381,7 +390,7 @@ function drawOxygenChart(){
     
 
     //Circles for representing the datapoint and adding on click event
-    svg.selectAll("oxygen_circle")
+    const o2_click = svg.selectAll("oxygen_circle")
     .data(filtered_data)
     .enter()
     .append("circle")
@@ -392,8 +401,18 @@ function drawOxygenChart(){
     .attr("cx", d=>x(d.charttime))
     .attr("cy", d=>y(d.valuenum))
     
-    .on("click", function(event,d){
+    o2_click.on("click", function(event,d){
         d3.select("#oxygen_value").text(d.valuenum)
+        d3.select(this)
+        .transition()
+        .duration(10)
+        .attr("r",4)
+        .attr("fill","yellow")
+
+        .transition()
+        .duration(1000)
+        .attr("r",2)
+        .attr("fill","blue")
     })
 
     
@@ -404,8 +423,8 @@ function drawOxygenChart(){
 
 function drawRespChart(){
     var margin = {top: 20, right: 50, bottom: 20, left: 60},
-    width = 1050 - margin.left - margin.right,
-    height = 200 - margin.top - margin.bottom;
+    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
+    height = 175 - margin.top - margin.bottom; //changed value from 200 to 175
     const filtered_data = selected_data.filter(data=>data["item_id"]==220179 || data["item_id"]==220180 )
     
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
@@ -557,7 +576,7 @@ function drawRespChart(){
       
     
     //Clicking circle
-    svg.selectAll("resp_circle")
+    const resp_click = svg.selectAll("resp_circle")
     .data(filtered_data)
     .enter()
     .append("circle")
@@ -566,12 +585,35 @@ function drawRespChart(){
     .attr("fill","blue")
     // .attr("opacity",0)
     .attr("r","2")
-    .on("click",function(event,d){  
-        if(d.item_id==220179)
+    resp_click.on("click",function(event,d){  
+        if(d.item_id==220179){
         d3.select("#syst_value").text(d.valuenum)
+        //Added animation for click wbent.
+        d3.select(this)
+        .transition()
+        .duration(10)
+        .attr("r",4)
+        .attr("fill","yellow")
+        .transition()
+        .duration(1000)
+        .attr("r",2)
+        .attr("fill","blue")
+        }
 
-        if(d.item_id==220180)
+        if(d.item_id==220180){
         d3.select("#dias_value").text(d.valuenum)
+        //Added animation for click vent.
+        d3.select(this)
+        .transition()
+        .duration(10)
+        .attr("r",4)
+        .attr("fill","yellow")
+        .transition()
+        .duration(1000)
+        .attr("r",2)
+        .attr("fill","blue")
+        }
+        
     })
 }
 

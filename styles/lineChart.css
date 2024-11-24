@@ -57,23 +57,23 @@
 
 #heart_value{
   margin-top: 20px;
-  margin-left: 200px;
+  margin-left: 100px; /* Changed value from 200px to 100px*/
   
 }
 #oxygen_value{
   margin-top: 20px;
-  margin-left: 200px;
+  margin-left: 100px; /* Changed value from 200px to 100px*/
   
 }
 #syst_value{
   
-  margin-left: 200px;
+  margin-left: 100px; /* Changed value from 200px to 100px*/
   
 }
 
 #dias_value{
   
-  margin-left: 200px;
+  margin-left: 100px; /* Changed value from 200px to 100px*/
 }
 
 #heart_metric{
@@ -107,9 +107,11 @@
 
 #outer_monitor{
   background: #393E46;
+  width: 1200px; /*Added width*/
+  height: 700px; /*Added height*/
 }
 .lineChartContainer svg{
-  width: 1050px;
+  width: 800px;
   height: 200px;
 }
 
