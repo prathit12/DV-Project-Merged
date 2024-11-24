@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const margin = {top: 40, right: 40, bottom: 60, left: 60};
-    const width = 800 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const margin = {top: 80, right: 40, bottom: 60, left: 60};
+    const width = 1200 - margin.left - margin.right;
+    const height = 600 - margin.top - margin.bottom;
 
     const svg = d3.select("#boxPlot")
         .append("svg")
@@ -20,9 +20,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         d3.select("#genderToggle").on("change", function() {
             updateBoxPlot(svg, data, width, height, this.checked);
+            colorKey(svg, width, this.checked);
         });
     });
 });
+
+function removeOutliersAndAdjustYAxis(losValues) {
+    const q1 = d3.quantile(losValues, 0.25);
+    const q3 = d3.quantile(losValues, 0.75);
+    const iqr = q3 - q1;
+    const whiskerBottom = Math.max(0, q1 - 1.5 * iqr);
+    const whiskerTop = q3 + 1.5 * iqr;
+    const filteredData = losValues.filter(d => d >= whiskerBottom && d <= whiskerTop);
+    return { filteredData, whiskerBottom, whiskerTop };
+}
 
 function processData(patients, icustays, processedData) {
     const ageGroups = [
@@ -88,6 +99,8 @@ function createBoxPlot(svg, data, width, height, showGender = false) {
         .text("Length of Stay (days)");
 
     updateBoxPlot(svg, data, width, height, showGender);
+    colorKey(svg, width, showGender);
+
 }
 
 function updateBoxPlot(svg, data, width, height, showGender = false) {
@@ -98,10 +111,13 @@ function updateBoxPlot(svg, data, width, height, showGender = false) {
         .range([0, width])
         .padding(0.1);
 
+    const allLosValues = data.map(d => d.los).filter(d => !isNaN(d) && d !== null);
+    const { whiskerBottom, whiskerTop } = removeOutliersAndAdjustYAxis(allLosValues);
+
     const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.los)])
-        .nice()
-        .range([height, 0]);
+    .domain([whiskerBottom, whiskerTop])
+    .nice()
+    .range([height, 0]);
 
     const boxWidth = showGender ? x.bandwidth() / 2.2 : x.bandwidth();
 
@@ -144,101 +160,122 @@ function updateBoxPlot(svg, data, width, height, showGender = false) {
 
     updateAxis(svg, x, y, height);
     updateLabels(svg, width, height, showGender ? "Age Group and Gender" : "Age Group", "Length of Stay (days)");
-    updateLegend(svg, width, showGender);
+    colorKey(svg, width, showGender);
 }
 
-       function animateIVDrip(g, groupData, delay, boxWidth, yScale, gender) {
-            const losValues = groupData.map(d => d.los).filter(d => !isNaN(d) && d !== null);
-            if (losValues.length === 0) return;
-        
-            const sorted = losValues.sort(d3.ascending);
-            const q1 = d3.quantile(sorted, 0.25);
-            const median = d3.quantile(sorted, 0.5);
-            const q3 = d3.quantile(sorted, 0.75);
-            const iqr = q3 - q1;
-            const whiskerBottom = Math.max(0, q1 - 1.5 * iqr);
-            const whiskerTop = Math.min(q3 + 1.5 * iqr, d3.max(sorted));
-        
-            const deceasedCount = groupData.filter(d => d.status === 'deceased').length;
-            const totalCount = groupData.length;
-            const deceasedProportion = deceasedCount / totalCount;
-        
-            const gradientId = `liquid-gradient-${Math.random().toString(36).substr(2, 9)}`;
-            const gradient = g.append("defs")
-                .append("linearGradient")
-                .attr("id", gradientId)
-                .attr("x1", "0%")
-                .attr("x2", "0%")
-                .attr("y1", "0%")
-                .attr("y2", "100%");
-        
-            if (gender === 'M') {
-                gradient.append("stop")
-                    .attr("offset", `${deceasedProportion * 100}%`)
-                    .attr("stop-color", "navy");
-        
-                gradient.append("stop")
-                    .attr("offset", `${deceasedProportion * 100}%`)
-                    .attr("stop-color", "lightsteelblue");
-            } else {
-                gradient.append("stop")
-                    .attr("offset", `${deceasedProportion * 100}%`)
-                    .attr("stop-color", "deeppink");
-        
-                gradient.append("stop")
-                    .attr("offset", `${deceasedProportion * 100}%`)
-                    .attr("stop-color", "pink");
-            }
-        
-            g.selectAll('.iv-bag')
-                .data([1])
-                .join('path')
-                .attr('class', 'iv-bag')
-                .attr('d', `
-                    M ${boxWidth * 0.2},${yScale(q3)}
-                    L ${boxWidth * 0.8},${yScale(q3)}
-                    L ${boxWidth * 0.8},${yScale(q1)}
-                    L ${boxWidth / 2},${yScale(q1) + 15}
-                    L ${boxWidth * 0.2},${yScale(q1)}
-                    Z
-                `)
-                .attr('fill', 'none')
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2)
-                .attr('opacity', 0)
-                .transition()
-                .delay(delay)
-                .duration(500)
-                .attr('opacity', 1);
-        
-            g.selectAll('.liquid-level')
-                .data([1])
-                .join('path')
-                .attr('class', 'liquid-level')
-                .attr('d', `
-                    M ${boxWidth * 0.2},${yScale(median)}
-                    L ${boxWidth * 0.8},${yScale(median)}
-                    L ${boxWidth * 0.8},${yScale(q1)}
-                    L ${boxWidth / 2},${yScale(q1) + 15}
-                    L ${boxWidth * 0.2},${yScale(q1)}
-                    Z
-                `)
-                .attr('fill', `url(#${gradientId})`)
-                .attr('opacity', 0)
-                .transition()
-                .delay(delay + 250)
-                .duration(500)
-                .attr('opacity', 0.7);
-                
+ 
 
-                    
-            g.selectAll('.iv-tube')
+    function animateIVDrip(g, groupData, delay, boxWidth, yScale, gender) {
+        const losValues = groupData.map(d => d.los).filter(d => !isNaN(d) && d !== null);
+        if (losValues.length === 0) return;
+    
+        const { filteredData, whiskerBottom, whiskerTop } = removeOutliersAndAdjustYAxis(losValues);
+    
+        yScale.domain([whiskerBottom, whiskerTop]).nice();
+        const sorted = losValues.sort(d3.ascending);
+        const q1 = d3.quantile(sorted, 0.25);
+        const median = d3.quantile(sorted, 0.5);
+        const q3 = d3.quantile(sorted, 0.75);
+    
+        const deceasedCount = groupData.filter(d => d.status === 'deceased').length;
+        const totalCount = groupData.length;
+        const deceasedProportion = deceasedCount / totalCount;
+    
+        const gradientId = `liquid-gradient-${Math.random().toString(36).substr(2, 9)}`;
+        const gradient = g.append("defs")
+            .append("linearGradient")
+            .attr("id", gradientId)
+            .attr("x1", "0%")
+            .attr("x2", "0%")
+            .attr("y1", "0%")
+            .attr("y2", "100%");
+    
+        if (gender === 'M') {
+            gradient.append("stop")
+                .attr("offset", `${deceasedProportion * 100}%`)
+                .attr("stop-color", "navy");
+    
+            gradient.append("stop")
+                .attr("offset", `${deceasedProportion * 100}%`)
+                .attr("stop-color", "lightsteelblue");
+        } else {
+            gradient.append("stop")
+                .attr("offset", `${deceasedProportion * 100}%`)
+                .attr("stop-color", "deeppink");
+    
+            gradient.append("stop")
+                .attr("offset", `${deceasedProportion * 100}%`)
+                .attr("stop-color", "pink");
+        }
+                
+            
+        g.selectAll('.iv-bag')
+        .data([1])
+        .join('path')
+        .attr('class', 'iv-bag')
+        .attr('d', `
+            M ${boxWidth * 0.2},${yScale(q3)}
+            L ${boxWidth * 0.8},${yScale(q3)}
+            L ${boxWidth * 0.8},${yScale(q1)}
+            Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
+            L ${boxWidth / 2},${yScale(q1) + 18}
+            L ${boxWidth * 0.4},${yScale(q1) + 14}
+            Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
+            Z
+        `)
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 2)
+        .attr('opacity', 0)
+        .transition()
+        .delay(delay)
+        .duration(500)
+        .attr('opacity', 1);
+
+        g.selectAll('.liquid-level')
+            .data([1])
+            .join('path')
+            .attr('class', 'liquid-level')
+            .attr('d', `
+                M ${boxWidth * 0.2},${yScale(median)}
+                L ${boxWidth * 0.8},${yScale(median)}
+                L ${boxWidth * 0.8},${yScale(q1)}
+                Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
+                L ${boxWidth / 2},${yScale(q1) + 18}
+                L ${boxWidth * 0.4},${yScale(q1) + 14}
+                Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
+                Z
+            `)
+            .attr('fill', `url(#${gradientId})`)
+            .attr('opacity', 0)
+            .transition()
+            .delay(delay + 250)
+            .duration(500)
+            .attr('opacity', 0.7);
+
+        g.selectAll('.iv-tube-top')
+        .data([1])
+        .join('line')
+        .attr('class', 'iv-tube-top')
+        .attr('x1', boxWidth / 2)
+        .attr('x2', boxWidth / 2)
+        .attr('y1', yScale(whiskerTop))
+        .attr('y2', yScale(q3))
+        .attr('stroke', 'black')
+        .attr('stroke-width', boxWidth * 0.05)
+        .style("opacity", 0)
+        .transition()
+        .delay(delay + 500)
+        .duration(500)
+        .style("opacity", 1);
+
+        g.selectAll('.iv-tube-bottom')
             .data([1])
             .join('line')
-            .attr('class', 'iv-tube')
+            .attr('class', 'iv-tube-bottom')
             .attr('x1', boxWidth / 2)
             .attr('x2', boxWidth / 2)
-            .attr('y1', yScale(whiskerTop))
+            .attr('y1', yScale(q1) + 15) 
             .attr('y2', yScale(whiskerBottom))
             .attr('stroke', 'black')
             .attr('stroke-width', boxWidth * 0.05)
@@ -248,43 +285,26 @@ function updateBoxPlot(svg, data, width, height, showGender = false) {
             .duration(500)
             .style("opacity", 1);
 
-            g.selectAll('.median-line')
-            .data([median])
-            .join('line')
-            .attr("class", "median-line")
-            .attr("x1", boxWidth * 0.2)
-            .attr("x2", boxWidth * 0.8)
-            .attr("y1", d => yScale(d))
-            .attr("y2", d => yScale(d))
-            .attr("stroke", "black")
-            .attr("stroke-width", 2)
-            .style("opacity", 0)
-            .transition()
-            .delay(delay + 750)
-            .duration(500)
-            .style("opacity", 1);
+        g.selectAll('.median-line')
+        .data([median])
+        .join('line')
+        .attr("class", "median-line")
+        .attr("x1", boxWidth * 0.2)
+        .attr("x2", boxWidth * 0.8)
+        .attr("y1", d => yScale(d))
+        .attr("y2", d => yScale(d))
+        .attr("stroke", "black")
+        .attr("stroke-width", 2)
+        .style("opacity", 0)
+        .transition()
+        .delay(delay + 750)
+        .duration(500)
+        .style("opacity", 1);
 
-            const outliers = losValues.filter(d => d < whiskerBottom || d > whiskerTop);
+    
+        
+    }
 
-            g.selectAll('.outlier')
-            .data(outliers)
-            .join(
-                enter => enter.append('circle')
-                    .attr('class', 'outlier')
-                    .attr('cx', boxWidth / 2)
-                    .attr('r', 3)
-                    .attr('fill', '#1a1a1a')
-                    .style('opacity', 0)
-                    .attr('cy', d => yScale(d)),
-                update => update,
-                exit => exit.remove()
-            )
-            .transition()
-            .delay(delay + 1000)
-            .duration(500)
-            .attr('cy', d => yScale(d))
-            .style('opacity', 1);
-    } 
 function updateAxis(svg, xScale, yScale, height) {
     svg.select('.x-axis')
         .transition()
@@ -292,12 +312,12 @@ function updateAxis(svg, xScale, yScale, height) {
         .call(d3.axisBottom(xScale))
         .selectAll("text")
         .style("font-size", "14px");
-
+    
     svg.select('.y-axis')
         .transition()
         .duration(1000)
         .call(d3.axisLeft(yScale));
-}
+    }
 
 function updateLabels(svg, width, height, xLabel, yLabel) {
     svg.select('.x-label')
@@ -311,74 +331,38 @@ function updateLabels(svg, width, height, xLabel, yLabel) {
         .text(yLabel);
 }
 
-    function updateLegend(svg, width, showGender) {
-        let legend = svg.select('.legend');
-    
-        if (legend.empty()) {
-            legend = svg.append("g")
-                .attr("class", "legend")
-                .attr("transform", `translate(${width - 150}, 20)`);
-        }
-    
-        if (showGender) {
-            // Clear existing legend items
-            legend.selectAll("*").remove();
-    
-            // Male legend items
-            legend.append("rect")
-                .attr("width", 18)
-                .attr("height", 18)
-                .style("fill", "navy");
-    
-            legend.append("text")
-                .attr("x", 24)
-                .attr("y", 9)
-                .attr("dy", ".35em")
-                .style("text-anchor", "start")
-                .text("Male (Deceased)");
-    
-            legend.append("rect")
-                .attr("width", 18)
-                .attr("height", 18)
-                .attr("y", 25)
-                .style("fill", "lightsteelblue");
-    
-            legend.append("text")
-                .attr("x", 24)
-                .attr("y", 34)
-                .attr("dy", ".35em")
-                .style("text-anchor", "start")
-                .text("Male (Alive)");
-    
-            // Female legend items
-            legend.append("rect")
-                .attr("width", 18)
-                .attr("height", 18)
-                .attr("y", 50)
-                .style("fill", "deeppink");
-    
-            legend.append("text")
-                .attr("x", 24)
-                .attr("y", 59)
-                .attr("dy", ".35em")
-                .style("text-anchor", "start")
-                .text("Female (Deceased)");
-    
-            legend.append("rect")
-                .attr("width", 18)
-                .attr("height", 18)
-                .attr("y", 75)
-                .style("fill", "pink");
-    
-            legend.append("text")
-                .attr("x", 24)
-                .attr("y", 84)
-                .attr("dy", ".35em")
-                .style("text-anchor", "start")
-                .text("Female (Alive)");
-    
-            legend.style("display", null);
-        } else {
-            legend.style("display", "none");
-        }
+function colorKey(svg, width, showGender) {
+    const colorKeyContainer = d3.select('#color-key-container');
+    colorKeyContainer.selectAll('*').remove();
+
+    if (showGender) {
+        const colorCategories = [
+            { color: "navy", text: "Male (Deceased)" },
+            { color: "lightsteelblue", text: "Male (Alive)" },
+            { color: "deeppink", text: "Female (Deceased)" },
+            { color: "pink", text: "Female (Alive)" }
+        ];
+
+        colorKeyContainer.selectAll('.color-key')
+            .data(colorCategories)
+            .enter()
+            .append('span')
+            .attr('class', 'color-key')
+            .style('display', 'inline-flex')
+            .style('align-items', 'center')
+            .style('margin-right', '20px')
+            .html(d => `
+                <span style="background-color: ${d.color}; 
+                             width: 15px; 
+                             height: 15px; 
+                             border-radius: 50%; 
+                             display: inline-block; 
+                             margin-right: 4px;"></span> 
+                ${d.text}
+            `);
+
+        colorKeyContainer.style('display', 'block');
+    } else {
+        colorKeyContainer.style('display', 'none');
     }
+}

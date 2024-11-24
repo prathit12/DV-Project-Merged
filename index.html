@@ -30,15 +30,15 @@
         <link rel="stylesheet" href="./styles/lineChart.css">
         
     </head>
-    <body onload="initializeChart()">
+    <body>
         <h1>Network</h1>
-        <svg id="networkSvg" width="1200" height="700"></svg>
+        <svg id="networkSvg" width="1700" height="900"></svg>
         <h1>Bubble Chart</h1>
         <div class="bubbleChart">
             <div class="sticky">
               <label for="stayDropdown">Choose Patient's Stay:</label>
               <select id="stayDropdown">
-                <option value="">Select Stay ID</option>
+                <option value="">Overall Frequency</option>
               </select>
               <label for="timeRange">Time Range:</label>
               <input type="range" id="timeRange" min="0" max="100" value="50" />
@@ -108,10 +108,13 @@
                 <h1>Box Plot - Age Group vs Length of Stays</h1>
                 <hr>
             </header>
+          <div class="controls-row">
             <div class="toggle-container">
                 <label for="genderToggle">Show Gender Distribution:</label>
                 <input type="checkbox" id="genderToggle">
             </div>
+            <div id="color-key-container"></div>
+          </div> 
             <div id="boxPlot"></div>
         </div>
 

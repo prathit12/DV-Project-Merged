@@ -16,3 +16,9 @@
     fill: #000;
     fill-opacity: 0.5;
 }
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
