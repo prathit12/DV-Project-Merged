@@ -1,7 +1,7 @@
 d3.csv('/Dataset/Processed/final_data_heatmap.csv').then(function(data) {
     const tooltip = d3.select("#tooltip");
 
-    console.log("Data loaded:", data);
+    // console.log("Data loaded:", data);
 
     data.forEach(d => {
         d.surgery_type_index = +d.surgery_type_index;

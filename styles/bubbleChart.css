@@ -1,14 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"); /* Import futuristic font */
-body {
-  font-family: "Orbitron", sans-serif; /* Updated font style */
-  background-color: #ffffff; /* Light background for reversed theme */
-  color: #1a1a1a; /* Dark text color */
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 .legend {
   font-size: 12px;
   color: #1a1a1a; /* Dark text color */
@@ -241,3 +231,6 @@ body {
 .time-labels {
     margin-top: 5px;
 }
+/* svg{
+  background-color: red;
+} */

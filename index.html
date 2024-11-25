@@ -24,12 +24,20 @@
         <link rel="stylesheet" href="./styles/heatMap.css"> 
         <link rel="stylesheet" href="./styles/networkDiagram.css">
         <link rel="stylesheet" href="./styles/lineChart.css">
+        <link rel="stylesheet" href="./styles/index.css">
         
     </head>
     <body>
-        <h1>Network</h1>
+      <!-- <img 
+      src="./images/bg1.png"> -->
+      <div class = "intro">
+        <h1 id="title">A Second Chance: The Role of ICUs in Patient Recovery</h1>
+        <h3 id="subtitle">There were 18,313,637 ICU hospitalizations and 78,501,532 non-ICU hospitalizations in Medicare, and 1,989,222 ICU hospitalizations and 16,732,960 non-ICU hospitalizations in the.</h3>
+      </div>
+      <div class="networkChart">
         <svg id="networkSvg" width="1200" height="700"></svg>
-        <h1>Bubble Chart</h1>
+      </div>
+        <!-- <h1>Bubble Chart</h1> -->
         <div class="bubbleChart">
             <div class="controls-container">
                 <div class="stay-selector">
@@ -61,8 +69,8 @@
 
         <div class="lineChartContainer">
             <div class="myContainer">
-                <h3 class="chart-title">Line Chart</h3>
-                <hr>
+                <!-- <h3 class="chart-title">Line Chart</h3>
+                <hr> -->
                 <div id="linechart_div">
                     <div id="controlpanel_div">
                         <label for="stay_options">Choose the stay_id: </label>
@@ -110,8 +118,8 @@
 
         <div class="boxPlotContainer">
             <header>
-                <h1>Box Plot - Age Group vs Length of Stays</h1>
-                <hr>
+                <!-- <h1>Box Plot - Age Group vs Length of Stays</h1> -->
+                <!-- <hr> -->
             </header>
           <div class="controls-row">
             <div class="toggle-container">
@@ -124,7 +132,7 @@
         </div>
 
         <div class="heatMapContainer">
-            <h2 class="text-center">Heatmap</h2>
+            <!-- <h2 class="text-center">Heatmap</h2> -->
             <div class="tooltip" id="tooltip"></div>
           
             <div class="container mt-4">

@@ -1,0 +1,27 @@
+body {
+    font-family: "Orbitron", sans-serif; 
+    background-color: #fbfbfb; 
+    color: #1a1a1a; /* Dark text color */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+.intro{
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 10%;
+}
+.intro, .networkChart, .bubbleChart, .lineChartContainer, .boxPlotContainer, .heatMapContainer{
+    height: 100vh;
+}
+#title{
+    font-size: 65px;
+    text-align: center;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+#subtitle{
+    margin-top: 5%;
+    text-align: center;
+}
