@@ -18,11 +18,14 @@
   padding: 20px;
   border: none;
 }
-#outer_monitor, #inner_monitor{
+#outer_monitor{
   border: 1px solid black;
   margin: 50px;
 }
-
+#inner_monitor{
+  border: 1px solid black;
+  margin: 50px;
+}
 
 #heart_vitals, #oxygen_vitals, #resp_vitals{
   
@@ -49,11 +52,9 @@
 #heart_metric, #oxygen_metric, #resp_metric{
   display: flex;
   flex-direction: column;
-  width: 40%;
-  margin-left: 0px;
+  width: 25%;
   padding: 10px;
-  
-}
+}  
 
 #heart_value{
   margin-top: 20px;
@@ -109,7 +110,7 @@
 
 #outer_monitor{
   background: #E4E0E1;
-  width: 1200px; /*Added width*/
+  width: 1100px; /*Added width*/
   height: 700px; /*Added height*/
 }
 .lineChartContainer svg{

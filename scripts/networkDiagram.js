@@ -14,7 +14,10 @@ class Link {
     this.value = value;
   }
 }
+document.addEventListener("DOMContentLoaded", function() {
 collectData1();
+
+});
 
 function createCurvedPath1(link) {
   const sourceNode = nodes_arr.find((node) => node.id === link.source);

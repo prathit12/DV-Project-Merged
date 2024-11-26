@@ -119,7 +119,6 @@ Promise.all([
 });
 
 function updateChart(stayId) {
-    // Clear any existing transitions and simulations
     svg.selectAll("*").interrupt();
     if (window.currentSimulation) {
         window.currentSimulation.stop();

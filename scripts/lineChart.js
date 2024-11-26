@@ -1,12 +1,9 @@
 let stays = [];
 
-const vitals_path  = '/Dataset/icu/chartevents.csv';
+const vitals_path  = '/Dataset/icu/charteventssubset.csv';
 const medicatons_path = '/Dataset/icu/medicationinput.csv';
 let selected_data;
 let medications_data=[];
-
-
-
 
 document.addEventListener("DOMContentLoaded", function() {
     let setOfStays = new Set();
@@ -39,6 +36,20 @@ function getData(){
     const stay_id = document.getElementById('stay_select').value;
     const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
     d3.csv(vitals_path).then(data => {
+        let setOfStays = new Set();
+        data.map(d=>{
+            setOfStays.add(d["hadm_id"]);
+        });
+        stays = Array.from(setOfStays).sort();
+        var stay_select = document.getElementById('stay_select');
+        stays.forEach(function(col_name){
+            var new_option = document.createElement('option');
+            new_option.value = col_name;
+            new_option.text = col_name;
+            stay_select.appendChild(new_option);  
+        });
+        document.getElementById('stay_select').value = stays[0];
+        
         individual_data = data.filter(d=>d["hadm_id"]==stay_id)
         .map(d => ({
             hadm_id: +d["hadm_id"],

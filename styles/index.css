@@ -16,6 +16,9 @@ body {
 .intro, .networkChart, .bubbleChart, .lineChartContainer, .boxPlotContainer, .heatMapContainer{
     height: 100vh;
 }
+/* .lineChartContainer{
+    width: 1200px;
+} */
 #title{
     font-size: 65px;
     text-align: center;
