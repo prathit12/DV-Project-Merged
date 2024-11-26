@@ -45,7 +45,7 @@
   margin-left: 30%;
 }
 
-/*Needs to be adjusted*/
+
 #heart_metric, #oxygen_metric, #resp_metric{
   display: flex;
   flex-direction: column;
@@ -58,11 +58,13 @@
 #heart_value{
   margin-top: 20px;
   margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-bottom: 40px;
   
 }
 #oxygen_value{
   margin-top: 20px;
   margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-bottom: 40px;
   
 }
 #syst_value{
@@ -77,16 +79,16 @@
 }
 
 #heart_metric{
-  background-color: #006BFF;
+  background-color: #0B192C;
  
 }
 
 #oxygen_metric{
-  background-color: #08C2FF;
+  background-color: #0B192C;
 }
 
 #resp_metric{
-  background-color: #BCF2F6;
+  background-color: #0B192C;
 }
 
 #hr_chart{
@@ -106,13 +108,26 @@
 }
 
 #outer_monitor{
-  background: #393E46;
+  background: #E4E0E1;
   width: 1200px; /*Added width*/
   height: 700px; /*Added height*/
 }
 .lineChartContainer svg{
   width: 800px;
   height: 200px;
+}
+
+#syst_abbr,#syst_value,#dias_abbr,#dias_value,#resp_m,#oxygen_abbr,#oxygen_value,#heart_value,#heart_abbr{
+  color: white;
+}
+
+
+#heart_measure{
+  color: white;
+}
+
+#o2_measure{
+  color: white;
 }
 
 @keyframes twinkle {
