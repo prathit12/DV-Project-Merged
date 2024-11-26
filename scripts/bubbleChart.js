@@ -1,22 +1,41 @@
-const width = 1200;
+const width = 1160;  // Increased from 900 to 1000
 const height = 600; 
-const margin = { top: 20, right: 20, bottom: 50, left: 70 };
+const margin = { top: 20, right: 200, bottom: 50, left: 100 };  // Increased right margin for more space
 const maxRadius = 15;  // Controls the maximum size of any bubble
 
 const xScale = d3.scalePoint().range([margin.left - 30, width - 30 - margin.right]).padding(2);
 const yScale = d3.scaleTime().range([margin.top + (height * 0.05) - 10, height - margin.bottom - 20]);
-const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+const colorScale = d3.scaleOrdinal()
+    .range([
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+        '#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5',
+        '#c49c94', '#f7b6d2', '#dbdb8d', '#9edae5', '#393b79'
+    ]);
 
-const svg = d3.select("#bubbleSvg").attr("width", width).attr("height", height);
-const tooltip = d3.select("body").append("div")
-    .attr("id", "bubbleTooltip")
+const svg = d3.select("#bubbleSvg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g")
+    .attr("transform", `translate(${margin.left}-10,${margin.top})`);  // Add proper translation
+
+// Replace tooltip and detailsBox initialization with:
+const tooltip = d3.select("body")
+    .append("div")
     .attr("class", "bubble-tooltip")
-    .style("opacity", 0);
-const detailsBox = d3.select("#detailsBox");
-const legendContainer = d3.select("#legendContainer");
+    .style("opacity", 0)
+    .style("position", "absolute")
+    .style("pointer-events", "none");
+
+const legendContainer = svg.append("foreignObject")
+    .attr("class", "legend-container")
+    .attr("width", 150)
+    .attr("height", height - 40)  // Adjust height to fit content
+    .attr("x", width - 190)  // Adjusted x position for new width
+    .attr("y", 20)
+    .append("xhtml:div");
 
 let inputEvents, dItems, dItemsMap;
-let activeCircle = null;
 
 Promise.all([
     d3.csv('./Dataset/icu/inputevents.csv'),
@@ -45,13 +64,21 @@ Promise.all([
         showOverallChart();
     }
 
+    // Modify the dropdown event listener
     dropdown.on("change", function() {
         const selectedStayId = this.value;
         const timeRangeContainer = d3.select("#timeRangeContainer");
         
         if (selectedStayId === "overall") {
-            timeRangeContainer.style("display", "none");
-            showOverallChart();
+            timeRangeContainer
+                .transition()
+                .duration(500)
+                .style("opacity", 0)
+                .end()
+                .then(() => {
+                    timeRangeContainer.style("display", "none");
+                    showOverallChart();
+                });
         } else {
             const filteredData = inputEvents.filter(d => d.stay_id === selectedStayId);
             const minTime = d3.min(filteredData, d => new Date(d.starttime));
@@ -59,14 +86,20 @@ Promise.all([
             
             // Update time range slider to middle position
             const timeSlider = d3.select("#timeRange");
-            timeSlider.property("value", 50); // Set to middle of range
+            timeSlider.property("value", 50);
             d3.select("#timeOutput").text("50");
             
             // Update time labels
             d3.select("#minTime").text(minTime.toLocaleString());
             d3.select("#maxTime").text(maxTime.toLocaleString());
             
-            timeRangeContainer.style("display", "block");
+            timeRangeContainer
+                .style("display", "block")
+                .style("opacity", 0)
+                .transition()
+                .duration(500)
+                .style("opacity", 1);
+                
             updateChart(selectedStayId);
         }
     });
@@ -86,6 +119,12 @@ Promise.all([
 });
 
 function updateChart(stayId) {
+    // Clear any existing transitions and simulations
+    svg.selectAll("*").interrupt();
+    if (window.currentSimulation) {
+        window.currentSimulation.stop();
+    }
+
     if (!stayId || stayId === "overall") {
         showOverallChart();
         return;
@@ -157,149 +196,114 @@ function updateChart(stayId) {
     yScale.range([margin.top + maxRadius, height - margin.bottom - maxRadius]);
 
     const simulation = d3.forceSimulation(combinedData)
-        .force("x", d3.forceX(d => xScale(d.order_category_name)).strength(1))
+        .force("x", d3.forceX(d => xScale(d.order_category_name)).strength(0.2))
         .force("y", d3.forceY(d => {
             const timePosition = yScale(d.times[0].starttime);
             return Math.max(margin.top + maxRadius, 
                    Math.min(height - margin.bottom - maxRadius, timePosition));
-        }).strength(1))
-        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 1).strength(1))
-        .force("boundary", function() {
-            for (let node of combinedData) {
-                const r = sizeScale(node.frequency);
-                node.x = Math.max(margin.left + r, Math.min(width - margin.right - r, node.x));
-                node.y = Math.max(margin.top + r, Math.min(height - margin.bottom - r, node.y));
-            }
-        })
-        .stop();
+        }).strength(0.2))
+        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 1).strength(0.7))
+        .alphaDecay(0.02) // Slower decay for smoother animation
+        .velocityDecay(0.3); // Reduced velocity decay for smoother movement
 
-    for (let i = 0; i < 500; i++) simulation.tick();
+    window.currentSimulation = simulation;
 
+    // Remove existing elements with transition
+    svg.selectAll("circle")
+        .transition()
+        .duration(500)
+        .style("opacity", 0)
+        .remove();
+
+    // Create new circles with proper enter transition
     const circles = svg.selectAll("circle")
-        .data(combinedData);
+        .data(combinedData, d => d.item_id);
 
-    circles.enter()
+    const circlesEnter = circles.enter()
         .append("circle")
-        .attr("cx", d => xScale(d.order_category_name))
-        .attr("cy", d => yScale(d.times[0].starttime))
+        .attr("cx", width / 2) // Start from center
+        .attr("cy", height / 2)
         .attr("r", 0)
         .attr("fill", d => colorScale(d.order_category_name))
-        .attr("opacity", 0.8)
-        .attr("class", d => `category-${d.order_category_name.replace(/\s+/g, '-')}`)
-        .on('mouseover', function(event, d) {
-            if (activeCircle !== this) {
-                d3.select(this)
-                    .attr('stroke', '#000')
-                    .attr('stroke-width', 2);
-                
-                const firstTime = d.times[0].starttime.toLocaleString();
-                const lastTime = d.times[d.times.length - 1].starttime.toLocaleString();
-                
-                const stats = `
-                    <div class="tooltip-content">
-                        <p><strong>Category:</strong> ${d.order_category_name}</p>
-                        <p><strong>Product:</strong> ${d.abbreviation}</p>
-                        <p><strong>Administrations:</strong> ${d.frequency}</p>
-                        <p><strong>First:</strong> ${firstTime}</p>
-                        <p><strong>Last:</strong> ${lastTime}</p>
-                    </div>
-                `;
+        .attr("opacity", 0);
 
-                const tooltipWidth = 200;
-                const tooltipHeight = 150;
-                
-                let xPosition = event.pageX + 15;
-                let yPosition = event.pageY - 30;
-                
-                if (xPosition + tooltipWidth > window.innerWidth) {
-                    xPosition = event.pageX - tooltipWidth - 15;
-                }
-                
-                if (yPosition + tooltipHeight > window.innerHeight) {
-                    yPosition = event.pageY - tooltipHeight - 15;
-                }
-
-                tooltip
-                    .style('opacity', 1)
-                    .style('left', `${xPosition}px`)
-                    .style('top', `${yPosition}px`)
-                    .html(stats);
-            }
-        })
-        .on('mouseout', function() {
-            if (activeCircle !== this) {
-                d3.select(this).attr('stroke', null);
-                tooltip.style('opacity', 0);
-            }
-        })
-        .on('click', function(event, d) {
-            if (activeCircle === this) {
-                svg.selectAll("circle")
-                    .transition()
-                    .duration(500)
-                    .style("opacity", 0.8)
-                    .attr("r", d => sizeScale(d.frequency))
-                    .attr("stroke", "none");
-
-                updateLegend(combinedData);
-                detailsBox.style('display', 'none');
-                activeCircle = null;
-            } else {
-                svg.selectAll("circle")
-                    .filter(circleData => circleData !== d)
-                    .transition()
-                    .duration(500)
-                    .style("opacity", 0.1);
-
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .attr("r", sizeScale(d.frequency) * 2)  // Controls how much bigger bubbles get when clicked
-                    .attr("stroke", "blue")
-                    .attr("stroke-width", 2);
-
-                const formattedTimes = d.times.map((time, index) => 
-                    `${index + 1}. Start: ${time.starttime.toLocaleString()}<br>
-                     End: ${time.endtime.toLocaleString()}<br>
-                     Amount: ${time.amount} ${time.amountuom}<br>
-                     Rate: ${time.rate} ${time.rateuom}`).join('<br><br>');
-                const details = `
-                    <p><strong>Order of Administration:</strong><br>${formattedTimes}</p>
-                    <button id="closeDetails">Close</button>
-                `;
-                detailsBox.html(details)
-                    .style('display', 'block');
-
-                d3.select("#closeDetails").on("click", function() {
-                    detailsBox.style('display', 'none');
-                    svg.selectAll("circle")
-                        .transition()
-                        .duration(500)
-                        .style("opacity", 0.8)
-                        .attr("r", d => sizeScale(d.frequency))
-                        .attr("stroke", "none");
-
-                    updateLegend(combinedData);
-                    activeCircle = null;
-                });
-
-                legendContainer.selectAll(".legend").remove();
-                tooltip.style('opacity', 0);
-                activeCircle = this;
-            }
-        })
+    // Merge and transition
+    circles.merge(circlesEnter)
         .transition()
         .duration(1000)
-        .attr("cx", d => Math.max(margin.left + sizeScale(d.frequency), 
-                        Math.min(width - margin.right - sizeScale(d.frequency), d.x)))
-        .attr("cy", d => Math.max(margin.top + sizeScale(d.frequency), 
-                        Math.min(height - margin.bottom - sizeScale(d.frequency), d.y)))
-        .attr("r", d => sizeScale(d.frequency));
+        .attr("r", d => sizeScale(d.frequency))
+        .attr("opacity", 0.8);
 
-    updateLegend(combinedData);
+    // Update simulation tick
+    simulation.on("tick", () => {
+        svg.selectAll("circle")
+            .attr("cx", d => Math.max(margin.left + sizeScale(d.frequency), 
+                        Math.min(width - margin.right - sizeScale(d.frequency), d.x)))
+            .attr("cy", d => Math.max(margin.top + sizeScale(d.frequency), 
+                        Math.min(height - margin.bottom - sizeScale(d.frequency), d.y)));
+    });
+
+    // Update legend after transition completes
+    setTimeout(() => {
+        updateLegend(combinedData);
+    }, 1000);
+
+    // Modify tooltip behavior in circle mouseover/mouseout events
+    circlesEnter
+        .on('mouseover', function(event, d) {
+            d3.select(this)
+                .attr('stroke', '#000')
+                .attr('stroke-width', 2);
+            
+            const firstTime = d.times[0].starttime.toLocaleString();
+            const lastTime = d.times[d.times.length - 1].starttime.toLocaleString();
+            
+            const stats = `
+                <div class="tooltip-content">
+                    <p><strong>Category:</strong> ${d.order_category_name}</p>
+                    <p><strong>Product:</strong> ${d.abbreviation}</p>
+                    <p><strong>Administrations:</strong> ${d.frequency}</p>
+                    <p><strong>First:</strong> ${firstTime}</p>
+                    <p><strong>Last:</strong> ${lastTime}</p>
+                </div>
+            `;
+
+            tooltip
+                .html(stats)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 30) + "px")
+                .transition()
+                .duration(200)
+                .style("opacity", 1);
+        })
+        .on('mouseout', function() {
+            d3.select(this).attr('stroke', null);
+            tooltip
+                .transition()
+                .duration(200)
+                .style("opacity", 0);
+        });
+
+    // Add event listeners to hide tooltip when mouse leaves the tooltip itself
+    tooltip
+        .on("mouseleave", function() {
+            tooltip
+                .transition()
+                .duration(200)
+                .style("opacity", 0);
+        });
+
+    // Start simulation
+    simulation.alpha(1).restart();
 }
 
 function showOverallChart() {
+    // Clear existing transitions and simulations
+    svg.selectAll("*").interrupt();
+    if (window.currentSimulation) {
+        window.currentSimulation.stop();
+    }
+
     const aggregatedData = d3.rollups(inputEvents, v => v.length, d => d.itemid).map(([item_id, frequency]) => {
         const abbreviation = dItemsMap.get(String(item_id)) || "Unknown";
         const matchingEvent = inputEvents.find(d => d.itemid === item_id);
@@ -312,40 +316,64 @@ function showOverallChart() {
         };
     });
 
-    // Update size scale to be more constrained
+    // Enhanced size scale for better visibility
     const sizeScale = d3.scaleSqrt()
         .domain([0, d3.max(aggregatedData, d => d.frequency)])
-        .range([3, Math.min(15, maxRadius)]);  // Increased from [2, 10] to [3, 15]
+        .range([5, 25]);  // Increased size range
 
     svg.selectAll("circle").remove();
     svg.selectAll("text.abbreviation").remove();
 
+    // Remove existing elements with transition
+    svg.selectAll("circle")
+        .transition()
+        .duration(500)
+        .style("opacity", 0)
+        .remove();
+
     const simulation = d3.forceSimulation(aggregatedData)
-        .force("x", d3.forceX(width / 2).strength(0.05))
-        .force("y", d3.forceY(height / 2).strength(0.05))
-        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 1).strength(1))
-        .force("boundary", function() {
-            for (let node of aggregatedData) {
-                const r = sizeScale(node.frequency);
-                node.x = Math.max(margin.left + r, Math.min(width - margin.right - r, node.x || width/2));
-                node.y = Math.max(margin.top + r, Math.min(height - margin.bottom - r, node.y || height/2));
-            }
-        })
-        .stop();
+        .force("x", d3.forceX(width / 2.2).strength(0.08))
+        .force("y", d3.forceY(height / 2).strength(0.08))
+        .force("charge", d3.forceManyBody().strength(-30))
+        .force("collide", d3.forceCollide(d => sizeScale(d.frequency) + 2)
+            .strength(0.9)
+            .iterations(2))
+        .alphaDecay(0.05)
+        .velocityDecay(0.4);
 
-    // Increase simulation iterations for better layout
-    for (let i = 0; i < 300; i++) simulation.tick();
+    window.currentSimulation = simulation;
 
+    // Add gentle floating animation
+    simulation.on("tick", () => {
+        svg.selectAll("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+    });
+
+    // Optimize circle updates
     const circles = svg.selectAll("circle")
-        .data(aggregatedData);
+        .data(aggregatedData, d => d.item_id);
 
-    circles.enter()
+    circles.exit().remove();
+
+    const circlesEnter = circles.enter()
         .append("circle")
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
         .attr("r", 0)
         .attr("fill", d => colorScale(d.order_category_name))
+        .attr("opacity", 0);
+
+    // Batch updates for better performance
+    circles.merge(circlesEnter)
+        .transition()
+        .duration(800)
+        .delay((d, i) => i * 3)
+        .attr("r", d => sizeScale(d.frequency))
         .attr("opacity", 0.8)
+        .ease(d3.easeBackOut.overshoot(1.2));
+
+    circlesEnter
         .on('mouseover', function(event, d) {
             const stats = `
                 <p><strong>Category:</strong> ${d.order_category_name}</p>
@@ -359,12 +387,21 @@ function showOverallChart() {
         })
         .on('mouseout', function() {
             tooltip.transition().duration(500).style('opacity', 0);
-        })
-        .transition()
-        .duration(1000)
-        .attr("r", d => sizeScale(d.frequency));
+        });
 
-    updateLegend(aggregatedData);
+    // Modify the float function for smoother transitions
+    function float() {
+        simulation.alpha(0.3)
+            .alphaDecay(0.02)
+            .restart();
+        setTimeout(float, 4000); // Longer interval between restarts
+    }
+    float();
+
+    // Update legend after transition completes
+    setTimeout(() => {
+        updateLegend(aggregatedData);
+    }, 1200);
 }
 
 function updateLegend(data) {
@@ -381,30 +418,38 @@ function updateLegend(data) {
         console.warn('No categories found in data');
         return;
     }
+
+    // Add title to legend
+    legendContainer.append("div")
+        .style("font-weight", "bold")
+        .style("margin-bottom", "5px")
+        .style("font-size", "11px")
+        .text("Categories");
     
-    const legendItems = legendContainer
+    const legendItems = d3.select(legendContainer.node())
         .selectAll(".legend-item")
         .data(categories)
         .enter()
         .append("div")
         .attr("class", "legend-item")
         .style("display", "flex")
-        .style("align-items", "center")
-        .style("margin-bottom", "5px")
-        .style("cursor", "pointer");
+        .style("align-items", "center");
 
-    legendItems
-        .append("div")
-        .style("width", "18px")
-        .style("height", "18px")
+    // Update color boxes
+    legendItems.append("div")
+        .style("min-width", "12px")
+        .style("height", "12px")
         .style("background-color", d => colorScale(d))
-        .style("margin-right", "5px")
         .style("border", "1px solid #ccc");
 
-    legendItems
-        .append("span")
-        .text(d => d);
+    // Add text with frequency count (only once)
+    legendItems.append("span")
+        .text(d => {
+            const count = data.filter(item => item.order_category_name === d).length;
+            return `${d.substring(0, 15)}${d.length > 15 ? '...' : ''} (${count})`;
+        });
 
+    // Click handling
     legendItems.on("click", function(event, category) {
         const item = d3.select(this);
         const isActive = !item.classed("inactive");
@@ -418,13 +463,16 @@ function updateLegend(data) {
             .style("pointer-events", isActive ? "none" : "all");
     });
 
-    legendItems.each(function(category) {
-        const count = data.filter(d => d.order_category_name === category).length;
-        d3.select(this).append("span")
-            .text(` (${count})`)
-            .style("margin-left", "5px")
-            .style("color", "#666");
-    });
+    // Adjust legend item styling
+    legendItems.style("padding", "3px 0")
+        .style("font-size", "11px");
+}
+
+function updateBoundary(node, r) {
+    node.x = Math.max(margin.left + r, 
+             Math.min(width - margin.right - r - 150, node.x));  // Adjust for legend space
+    node.y = Math.max(margin.top + r, 
+             Math.min(height - margin.bottom - r, node.y));
 }
 
 function resetVisualization() {
@@ -436,23 +484,18 @@ function resetVisualization() {
         .classed("inactive", false)
         .select("div")
         .style("opacity", 1);
-        
-    if (activeCircle) {
-        activeCircle = null;
-        detailsBox.style('display', 'none');
-    }
 }
 
 d3.select("#resetButton").on("click", resetVisualization);
 
-d3.select("#timeRange").on("input", function() {
+d3.select("#timeRange").on("input", debounce(function() {
     const selectedStayId = d3.select("#stayDropdown").property("value");
     if (selectedStayId) {
         resetVisualization();
         updateChart(selectedStayId);
     }
     updateMinMaxTime();
-});
+}, 100));
 
 // Add label for time range slider
 d3.select("#timeRangeContainer")
@@ -494,6 +537,54 @@ styleSheet.textContent = `
     .tooltip-content p {
         margin: 4px 0;
     }
+
+    .visualization-container {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .chart-container {
+        flex: 0 0 auto;
+    }
+
+    .sidebar {
+        flex: 0 0 280px;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .legend-container {
+        margin-bottom: 20px;
+        padding: 10px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .legend-item {
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .legend-item:last-child {
+        border-bottom: none;
+    }
 `;
 document.head.appendChild(styleSheet);
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 

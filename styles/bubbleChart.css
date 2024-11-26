@@ -1,4 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"); /* Import futuristic font */
+body {
+  font-family: "Orbitron", sans-serif; /* Updated font style */
+  background-color: #ffffff; /* Light background for reversed theme */
+  color: #1a1a1a; /* Dark text color */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .legend {
   font-size: 12px;
   color: #1a1a1a; /* Dark text color */
@@ -45,15 +55,15 @@
 .bubble-tooltip {
   position: absolute;
   opacity: 0;
-  background-color: #f4f4f9; /* Light background for tooltip */
-  color: #1a1a1a; /* Dark text color */
+  background: rgba(255, 255, 255, 0.95);
   padding: 10px;
-  border: 1px solid #ccc; /* Light border */
+  border: 1px solid #333;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Lighter shadow */
   pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 100; /* Add z-index to ensure tooltip appears above other elements */
+  font-size: 12px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-width: 250px;
 }
 .details-box {
   width: 100%;
@@ -66,6 +76,11 @@
   overflow-y: auto;
   z-index: 20;
   margin-top: 20px; /* Added margin to separate from chart */
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 11px;
 }
 .details-box p {
   margin: 5px 0;
@@ -73,11 +88,11 @@
 }
 .details-box button {
   margin-top: 10px;
-  padding: 5px 10px;
+  padding: 4px 8px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 .details-box button:hover {
@@ -183,6 +198,7 @@
 
 .bubbleChart {
     padding: 20px;
+    padding-left: 20px;
 }
 
 .controls-container {
@@ -191,6 +207,7 @@
 
 .stay-selector {
     margin-bottom: 10px;
+    margin-left: 70%;
 }
 
 .visualization-container {
@@ -210,12 +227,54 @@
 }
 
 .legend-container {
-    background: white;
-    padding: 10px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 150px;  /* Reduced width */
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    max-height: 300px;
+    font-size: 10px;  /* Smaller font */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: none;  /* Remove max-height */
+    overflow-y: visible;  /* Remove scrolling */
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;  /* Reduced padding */
+    margin-bottom: 2px;  /* Reduced margin */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.legend-item div {  /* Color box */
+    min-width: 12px !important;  /* Smaller color box */
+    height: 12px !important;
+    flex-shrink: 0;
+}
+
+.legend-item span {
+    margin-left: 4px;
+    font-size: 9px;  /* Smaller text */
+}
+
+.details-box {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;  /* Reduced from default */
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;  /* Reduced height */
     overflow-y: auto;
+    font-size: 11px;  /* Smaller font size */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .details-box {
@@ -231,6 +290,4 @@
 .time-labels {
     margin-top: 5px;
 }
-/* svg{
-  background-color: red;
-} */
+
