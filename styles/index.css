@@ -125,3 +125,7 @@ body {
   #stat_text{
     font-size: 2rem;
   }
+  #stat_div{
+    margin-left: 30%;
+    margin-top: 15px;
+  }
