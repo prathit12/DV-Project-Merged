@@ -163,147 +163,222 @@ function updateBoxPlot(svg, data, width, height, showGender = false) {
     colorKey(svg, width, showGender);
 }
 
- 
+function animateIVDrip(g, groupData, delay, boxWidth, yScale, gender) {
+const losValues = groupData.map(d => d.los).filter(d => !isNaN(d) && d !== null);
+if (losValues.length === 0) return;
 
-    function animateIVDrip(g, groupData, delay, boxWidth, yScale, gender) {
-        const losValues = groupData.map(d => d.los).filter(d => !isNaN(d) && d !== null);
-        if (losValues.length === 0) return;
-    
-        const { filteredData, whiskerBottom, whiskerTop } = removeOutliersAndAdjustYAxis(losValues);
-    
-        yScale.domain([whiskerBottom, whiskerTop]).nice();
-        const sorted = losValues.sort(d3.ascending);
-        const q1 = d3.quantile(sorted, 0.25);
-        const median = d3.quantile(sorted, 0.5);
-        const q3 = d3.quantile(sorted, 0.75);
-    
-        const deceasedCount = groupData.filter(d => d.status === 'deceased').length;
-        const totalCount = groupData.length;
-        const deceasedProportion = deceasedCount / totalCount;
-    
-        const gradientId = `liquid-gradient-${Math.random().toString(36).substr(2, 9)}`;
-        const gradient = g.append("defs")
-            .append("linearGradient")
-            .attr("id", gradientId)
-            .attr("x1", "0%")
-            .attr("x2", "0%")
-            .attr("y1", "0%")
-            .attr("y2", "100%");
-    
-        if (gender === 'M') {
-            gradient.append("stop")
-                .attr("offset", `${deceasedProportion * 100}%`)
-                .attr("stop-color", "navy");
-    
-            gradient.append("stop")
-                .attr("offset", `${deceasedProportion * 100}%`)
-                .attr("stop-color", "lightsteelblue");
-        } else {
-            gradient.append("stop")
-                .attr("offset", `${deceasedProportion * 100}%`)
-                .attr("stop-color", "deeppink");
-    
-            gradient.append("stop")
-                .attr("offset", `${deceasedProportion * 100}%`)
-                .attr("stop-color", "pink");
-        }
-                
-            
-        g.selectAll('.iv-bag')
-        .data([1])
-        .join('path')
-        .attr('class', 'iv-bag')
-        .attr('d', `
-            M ${boxWidth * 0.2},${yScale(q3)}
-            L ${boxWidth * 0.8},${yScale(q3)}
-            L ${boxWidth * 0.8},${yScale(q1)}
-            Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
-            L ${boxWidth / 2},${yScale(q1) + 18}
-            L ${boxWidth * 0.4},${yScale(q1) + 14}
-            Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
-            Z
-        `)
-        .attr('fill', 'none')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 2)
-        .attr('opacity', 0)
-        .transition()
-        .delay(delay)
-        .duration(500)
-        .attr('opacity', 1);
+const { filteredData, whiskerBottom, whiskerTop } = removeOutliersAndAdjustYAxis(losValues);
+yScale.domain([whiskerBottom, whiskerTop]).nice();
 
-        g.selectAll('.liquid-level')
-            .data([1])
-            .join('path')
-            .attr('class', 'liquid-level')
-            .attr('d', `
-                M ${boxWidth * 0.2},${yScale(median)}
-                L ${boxWidth * 0.8},${yScale(median)}
-                L ${boxWidth * 0.8},${yScale(q1)}
-                Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
-                L ${boxWidth / 2},${yScale(q1) + 18}
-                L ${boxWidth * 0.4},${yScale(q1) + 14}
-                Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
-                Z
-            `)
-            .attr('fill', `url(#${gradientId})`)
-            .attr('opacity', 0)
-            .transition()
-            .delay(delay + 250)
-            .duration(500)
-            .attr('opacity', 0.7);
+const sorted = losValues.sort(d3.ascending);
+const q1 = d3.quantile(sorted, 0.25);
+const median = d3.quantile(sorted, 0.5);
+const q3 = d3.quantile(sorted, 0.75);
 
-        g.selectAll('.iv-tube-top')
-        .data([1])
-        .join('line')
-        .attr('class', 'iv-tube-top')
-        .attr('x1', boxWidth / 2)
-        .attr('x2', boxWidth / 2)
-        .attr('y1', yScale(whiskerTop))
-        .attr('y2', yScale(q3))
-        .attr('stroke', 'black')
-        .attr('stroke-width', boxWidth * 0.05)
-        .style("opacity", 0)
-        .transition()
-        .delay(delay + 500)
-        .duration(500)
-        .style("opacity", 1);
+const deceasedCount = groupData.filter(d => d.status === 'deceased').length;
+const totalCount = groupData.length;
+const deceasedProportion = deceasedCount / totalCount;
 
-        g.selectAll('.iv-tube-bottom')
-            .data([1])
-            .join('line')
-            .attr('class', 'iv-tube-bottom')
-            .attr('x1', boxWidth / 2)
-            .attr('x2', boxWidth / 2)
-            .attr('y1', yScale(q1) + 15) 
-            .attr('y2', yScale(whiskerBottom))
-            .attr('stroke', 'black')
-            .attr('stroke-width', boxWidth * 0.05)
-            .style("opacity", 0)
-            .transition()
-            .delay(delay + 500)
-            .duration(500)
-            .style("opacity", 1);
+const gradientId = `liquid-gradient-${Math.random().toString(36).substr(2, 9)}`;
+const gradient = g.append("defs")
+    .append("linearGradient")
+    .attr("id", gradientId)
+    .attr("x1", "0%")
+    .attr("x2", "0%")
+    .attr("y1", "0%")
+    .attr("y2", "100%");
 
-        g.selectAll('.median-line')
-        .data([median])
-        .join('line')
-        .attr("class", "median-line")
-        .attr("x1", boxWidth * 0.2)
-        .attr("x2", boxWidth * 0.8)
-        .attr("y1", d => yScale(d))
-        .attr("y2", d => yScale(d))
-        .attr("stroke", "black")
-        .attr("stroke-width", 2)
-        .style("opacity", 0)
-        .transition()
-        .delay(delay + 750)
-        .duration(500)
-        .style("opacity", 1);
-
-    
-        
+if (!gender) {
+    gradient.append("stop")
+        .attr("offset", `${deceasedProportion * 100}%`)
+        .attr("stop-color", "#3d919b");
+    gradient.append("stop")
+        .attr("offset", `${deceasedProportion * 100}%`)
+        .attr("stop-color", "#a6ffc2");
+} else {
+    if (gender === 'M') {
+        gradient.append("stop")
+            .attr("offset", `${deceasedProportion * 100}%`)
+            .attr("stop-color", "navy");
+        gradient.append("stop")
+            .attr("offset", `${deceasedProportion * 100}%`)
+            .attr("stop-color", "lightsteelblue");
+    } else {
+        gradient.append("stop")
+            .attr("offset", `${deceasedProportion * 100}%`)
+            .attr("stop-color", "deeppink");
+        gradient.append("stop")
+            .attr("offset", `${deceasedProportion * 100}%`)
+            .attr("stop-color", "pink");
     }
+}
+
+   
+
+const bagGradientId = `bag-gradient-${Math.random().toString(36).substr(2, 9)}`;
+const bagGradient = g.append("defs")
+  .append("linearGradient")
+  .attr("id", bagGradientId)
+  .attr("x1", "0%")
+  .attr("y1", "0%")
+  .attr("x2", "100%")
+  .attr("y2", "100%");
+
+bagGradient.append("stop")
+  .attr("offset", "0%")
+  .attr("stop-color", "#FFFEFF");
+
+bagGradient.append("stop")
+  .attr("offset", "100%")
+  .attr("stop-color", "#D7FFFE");
+    
+g.selectAll('.iv-bag')
+    .data([1])
+    .join('path')
+    .attr('class', 'iv-bag')
+    .attr('d', `
+        M ${boxWidth * 0.2},${yScale(q3)}
+        L ${boxWidth * 0.8},${yScale(q3)}
+        L ${boxWidth * 0.8},${yScale(q1)}
+        Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
+        L ${boxWidth / 2},${yScale(q1) + 18}
+        L ${boxWidth * 0.4},${yScale(q1) + 14}
+        Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
+        Z
+    `)
+    .attr('fill', `url(#${bagGradientId})`)
+    .attr('fill-opacity', 0.4)
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2)
+    .attr('opacity', 0)
+    .transition()
+    .delay(delay)
+    .duration(500)
+    .attr('opacity', 1);
+
+const tubeTopGradientId = `tube-top-gradient-${Math.random().toString(36).substr(2, 9)}`;
+const tubeTopGradient = g.append("defs")
+  .append("linearGradient")
+  .attr("id", tubeTopGradientId)
+  .attr("x1", "0%")
+  .attr("y1", "0%")
+  .attr("x2", "0%")
+  .attr("y2", "100%");
+
+tubeTopGradient.append("stop")
+  .attr("offset", "5.5%")
+  .attr("stop-color", "rgb(221, 221, 221)");
+
+tubeTopGradient.append("stop")
+  .attr("offset", "90.2%")
+  .attr("stop-color", "rgb(110, 136, 161)");
+
+  g.selectAll('.iv-top-rectangle')
+  .data([1])
+  .join('rect')
+  .attr('class', 'iv-top-rectangle')
+  .attr('x', boxWidth * 0.15)
+  .attr('y', yScale(q3) - 35)
+  .attr('width', boxWidth * 0.7)
+  .attr('height', 35)
+  .attr('fill', `url(#${tubeTopGradientId})`)
+  .attr('stroke', 'black')
+  .attr('stroke-width', 2)
+  .attr('opacity', 0)
+  .transition()
+  .delay(delay)
+  .duration(500)
+  .attr('opacity', 1);
+  
+
+
+g.selectAll('.liquid-level')
+    .data([1])
+    .join('path')
+    .attr('class', 'liquid-level')
+    .attr('d', `
+        M ${boxWidth * 0.2},${yScale(median)}
+        L ${boxWidth * 0.8},${yScale(median)}
+        L ${boxWidth * 0.8},${yScale(q1)}
+        Q ${boxWidth * 0.8},${yScale(q1) + 12} ${boxWidth * 0.6},${yScale(q1) + 14}
+        L ${boxWidth / 2},${yScale(q1) + 18}
+        L ${boxWidth * 0.4},${yScale(q1) + 14}
+        Q ${boxWidth * 0.2},${yScale(q1) + 12} ${boxWidth * 0.2},${yScale(q1)}
+        Z
+    `)
+    .attr('fill', `url(#${gradientId})`)
+    .attr('opacity', 0)
+    .transition()
+    .delay(delay + 250)
+    .duration(500)
+    .attr('opacity', 0.7);
+
+   g.selectAll('.iv-tube-top')
+  .data([1])
+  .join('rect')
+  .attr('class', 'iv-tube-top')
+  .attr('x', boxWidth / 2 - boxWidth * 0.025)
+  .attr('y', yScale(whiskerTop))
+  .attr('width', boxWidth * 0.05)
+  .attr('height', yScale(q3) - yScale(whiskerTop) + 25)
+  .attr('fill', `url(#${tubeTopGradientId})`)
+  .attr('stroke', 'black')
+  .attr('stroke-width', 2)
+  .style("opacity", 0)
+  .transition()
+  .delay(delay )
+  .duration(500)
+  .style("opacity", 1);
+    
+const aliveColor = !gender ? "#a6ffc2" : (gender === 'M' ? "lightsteelblue" : "pink");
+  
+const tubeWidth = 5; 
+
+
+g.selectAll('.iv-tube-bottom-border')
+  .data([1])
+  .join('line')
+  .attr('class', 'iv-tube-bottom-border')
+  .attr('x1', boxWidth / 2)
+  .attr('x2', boxWidth / 2)
+  .attr('y1', yScale(q1) + 15)
+  .attr('y2', yScale(whiskerBottom))
+  .attr('stroke', 'black')  
+  .attr('stroke-width', tubeWidth * 1.7) 
+  .style('opacity', 1);  
+
+g.selectAll('.iv-tube-bottom')
+  .data([1])
+  .join('line')
+  .attr('class', 'iv-tube-bottom')
+  .attr('x1', boxWidth / 2)
+  .attr('x2', boxWidth / 2)
+  .attr('y1', yScale(q1) + 15)
+  .attr('y2', yScale(whiskerBottom))
+  .attr('stroke', aliveColor)  
+  .attr('stroke-width', tubeWidth)  
+  .style('opacity', 0)
+  .transition()
+    .delay(delay)
+    .duration(500)
+    .style('opacity', 1);
+
+g.selectAll('.median-line')
+    .data([median])
+    .join('line')
+    .attr("class", "median-line")
+    .attr("x1", boxWidth * 0.2)
+    .attr("x2", boxWidth * 0.8)
+    .attr("y1", d => yScale(d))
+    .attr("y2", d => yScale(d))
+    .attr("stroke", "black")
+    .attr("stroke-width", 2)
+    .style("opacity", 0)
+    .transition()
+    .delay(delay + 750)
+    .duration(500)
+    .style("opacity", 1);
+}
 
 function updateAxis(svg, xScale, yScale, height) {
     svg.select('.x-axis')
@@ -332,37 +407,37 @@ function updateLabels(svg, width, height, xLabel, yLabel) {
 }
 
 function colorKey(svg, width, showGender) {
-    const colorKeyContainer = d3.select('#color-key-container');
-    colorKeyContainer.selectAll('*').remove();
+const colorKeyContainer = d3.select('#color-key-container');
+colorKeyContainer.selectAll('*').remove();
 
-    if (showGender) {
-        const colorCategories = [
-            { color: "navy", text: "Male (Deceased)" },
-            { color: "lightsteelblue", text: "Male (Alive)" },
-            { color: "deeppink", text: "Female (Deceased)" },
-            { color: "pink", text: "Female (Alive)" }
-        ];
+let colorCategories;
 
-        colorKeyContainer.selectAll('.color-key')
-            .data(colorCategories)
-            .enter()
-            .append('span')
-            .attr('class', 'color-key')
-            .style('display', 'inline-flex')
-            .style('align-items', 'center')
-            .style('margin-right', '20px')
-            .html(d => `
-                <span style="background-color: ${d.color}; 
-                             width: 15px; 
-                             height: 15px; 
-                             border-radius: 50%; 
-                             display: inline-block; 
-                             margin-right: 4px;"></span> 
-                ${d.text}
-            `);
+if (showGender) {
+    colorCategories = [
+    { color: "navy", text: "Male (Deceased)" },
+    { color: "lightsteelblue", text: "Male (Alive)" },
+    { color: "deeppink", text: "Female (Deceased)" },
+    { color: "pink", text: "Female (Alive)" }
+    ];
+} else {
+    colorCategories = [
+    { color: "#3d919b", text: "Deceased" },
+    { color: "#a6ffc2", text: "Alive" }
+    ];
+}
 
-        colorKeyContainer.style('display', 'block');
-    } else {
-        colorKeyContainer.style('display', 'none');
-    }
+colorKeyContainer.selectAll('.color-key')
+    .data(colorCategories)
+    .enter()
+    .append('span')
+    .attr('class', 'color-key')
+    .style('display', 'inline-flex')
+    .style('align-items', 'center')
+    .style('margin-right', '20px')
+    .html(d => `
+    <span style="background-color: ${d.color}; width: 15px; height: 15px; border-radius: 50%; display: inline-block; margin-right: 4px; border: 1.5px solid black;"></span>
+    ${d.text}
+    `);
+
+colorKeyContainer.style('display', 'block');
 }
