@@ -104,3 +104,9 @@ body {
 .scale {
     text-align: center;
 }
+
+.cell:hover {
+    transform: scale(1.1); /* Slight zoom-in effect */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
+    z-index: 2; /* Ensure the cell appears above others */
+}

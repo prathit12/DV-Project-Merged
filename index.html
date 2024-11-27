@@ -1,174 +1,379 @@
 <!DOCTYPE html>
-<html lang='en'>
-    <head>
-        <title>ICU Effectiveness</title>
+<html lang="en">
+  <head>
+    <title>ICU Effectiveness</title>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Droid+Sans+Mono" rel="stylesheet">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Droid+Sans+Mono"
+      rel="stylesheet"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-        <script src="https://d3js.org/d3.v7.min.js"></script>
-        
-        
-            <!-- Network - Transfers
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
-            bubble - treatments
-            line chart - vitals
-            
-            Boxplot - age/gender
-            HeatMap - procedure Severity -->
-       
 
-        <link rel="stylesheet" href="./styles/boxPlot.css">
-        <link rel="stylesheet" href="./styles/bubbleChart.css">
-        <link rel="stylesheet" href="./styles/heatMap.css"> 
-        <link rel="stylesheet" href="./styles/networkDiagram.css">
-        <link rel="stylesheet" href="./styles/lineChart.css">
-        <link rel="stylesheet" href="./styles/index.css">
-        
-    </head>
-    <body>
-      <!-- <img 
+    <link rel="stylesheet" href="./styles/boxPlot.css" />
+    <link rel="stylesheet" href="./styles/bubbleChart.css" />
+    <link rel="stylesheet" href="./styles/heatMap.css" />
+    <link rel="stylesheet" href="./styles/networkDiagram.css" />
+    <link rel="stylesheet" href="./styles/lineChart.css" />
+    <link rel="stylesheet" href="./styles/index.css" />
+  </head>
+  <body>
+    <!-- <img 
       src="./images/bg1.png"> -->
-      <div class = "intro">
-        <h1 id="title">A Second Chance: The Role of ICUs in Patient Recovery</h1>
-            <h3 id="subtitle">The evolution of Intensive Care Units (ICUs) over the past decades has transformed patient outcomes, offering a remarkable second chance to those facing critical illnesses. As per NIH, more than 5.7 million patients are admitted annually to an ICU in the United States, accounting for approximately 20% of all acute care admissions.</h3>
-            <h3 id="subtitle"> The story is on the Medical Information Mart for Intensive Care (MIMIC)-IV database, consisting a set of 100 patients admitted to the Beth Israel Deaconess Medical Center to demonstrate the effectivess of ICUs in improving patient recovery.</h3>
+    <div class="intro">
+      <h1 id="title">
+        ICUs: Where Critical Care Gives a Second Chance to Life
+      </h1>
+      <div class="subdiv">
+        <div class="subdivinfo">
+          <h3 class="subtitle">
+            The evolution of Intensive Care Units (ICUs) over the past decades
+            has transformed patient outcomes, offering a remarkable second
+            chance to those facing critical illnesses. As per NIH, more than
+            <b>5.7 million</b> patients are admitted annually to an ICU in the
+            United States, accounting for approximately <b>20%</b> of all acute
+            care admissions.
+          </h3>
         </div>
-      <div class="networkChart">
-        <svg id="networkSvg" width="1200" height="700"></svg>
+        <div class="subdivgraphic">
+          <svg id="intropiechart"></svg>
+        </div>
       </div>
-        <!-- <h1>Bubble Chart</h1> -->
-        <div class="bubbleChart">
-            <div class="controls-container">
-                <div class="stay-selector">
-                    
-                    <label for="stayDropdown">Choose Patient's Stay:</label>
-                    <select id="stayDropdown">
-                                <option value="overall">Overall Frequency</option>
-                    </select>
-                </div>
-                <div id="timeRangeContainer" style="display: none;">
-                    <label for="timeRange"></label>
-                    <input type="range" id="timeRange" min="0" max="100" value="0" step="1">
-                    <div class="time-labels">
-                        <span>Start: <span id="minTime"></span></span>
-                        <span style="margin-left: 20px;">End: <span id="maxTime"></span></span>
-                    </div>
-                </div>
-            </div>
-      
-            <div class="visualization-container">
-              <div class="chart-container">
-                    <svg id="bubbleSvg" width="1200" height="600"></svg>
-              </div>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <div class="subdiv">
+          <div class="subdivinfo">
+            <h3 class="introInfoText">
+              <br>
+              In this story, we use the Medical Information Mart for Intensive
+              Care (MIMIC)-IV database, a publicly available database
+              consisting of 100 patients admitted to the Beth Israel
+              Deaconess Medical Center from 2011 - 2016. Here we demonstrate the
+              effectivess of ICUs in improving patient recovery and how they
+              provide a second chance to life.
+            </h3>
+          </div>
+          <img src="./images/hospital_image.png" width="500px" height="300px" />
+        </div>
+        <div class="grid-container">
+          <!-- First row: Icons -->
+          <div class="grid-item">
+            <img src="./images/patient_icon.png" alt="Icon 1" class="icon" />
+          </div>
+          <div class="grid-item">
+            <img src="./images/hospitalisation.png" alt="Icon 2" class="icon" />
+          </div>
+          <div class="grid-item">
+            <img src="./images/hospitalization.png" alt="Icon 3" class="icon" />
+          </div>
+          <div class="grid-item">
+            <h1>100</h1>
+          </div>
+          <div class="grid-item">
+            <h1>275</h1>
+          </div>
+          <div class="grid-item">
+            <h1>140</h1>
+          </div>
+          <div class="grid-item">
+            <h4>Patients</h4>
+          </div>
+          <div class="grid-item">
+            <h4>Hospital Admissions</h4>
+          </div>
+          <div class="grid-item">
+            <h4>ICU Stays</h4>
+          </div>
+          
+          <!-- Second row: Texts -->
+        </div>
+      </div>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="introInfoText">
+          In the high-stakes environment of an ICU, every decision matters.
+          Patient transfers—from admission to ICU, Specialized Care Units,
+          and eventual outcomes—reveal the intricate web of care pathways
+          designed to maximize recovery. These transitions, however, are not
+          without challenges. A delay in transfer or misstep in coordination can
+          significantly affect patient outcomes. Tracking these movements is key
+          to evaluating ICU efficiency and effectiveness. <br /><br />
+          ICU's and Care Units have further subdivisons amongst them. Continous patient monitoring and transfer to the right subdivision can help expediate patient recovery. 
+        </h3>
+        <div id="early_transfer_stat">
+        According to an article from the NIH,<br><br> <span id="counter_text">"Early transfers result in approximately </span> <span id="counter"></span> <span id="counter_text">% reduction in risk of inhospital mortality."</span> 
+      </div>
+      </div>
+    </div>
+    <div class="networkChart">
+      <svg id="networkSvg" width="1200" height="700">
+        <!-- <image x="250" y="50" width="50" height="50" href="./images/hospitalisation.png" style="z-index: 10;" /> -->
+      </svg>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="introInfoText">
+          In the ICU, personalized treatment plans are the cornerstone of
+          patient recovery. Each patient’s journey is shaped by a unique
+          combination of interventions, from lifesaving drips and antibiotics to
+          tailored nutritional support. The diversity and intensity of these
+          treatments reflect the complexities of managing critical illnesses and
+          highlight the collaborative effort of healthcare providers to meet
+          individual needs. To illustrate this complexity, the bubble chart
+          below maps out treatments administered to each patient, showcasing the
+          breadth of interventions required. For example, some patients rely
+          heavily on fluid management through intravenous drips or fluid
+          boluses, while others require specialized therapies like insulin,
+          blood products, or enteral nutrition.
+        </h3>
+        <h3 class="introInfoText">
+          As you explore the chart, note the variability in treatment
+          approaches. Each bubble represents a treatment type, sized
+          proportionally to its frequency of use across 100 patients in our
+          dataset. This visualization provides a window into the meticulous and
+          diverse strategies employed in ICU care, underscoring the adaptability
+          and precision of modern medicine.
+        </h3>
+      </div>
+    </div>
+    <div class="bubbleChart">
+      <div class="controls-container">
+        <div class="stay-selector">
+          <label for="stayDropdown">Choose Patient's Stay:</label>
+          <select id="stayDropdown">
+            <option value="overall">Overall Frequency</option>
+          </select>
+        </div>
+        <div id="timeRangeContainer" style="display: none">
+          <label for="timeRange"></label>
+          <input
+            type="range"
+            id="timeRange"
+            min="0"
+            max="100"
+            value="0"
+            step="1"
+          />
+          <div class="time-labels">
+            <span>Start: <span id="minTime"></span></span>
+            <span style="margin-left: 20px"
+              >End: <span id="maxTime"></span
+            ></span>
           </div>
         </div>
+      </div>
 
-        <div class="lineChartContainer">
-            <div class="myContainer">
-                <!-- <h3 class="chart-title">Line Chart</h3>
+      <div class="visualization-container">
+        <div class="chart-container">
+          <svg id="bubbleSvg" width="1200" height="600"></svg>
+        </div>
+      </div>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="introInfoText">
+          The ICU is a battlefield where every decision can mean the difference
+          between life and death. Tracking and responding to vital signs—heart
+          rate, oxygen levels, and blood pressure—enable clinicians to act
+          swiftly in stabilizing critically ill patients. These metrics are not
+          just numbers; they’re a window into the body’s response to life-saving
+          interventions.
+        </h3>
+        <h3 class="introInfoText">
+          The charts below demonstrate this connection. Visualized as heart
+          monitors, they depict the interplay between vital signs and medical
+          treatments for each patient. Circles mark points where medications
+          were administered, showing how these interventions impact stability
+          and recovery. This visualization underscores the ICU’s effectiveness
+          in saving lives. By closely monitoring changes and tailoring
+          treatments in real time, healthcare providers can prevent critical
+          conditions from escalating, restore vital functions, and offer
+          patients a fighting chance. As you explore, notice how timely
+          interventions correlate with improvements in vital metrics, a
+          testament to the ICU's pivotal role in patient survival.
+        </h3>
+      </div>
+    </div>
+    <div class="lineChartContainer">
+      <div class="myContainer">
+        <!-- <h3 class="chart-title">Line Chart</h3>
                 <hr> -->
-                <div id="linechart_div">
-                    <div id="controlpanel_div">
-                        <label for="stay_options">Choose the stay_id: </label>
-                        <select id="stay_select" name="stay_options" onchange="getData()">
-                        </select>
-                    </div> 
-                    <div id="outer_monitor">
-                        <div id="inner_monitor">
-                            <div id="heart_vitals">
-                                <div id="heart_chart">
-                                    <svg id="hr_chart"></svg>
-                                </div>
-                                <div id="heart_metric">
-                                    <h4 id="heart_abbr">HR</h6>
-                                    <h1 id="heart_value">92</h1>
-                                    <h5 id="heart_measure">Bpm</h5>
-                                </div>
-                            </div>
-                            <div id="oxygen_vitals">
-                                <div id="heart_chart">
-                                    <svg id="o2_chart"></svg>
-                                </div>
-                                <div id="oxygen_metric">
-                                    <h4 id="oxygen_abbr">SPO2</h6>
-                                    <h1 id="oxygen_value">98</h1>
-                                    <h5 id="o2_measure">%</h5>
-                                    
-                                    
-                                </div>
-                            </div>
-                            <div id="resp_vitals">
-                                <div id="resp_chart">
-                                    <svg id="bp_chart"></svg>
-                                </div>
-                                <div id="resp_metric">
-                                    <h4 id="syst_abbr">SYST</h6>
-                                    <h2 id="syst_value">100</h2>
-                                    <h4 id="dias_abbr">DIAS</h6>
-                                    <h2 id="dias_value">70</h2>
-                                    <span id="resp_m">mmHg</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div id="linechart_div">
+          <div id="controlpanel_div">
+            <label for="stay_options">Choose the stay_id: </label>
+            <select
+              id="stay_select"
+              name="stay_options"
+              onchange="getData()"
+            ></select>
+          </div>
+          <div id="outer_monitor">
+            <div id="inner_monitor">
+              <div id="heart_vitals">
+                <div id="heart_chart">
+                  <svg id="hr_chart"></svg>
                 </div>
-            </div>
-        </div>
-
-        <div class="boxPlotContainer">
-            <header>
-                <!-- <h1>Box Plot - Age Group vs Length of Stays</h1> -->
-                <!-- <hr> -->
-            </header>
-          <div class="controls-row">
-            <div class="toggle-container">
-                <label for="genderToggle">Show Gender Distribution:</label>
-                <input type="checkbox" id="genderToggle">
-            </div>
-            <div id="color-key-container"></div>
-          </div> 
-            <div id="boxPlot"></div>
-        </div>
-
-        <div class="heatMapContainer">
-            <!-- <h2 class="text-center">Heatmap</h2> -->
-            <div class="tooltip" id="tooltip"></div>
-          
-            <div class="container mt-4">
-              <div id="controls">
-                <div class="col-md-2">
-                <label for="filter" class="form-label">Filter:</label>
-                <select id="filter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="alive">Alive</option>
-                    <option value="dead">Dead</option>
-                </select>
+                <div id="heart_metric">
+                  <h4 id="heart_abbr">HR</h4>
+                  <h1 id="heart_value">92</h1>
+                  <h5 id="heart_measure">Bpm</h5>
                 </div>
-                <div id="aliveScale" class="scale-container">
-                    <span>Alive Scale:</span>
-                    <svg></svg>
-                    <span id="aliveMax">0</span>
-                </div>
-                <div id="deadScale" class="scale-container">
-                    <span>Dead Scale:</span>
-                    <svg></svg>
-                    <span id="deadMax">0</span>
-                </div>
-            </div>
-              <div class="heatmap-container">
-                <div class="y-axis-labels"></div>
-                <div id="heatmap" class="heatmap"></div>  
               </div>
-                
-            <div class="x-axis-labels"></div> 
+              <div id="oxygen_vitals">
+                <div id="heart_chart">
+                  <svg id="o2_chart"></svg>
+                </div>
+                <div id="oxygen_metric">
+                  <h4 id="oxygen_abbr">SPO2</h4>
+                  <h1 id="oxygen_value">98</h1>
+                  <h5 id="o2_measure">%</h5>
+                </div>
+              </div>
+              <div id="resp_vitals">
+                <div id="resp_chart">
+                  <svg id="bp_chart"></svg>
+                </div>
+                <div id="resp_metric">
+                  <h4 id="syst_abbr">SYST</h4>
+                  <h2 id="syst_value">100</h2>
+                  <h4 id="dias_abbr">DIAS</h4>
+                  <h2 id="dias_value">70</h2>
+                  <span id="resp_m">mmHg</span>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        <script src="./scripts/bubbleChart.js"></script>
-        <script src="./scripts/networkdiagram.js"></script>
-        <script src="./scripts/boxPlot.js"></script>
-        <script src="./scripts/heatMap.js"></script>
-        <script src="./scripts/linechart.js"></script> 
-    </body>
+      </div>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="introInfoText">
+          As the data reveals, age is a key factor influencing ICU outcomes,
+          with older patients showing longer stays and higher mortality rates.
+          This is not an indication of ICU ineffectiveness but reflects the
+          natural decline in physiological reserves that comes with aging. Older
+          individuals often face multiple comorbidities and a slower recovery
+          rate, which can lengthen their ICU stay. interventions.
+        </h3>
+        <h3 class="introInfoText">
+          While a longer length of stay may seem concerning, it can also be
+          beneficial. Extended monitoring and care offer critical opportunities
+          to manage complications, stabilize vital functions, and provide
+          patients with the best chance for recovery. This reinforces that the
+          ICU’s role is not only to treat but to support patients through
+          extended recovery processes, especially as age-related challenges
+          arise. Thus, while longer stays may correlate with higher mortality
+          rates, they also highlight the ICU's essential role in providing
+          comprehensive, sustained care.
+        </h3>
+      </div>
+    </div>
+    <div class="boxPlotContainer">
+      <header>
+        <!-- <h1>Box Plot - Age Group vs Length of Stays</h1> -->
+        <!-- <hr> -->
+      </header>
+      <div class="controls-row">
+        <div class="toggle-container">
+          <label for="genderToggle">Show Gender Distribution:</label>
+          <input type="checkbox" id="genderToggle" />
+        </div>
+        <div id="color-key-container"></div>
+      </div>
+      <div id="boxPlot"></div>
+    </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="introInfoText">
+          In the ICU, high-severity procedures are often necessary to save
+          critically ill patients. However, these procedures carry inherent
+          risks that can lead to higher mortality rates. It’s important to note
+          that the link between severe procedures and patient outcomes is not a
+          reflection of ICU care quality, but rather the complexity and severity
+          of the conditions being treated. The data shows that patients
+          undergoing the most intense procedures face the highest risks,
+          underscoring the importance of ICU support in managing such critical
+          cases.
+        </h3>
+        <h3 class="introInfoText">
+          While the ICU plays a crucial role in supporting recovery, the
+          severity of the procedures, rather than the quality of care, is a key
+          factor in patient outcomes. This highlights the ICU’s role in managing
+          the most critical cases but also points to the unavoidable risks
+          associated with high-severity procedures.
+        </h3>
+      </div>
+    </div>
+    <div class="heatMapContainer">
+      <!-- <h2 class="text-center">Heatmap</h2> -->
+      <div class="tooltip" id="tooltip"></div>
+
+      <div class="container mt-4">
+        <div id="controls">
+          <div class="col-md-2">
+            <label for="filter" class="form-label">Filter:</label>
+            <select id="filter" class="form-select">
+              <option value="all">All</option>
+              <option value="alive">Cured</option>
+              <option value="dead">Dead</option>
+            </select>
+          </div>
+          <div id="aliveScale" class="scale-container">
+            <span>Cured Scale:</span>
+            <svg></svg>
+            <span id="aliveMax">0</span>
+          </div>
+          <div id="deadScale" class="scale-container">
+            <span>Dead Scale:</span>
+            <svg></svg>
+            <span id="deadMax">0</span>
+          </div>
+        </div>
+        <div class="heatmap-container">
+          <div class="y-axis-labels"></div>
+          <div id="heatmap" class="heatmap"></div>
+        </div>
+
+        <div class="x-axis-labels"></div>
+      </div>
+    </div>
+    
+   <script>
+    // Set up the SVG and number container
+const counter = d3.select("#counter");
+
+// The starting and ending values for the counter
+const startValue = 0;
+const endValue = 56;
+const duration = 2000; // Duration for the animation in milliseconds
+
+// Create a transition to animate the number increase
+d3.transition()
+    .duration(duration)  // Duration of the transition
+    .tween("text", function() {
+        // Define the transition
+        const interpolate = d3.interpolateNumber(startValue, endValue);
+        
+        return function(t) {
+            // Interpolate the number at each step
+            counter.text(Math.round(interpolate(t)));
+        };
+    });
+   </script>
+    <script src="./scripts/bubbleChart.js"></script>
+    <script src="./scripts/networkdiagram.js"></script>
+    <script src="./scripts/boxPlot.js"></script>
+    <script src="./scripts/heatMap.js"></script>
+    <script src="./scripts/linechart.js"></script>
+    <script src="./scripts/intropie.js"></script>
+  </body>
 </html>

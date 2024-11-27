@@ -14,9 +14,8 @@ class Link {
     this.value = value;
   }
 }
-document.addEventListener("DOMContentLoaded", function() {
-collectData1();
-
+document.addEventListener("DOMContentLoaded", function () {
+  collectData1();
 });
 
 function createCurvedPath1(link) {
@@ -28,7 +27,7 @@ function createCurvedPath1(link) {
   const tx = targetNode.x;
   const ty = targetNode.y;
 
-  if (link.source === "Admit" && link.target === "Emergency Department") {
+  if (link.source === "Admit" && link.target === "ICU") {
     const offsetX = 600;
     return `M${sx},${sy + 75} L${sx - offsetX},${sy + 75} L${sx - offsetX},${
       ty + 150
@@ -39,10 +38,7 @@ function createCurvedPath1(link) {
   ) {
     const offsetY = 150;
     return `M${sx + offsetY},${sy}  L${sx + offsetY},${ty + 150}  }`;
-  } else if (
-    link.source === "Emergency Department" &&
-    link.target === "Care Units"
-  ) {
+  } else if (link.source === "ICU" && link.target === "Care Units") {
     const offsetX = 600;
     return `M${sx + 300},${sy + 50}  L${sx + 750},${sy + 50}  }`;
   }
@@ -64,27 +60,43 @@ function drawGraph() {
     if (node.id === "Admit") {
       node.x = centerX;
       node.y = centerY;
-    } else if (node.id == "Emergency Department") {
+      node.imageUrl = "./images/patient_icon.png";
+    } else if (node.id == "ICU") {
       node.x = centerX - 750;
       node.y = centerY - 200;
+      node.imageUrl = "./images/hospitalization.png";
     } else if (node.id == "Care Units") {
-      node.x = centerX ;
+      node.x = centerX;
       node.y = centerY - 250;
+      node.imageUrl = "./images/hospitalisation.png";
     } else if (node.id == "Dead") {
       node.x = centerX - 750;
       node.y = centerY - 500;
+      node.imageUrl = "./images/patient.png";
     } else if (node.id == "Discharge") {
       node.x = centerX;
       node.y = centerY - 500;
+      node.imageUrl = "./images/discharge.png";
     }
   });
-  //   console.log(nodes_arr);
-  //   console.log(links_arr);
   originalStrokeWidth = 1;
   const thicknessScale = d3
     .scaleLinear()
     .domain(d3.extent(links_arr, (d) => d.value))
     .range([15, 100]);
+
+    const defs = svg.append("defs");  
+    defs.append("filter")
+        .attr("id", "drop-shadow")  
+        .attr("x", "-50%")  
+        .attr("y", "-50%")
+        .attr("width", "200%")
+        .attr("height", "200%")
+      .append("feDropShadow")
+        .attr("dx", "5")  
+        .attr("dy", "5")  
+        .attr("stdDeviation", "10")  
+        .attr("flood-color", "rgba(0, 0, 0, 0.3)");  
 
   const node = svg
     .append("g")
@@ -100,7 +112,8 @@ function drawGraph() {
     .style("stroke-width", "2px")
     .style("stroke", "#b3c7c6")
     .attr("rx", 20)
-    .attr("ry", 20);
+    .attr("ry", 20)
+    .style("filter", "url(#drop-shadow)");;
 
   const labels = svg
     .append("g")
@@ -109,13 +122,29 @@ function drawGraph() {
     .join("text")
     .attr("class", "node-label")
     .attr("x", (d) => d.x + 150)
-    .attr("y", (d) => d.y + 75) 
+    .attr("y", (d) => d.y + 75)
     .attr("text-anchor", "middle")
     .attr("dy", ".35em")
     .style("fill", "#000000")
     .style("font-size", "24px")
     .text((d) => d.id);
 
+  const image = svg
+    .append("g")
+    .selectAll("image")
+    .data(nodes_arr)
+    .join("image")
+    .attr("x", (d) => {
+      if(d.id=="ICU" || d.id=="Dead" || d.id == "Admit"){
+        return d.x + 190;
+      }
+      return d.x + 220
+    })
+    .attr("y", (d) => d.y + 50)
+    .attr("width", 50)
+    .attr("height", 50)
+    .attr("href", (d) => d.imageUrl)
+    .attr("opacity", 1);
   var div = d3
     .select("body")
     .append("div")
@@ -130,7 +159,7 @@ function drawGraph() {
     .attr("d", (d) => {
       return createCurvedPath1(d);
     })
-    .style("stroke","#b3c7c6")
+    .style("stroke", "#b3c7c6")
     .attr("stroke-width", 1)
     .attr("marker-end", "url(#arrow)")
     .on("mousemove", function (event, d) {
@@ -162,13 +191,21 @@ function drawGraph() {
           .selectAll(".link")
           .filter((d) => d === link)
           .transition()
-          .duration(d=>{
-            if (link.source === "Admit" && link.target === "Emergency Department" || link.source === "Emergency Department" && link.target === "Care Units") {
-             return 120 ;
-            } 
-            else if (link.source === "Admit" && link.target === "Care Units"){
+          .duration((d) => {
+            if (
+              (link.source === "Admit" && link.target === "ICU") ||
+              (link.source === "ICU" && link.target === "Care Units")
+            ) {
+              return 120;
+            } else if (
+              link.source === "Admit" &&
+              link.target === "Care Units"
+            ) {
               return 558.79;
-            }else if(link.source === "Care Units" && link.target === "Discharge"){
+            } else if (
+              link.source === "Care Units" &&
+              link.target === "Discharge"
+            ) {
               return 100;
             }
             return 10000;
@@ -177,23 +214,40 @@ function drawGraph() {
           .attr("stroke-width", thicknessScale(i));
         circle
           .transition()
-          .delay(d=>{
-            if (link.source === "Admit" && link.target === "Emergency Department" || link.source === "Emergency Department" && link.target === "Care Units") {
-              return i*143;
-             } 
-             else if (link.source === "Admit" && link.target === "Care Units"){
-              return i*275;
-             }else if(link.source === "Care Units" && link.target === "Discharge"){
-              return i*100;
-             }
-            return i * 1150})
-          .duration(d=>{
-            if (link.source === "Admit" && link.target === "Emergency Department" || link.source === "Emergency Department" && link.target === "Care Units") {
-             return 120;
-            } 
-            else if (link.source === "Admit" && link.target === "Care Units"){
+          .delay((d) => {
+            if (
+              (link.source === "Admit" && link.target === "ICU") ||
+              (link.source === "ICU" && link.target === "Care Units")
+            ) {
+              return i * 143;
+            } else if (
+              link.source === "Admit" &&
+              link.target === "Care Units"
+            ) {
+              return i * 275;
+            } else if (
+              link.source === "Care Units" &&
+              link.target === "Discharge"
+            ) {
+              return i * 100;
+            }
+            return i * 1150;
+          })
+          .duration((d) => {
+            if (
+              (link.source === "Admit" && link.target === "ICU") ||
+              (link.source === "ICU" && link.target === "Care Units")
+            ) {
+              return 120;
+            } else if (
+              link.source === "Admit" &&
+              link.target === "Care Units"
+            ) {
               return 558.79;
-            }else if(link.source === "Care Units" && link.target === "Discharge"){
+            } else if (
+              link.source === "Care Units" &&
+              link.target === "Discharge"
+            ) {
               return 100;
             }
             return 10000;
@@ -248,7 +302,7 @@ function collectData1() {
               curr_group = "Discharge";
             }
             if (current_type == "ED") {
-              curr_group = "Emergency Department";
+              curr_group = "ICU";
             } else if (current_type == "transfer") {
               curr_group = "Care Units";
             }
@@ -261,7 +315,7 @@ function collectData1() {
                 next_group = "Discharge";
               }
             } else if (next_type === "ED") {
-              next_group = "Emergency Department";
+              next_group = "ICU";
             } else {
               next_group = "Care Units";
             }
@@ -295,17 +349,17 @@ function collectData1() {
         } else if (curr == "Admit" && next == "Discharge") {
           directlyDischarged = value;
         } else {
-          if (curr == "Emergency Department") {
+          if (curr == "ICU") {
             curr = "Admit";
           } else if (curr == "Admit") {
-            curr = "Emergency Department";
+            curr = "ICU";
           }
-          if (next == "Emergency Department") {
+          if (next == "ICU") {
             next = "Admit";
           } else if (next == "Admit") {
-            next = "Emergency Department";
+            next = "ICU";
           }
-          if (curr == "Emergency Department") {
+          if (curr == "ICU") {
             value += 6;
           }
           links_arr.push(new Link(curr, next, value));
@@ -314,13 +368,7 @@ function collectData1() {
 
       nodes_arr = [...nodes];
       nodes_arr.sort((a, b) => {
-        const order = [
-          "Emergency Department",
-          "Admit",
-          "Care Units",
-          "Discharge",
-          "Dead",
-        ];
+        const order = ["ICU", "Admit", "Care Units", "Discharge", "Dead"];
         return order.indexOf(a.id) - order.indexOf(b.id);
       });
 

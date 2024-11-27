@@ -1,30 +1,120 @@
 body {
-    font-family: "Orbitron", sans-serif; 
-    background-color: #fbfbfb; 
-    color: #1a1a1a; /* Dark text color */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-.intro{
-    margin-left: 20%;
-    margin-right: 20%;
-    margin-top: 10%;
+  font-family: "Orbitron", sans-serif;
+  background-color: #fbfbfb;
+  color: #1a1a1a; /* Dark text color */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.intro, .networkChart, .bubbleChart, .lineChartContainer, .boxPlotContainer, .heatMapContainer{
-    height: 100vh;
+.intro {
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 10%;
+}
+.intro,
+.networkChart,
+.bubbleChart,
+.lineChartContainer,
+.boxPlotContainer,
+.heatMapContainer {
+  height: 100vh;
+}
+.intro,
+.networkChart,
+.bubbleChart,
+.lineChartContainer,
+.boxPlotContainer,
+.heatMapContainer,
+.networkChartIntro {
+  height: 100vh;
+}
+.introInfo {
+  margin: 100px;
+  padding: 50px;
+  border-radius: 50px;
 }
 /* .lineChartContainer{
     width: 1200px;
 } */
-#title{
-    font-size: 65px;
-    text-align: center;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+#title {
+  font-size: 65px;
+  text-align: center;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
-#subtitle{
-    margin-top: 5%;
-    text-align: center;
+.subtitle {
+  margin-top: 5%;
+  text-align: center;
+  font-size: 1.75rem;
 }
+.hospital_image {
+  margin-top: 20px;
+  margin-left: 20%;
+}
+.subdiv {
+  margin-top: 50px;
+  display: flex; 
+  gap: 20px; 
+  align-items: flex-start; 
+}
+
+.subdivinfo {
+  flex: 2;
+}
+.subdivgraphic {
+  flex: 1;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+#intropiechart {
+  width: 300px;
+  height: 300px;
+}
+.hospital_image{
+  flex: 1; 
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    grid-template-rows: auto auto auto; /* 2 rows */
+    gap: 10px; /* Space between items */
+    padding: 20px;
+    margin-top: 50px;
+  }
+  
+  /* Styling for each grid item */
+  .grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .icon {
+    width: 100px; /* Adjust icon size */
+    height: 100px; /* Adjust icon size */
+    margin-bottom: 10px;
+  }
+  
+  /* Optional: Styling for the text */
+  .grid-item p {
+    font-size: 16px;
+    color: #333;
+  }
+  .subdiv img{
+    border-radius:25px;
+  }
+  #counter {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 50px;
+  }
+  #early_transfer_stat{
+    margin-top: 50px;
+  }
+  #counter_text{
+    font-size: 2.5rem;
+  }
