@@ -15,7 +15,6 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
-
     <link rel="stylesheet" href="./styles/boxPlot.css" />
     <link rel="stylesheet" href="./styles/bubbleChart.css" />
     <link rel="stylesheet" href="./styles/heatMap.css" />
@@ -51,13 +50,13 @@
         <div class="subdiv">
           <div class="subdivinfo">
             <h3 class="introInfoText">
-              <br>
+              <br />
               In this story, we use the Medical Information Mart for Intensive
-              Care (MIMIC)-IV database, a publicly available database
-              consisting of 100 patients admitted to the Beth Israel
-              Deaconess Medical Center from 2011 - 2016. Here we demonstrate the
-              effectivess of ICUs in improving patient recovery and how they
-              provide a second chance to life.
+              Care (MIMIC)-IV database, a publicly available database consisting
+              of 100 patients admitted to the Beth Israel Deaconess Medical
+              Center from 2011 - 2016. Here we demonstrate the effectivess of
+              ICUs in improving patient recovery and how they provide a second
+              chance to life.
             </h3>
           </div>
           <img src="./images/hospital_image.png" width="500px" height="300px" />
@@ -91,7 +90,7 @@
           <div class="grid-item">
             <h4>ICU Stays</h4>
           </div>
-          
+
           <!-- Second row: Texts -->
         </div>
       </div>
@@ -100,17 +99,26 @@
       <div class="introInfo">
         <h3 class="introInfoText">
           In the high-stakes environment of an ICU, every decision matters.
-          Patient transfers—from admission to ICU, Specialized Care Units,
-          and eventual outcomes—reveal the intricate web of care pathways
-          designed to maximize recovery. These transitions, however, are not
-          without challenges. A delay in transfer or misstep in coordination can
+          Patient transfers—from admission to ICU, Specialized Care Units, and
+          eventual outcomes—reveal the intricate web of care pathways designed
+          to maximize recovery. These transitions, however, are not without
+          challenges. A delay in transfer or misstep in coordination can
           significantly affect patient outcomes. Tracking these movements is key
           to evaluating ICU efficiency and effectiveness. <br /><br />
-          ICU's and Care Units have further subdivisons amongst them. Continous patient monitoring and transfer to the right subdivision can help expediate patient recovery. 
+          ICU's and Care Units have further subdivisons amongst them. Continous
+          patient monitoring and transfer to the right subdivision can help
+          expediate patient recovery.
         </h3>
         <div id="early_transfer_stat">
-        According to an article from the NIH,<br><br> <span id="counter_text">"Early transfers result in approximately </span> <span id="counter"></span> <span id="counter_text">% reduction in risk of inhospital mortality."</span> 
-      </div>
+          According to an article from the NIH,<br /><br />
+          <span id="counter_text"
+            >"Early transfers result in approximately
+          </span>
+          <span id="counter"></span>
+          <span id="counter_text"
+            >% reduction in risk of inhospital mortality."</span
+          >
+        </div>
       </div>
     </div>
     <div class="networkChart">
@@ -129,25 +137,30 @@
           highlight the collaborative effort of healthcare providers to meet
           individual needs. To illustrate this complexity, the bubble chart
           below maps out treatments administered to each patient, showcasing the
-          breadth of interventions required. For example, some patients rely
-          heavily on fluid management through intravenous drips or fluid
-          boluses, while others require specialized therapies like insulin,
-          blood products, or enteral nutrition.
+          breadth of interventions required.
         </h3>
+        <br />
         <h3 class="introInfoText">
-          As you explore the chart, note the variability in treatment
-          approaches. Each bubble represents a treatment type, sized
-          proportionally to its frequency of use across 100 patients in our
-          dataset. This visualization provides a window into the meticulous and
-          diverse strategies employed in ICU care, underscoring the adaptability
-          and precision of modern medicine.
+          Here are some staggering statistics from the dataset that further
+          underline the remarkable scale and complexity of critical care. These
+          numbers give us insight into the breadth of interventions required and
+          the difference ICU care makes in saving lives and accelerate recovery.
         </h3>
+        <div id="stat_div">
+        <span id="stat_number">20,400</span><span id="stat_text"> treatments provided</span>
+      </div>
+      <div id="stat_div">
+        <span id="stat_number">4,000</span><span id="stat_text"> unique treatments</span>
+      </div>
+      <div id="stat_div">
+        <span id="stat_number">16</span><span id="stat_text"> Categories of treatments</span>
+      </div>
       </div>
     </div>
     <div class="bubbleChart">
       <div class="controls-container">
         <div class="stay-selector">
-          <label for="stayDropdown">Choose Patient's Stay:</label>
+          <label for="stayDropdown"><b>Monitor Patient:</b></label>
           <select id="stayDropdown">
             <option value="overall">Overall Frequency</option>
           </select>
@@ -163,9 +176,9 @@
             step="1"
           />
           <div class="time-labels">
-            <span>Start: <span id="minTime"></span></span>
+            <span><b>Start: </b><span id="minTime"></span></span>
             <span style="margin-left: 20px"
-              >End: <span id="maxTime"></span
+              ><b>End: </b><span id="maxTime"></span
             ></span>
           </div>
         </div>
@@ -346,29 +359,29 @@
         <div class="x-axis-labels"></div>
       </div>
     </div>
-    
-   <script>
-    // Set up the SVG and number container
-const counter = d3.select("#counter");
 
-// The starting and ending values for the counter
-const startValue = 0;
-const endValue = 56;
-const duration = 2000; // Duration for the animation in milliseconds
+    <script>
+      // Set up the SVG and number container
+      const counter = d3.select("#counter");
 
-// Create a transition to animate the number increase
-d3.transition()
-    .duration(duration)  // Duration of the transition
-    .tween("text", function() {
-        // Define the transition
-        const interpolate = d3.interpolateNumber(startValue, endValue);
-        
-        return function(t) {
+      // The starting and ending values for the counter
+      const startValue = 0;
+      const endValue = 56;
+      const duration = 2000; // Duration for the animation in milliseconds
+
+      // Create a transition to animate the number increase
+      d3.transition()
+        .duration(duration) // Duration of the transition
+        .tween("text", function () {
+          // Define the transition
+          const interpolate = d3.interpolateNumber(startValue, endValue);
+
+          return function (t) {
             // Interpolate the number at each step
             counter.text(Math.round(interpolate(t)));
-        };
-    });
-   </script>
+          };
+        });
+    </script>
     <script src="./scripts/bubbleChart.js"></script>
     <script src="./scripts/networkdiagram.js"></script>
     <script src="./scripts/boxPlot.js"></script>

@@ -118,3 +118,10 @@ body {
   #counter_text{
     font-size: 2.5rem;
   }
+  #stat_number{
+    font-size: 4rem;
+    color: darkslategray;
+  }
+  #stat_text{
+    font-size: 2rem;
+  }

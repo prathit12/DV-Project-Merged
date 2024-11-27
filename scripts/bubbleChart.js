@@ -29,9 +29,9 @@ const tooltip = d3.select("body")
 
 const legendContainer = svg.append("foreignObject")
     .attr("class", "legend-container")
-    .attr("width", 150)
-    .attr("height", height - 40)  // Adjust height to fit content
-    .attr("x", width - 190)  // Adjusted x position for new width
+    .attr("width", 175)
+    .attr("height", height/2 + 100)  // Adjust height to fit content
+    .attr("x", width - 175)  // Adjusted x position for new width
     .attr("y", 20)
     .append("xhtml:div");
 
@@ -259,7 +259,7 @@ function updateChart(stayId) {
             
             const stats = `
                 <div class="tooltip-content">
-                    <p><strong>Category:</strong> ${d.order_category_name}</p>
+                    <p><strong>Category:</strong> ${d.order_category_name.substring(3,)}</p>
                     <p><strong>Product:</strong> ${d.abbreviation}</p>
                     <p><strong>Administrations:</strong> ${d.frequency}</p>
                     <p><strong>First:</strong> ${firstTime}</p>
@@ -375,7 +375,7 @@ function showOverallChart() {
     circlesEnter
         .on('mouseover', function(event, d) {
             const stats = `
-                <p><strong>Category:</strong> ${d.order_category_name}</p>
+                <p><strong>Category:</strong> ${d.order_category_name.substring(3,)}</p>
                 <p><strong>Product Description:</strong> ${d.abbreviation}</p>
                 <p><strong>Frequency:</strong> ${d.frequency}</p>
             `;
@@ -445,7 +445,7 @@ function updateLegend(data) {
     legendItems.append("span")
         .text(d => {
             const count = data.filter(item => item.order_category_name === d).length;
-            return `${d.substring(0, 15)}${d.length > 15 ? '...' : ''} (${count})`;
+            return `${d.substring(3,)} (${count})`;
         });
 
     // Click handling
@@ -497,10 +497,10 @@ d3.select("#timeRange").on("input", debounce(function() {
 }, 100));
 
 // Add label for time range slider
-d3.select("#timeRangeContainer")
-    .insert("label", "#timeRange")
-    .attr("for", "timeRange")
-    .text("Time Range:");
+// d3.select("#timeRangeContainer")
+//     .insert("label", "#timeRange")
+//     .attr("for", "timeRange")
+//     .text("Time Range:");
 
 function updateMinMaxTime() {
     const selectedStayId = d3.select("#stayDropdown").property("value");
