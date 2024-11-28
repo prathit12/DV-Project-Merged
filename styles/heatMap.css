@@ -48,12 +48,6 @@ body {
     grid-row: 1 / 2; /* Ensure labels align with the top row */
 }
 
-.y-label {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 5px; /* Optional: space between label and heatmap */
-}
 
 .tooltip {
     position: absolute;
@@ -122,15 +116,8 @@ body {
 .y-label {
     font-weight: bold;
     display: flex;
+    align-items: center;
     flex-direction: column;
-    justify-content: center;
-    margin-top: 50px;
-}
-.outer-label{
-    margin-left: -50px;
-    margin-top: 20px;
-}
-.inner-label {
-    font-size: 1rem;
-    text-align: center; 
+    justify-content: flex-end;
+    padding-bottom: 25px;
 }

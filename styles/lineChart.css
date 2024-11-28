@@ -17,6 +17,7 @@
 #stay_select{
   padding: 20px;
   border: none;
+  background-color: transparent;
 }
 #outer_monitor{
   border: 1px solid black;
