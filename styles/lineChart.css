@@ -20,10 +20,13 @@
 }
 #outer_monitor{
   border: 1px solid black;
-  margin: 50px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  margin-left: 50px;
+  margin-right: 50px;
 }
 #inner_monitor{
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin: 50px;
 }
 
@@ -58,25 +61,25 @@
 
 #heart_value{
   margin-top: 20px;
-  margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-left: 60px; /* Changed value from 200px to 100px*/
   margin-bottom: 40px;
   
 }
 #oxygen_value{
   margin-top: 20px;
-  margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-left: 60px; /* Changed value from 200px to 100px*/
   margin-bottom: 40px;
   
 }
 #syst_value{
   
-  margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-left: 60px; /* Changed value from 200px to 100px*/
   
 }
 
 #dias_value{
   
-  margin-left: 100px; /* Changed value from 200px to 100px*/
+  margin-left: 60px; /* Changed value from 200px to 100px*/
 }
 
 #heart_metric{

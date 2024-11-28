@@ -129,3 +129,63 @@ body {
     margin-left: 30%;
     margin-top: 15px;
   }
+  .monitor-button1{
+    background-color: #8b0303;
+    width: 100px;
+    height: 20px;
+    border-radius: 20px;
+    border: 1px solid black;
+    margin-left: 10px;
+  }
+  .is_dead{
+    background-color: #8b0303;
+    color: whitesmoke;
+    padding: 10px 20px 10px 20px;
+    border-radius: 5px;
+    margin-right: 20px;
+    opacity: 0;
+  }
+  #bubbleDead{
+    margin-left: -70px;
+  }
+  #lineDead{
+    margin-left: -60px;
+  }
+  .monitor-button2{
+    background-color: rgb(162, 191, 242);
+    width: 100px;
+    height: 20px;
+    border-radius: 20px;
+    border: 1px solid black;
+    margin-left: 10px;
+  }
+  .monitor-button3{
+    background-color: rgb(177, 177, 19);
+    width: 100px;
+    height: 20px;
+    border-radius: 20px;
+    border: 1px solid black;
+    margin-left: 10px;
+  }
+  .button-group{
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 15%;
+  }
+  .introInfoText{
+    text-align: center;
+  }
+  #death_metric{
+    color: rgb(188, 0, 0);
+    font-size: 4rem;
+    margin-right: 20px;
+  }
+  #death_age_metric{
+    font-size: 3rem;
+    color: darkslategray;
+  }
+  #death_boxplot_metric{
+    margin-left: 20%;
+    margin-bottom: 50px;
+  }

@@ -1,630 +1,699 @@
 let stays = [];
 
-const vitals_path  = '/Dataset/icu/charteventssubset.csv';
-const medicatons_path = '/Dataset/icu/medicationinput.csv';
+const vitals_path = "/Dataset/icu/charteventssubset.csv";
+const medicatons_path = "/Dataset/icu/medicationinput.csv";
+const deaths_path = "/Dataset/Processed/final_data_heatmap.csv";
 let selected_data;
-let medications_data=[];
-
-document.addEventListener("DOMContentLoaded", function() {
-    let setOfStays = new Set();
-    d3.csv(vitals_path).then(data => {
-        data.map(d=>{
-            setOfStays.add(d["hadm_id"]);
+let medications_data = [];
+let death_ids = new Set();
+document.addEventListener("DOMContentLoaded", function () {
+  let setOfStays = new Set();
+  
+  d3.csv(deaths_path).then((data) => {
+    data.map((d) => {
+      if (d["hospital_expire_flag"] == "1") {
+        death_ids.add(d["hadm_id"]);
+      }
+    });
+    d3.csv(vitals_path).then((data) => {
+        data.map((d) => {
+          setOfStays.add(d["hadm_id"]);
         });
         stays = Array.from(setOfStays).sort();
-        var stay_select = document.getElementById('stay_select');
-        stays.forEach(function(col_name){
-            var new_option = document.createElement('option');
-            new_option.value = col_name;
-            new_option.text = col_name;
-            stay_select.appendChild(new_option);  
+        var stay_select = document.getElementById("stay_select");
+        stays.forEach(function (col_name) {
+          var new_option = document.createElement("option");
+          new_option.value = col_name;
+          new_option.text = col_name;
+          if(death_ids.has(col_name)){
+            new_option.style.backgroundColor = "#8b0303";
+            new_option.style.color = "whitesmoke";
+          }
+          stay_select.appendChild(new_option);
         });
-        document.getElementById('stay_select').value = stays[0];
+        document.getElementById("stay_select").value = stays[0];
         getData();
-    });
-   
+      });
   });
+  
+});
 
-function removeAllOptions(id){
-    const selectObj = document.getElementById(id);
-    while (selectObj.options.length > 0) {
-        selectObj.remove(0);
-    }
+function removeAllOptions(id) {
+  const selectObj = document.getElementById(id);
+  while (selectObj.options.length > 0) {
+    selectObj.remove(0);
+  }
 }
-function getData(){
-    
-    const stay_id = document.getElementById('stay_select').value;
-    const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    d3.csv(vitals_path).then(data => {
-        let setOfStays = new Set();
-        data.map(d=>{
-            setOfStays.add(d["hadm_id"]);
-        });
-        stays = Array.from(setOfStays).sort();
-        var stay_select = document.getElementById('stay_select');
-        stays.forEach(function(col_name){
-            var new_option = document.createElement('option');
-            new_option.value = col_name;
-            new_option.text = col_name;
-            stay_select.appendChild(new_option);  
-        });
-        document.getElementById('stay_select').value = stays[0];
-        
-        individual_data = data.filter(d=>d["hadm_id"]==stay_id)
-        .map(d => ({
-            hadm_id: +d["hadm_id"],
-            item_id: +d["itemid"],
-            valuenum: +d["valuenum"],
-            charttime: parseTime(d["charttime"])
-        }));
-        selected_data = individual_data;
-        // console.log("Selected id data : ", selected_data);
-        
-        d3.csv(medicatons_path).then(data1 => {
-            individual_data1 = data1.filter(d1=>d1["hadm_id"]==stay_id)
-            .map(d1 => ({
-                hadm_id: +d1["hadm_id"],
-                ordercategoryname: d1['ordercategoryname'],
-               
-                starttime: parseTime(d1["starttime"])
-            }));
-            medications_data = individual_data1;
-            drawHeartChart();
-            drawOxygenChart();
-            drawRespChart();
-            
-            // console.log("Medications Data: ", medications_data);
-            
-
-        });
-        
+function getData() {
+  const stay_id = document.getElementById("stay_select").value;
+  if(death_ids.has(stay_id)){
+    d3.select("#lineDead").style("opacity",1);
+  }else{
+    d3.select("#lineDead").style("opacity",0);
+  }
+  const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+  d3.csv(vitals_path).then((data) => {
+    let setOfStays = new Set();
+    data.map((d) => {
+      setOfStays.add(d["hadm_id"]);
     });
+    stays = Array.from(setOfStays).sort();
+    var stay_select = document.getElementById("stay_select");
+    stays.forEach(function (col_name) {
+      var new_option = document.createElement("option");
+      new_option.value = col_name;
+      new_option.text = col_name;
+      stay_select.appendChild(new_option);
+    });
+    // document.getElementById("stay_select").value = stays[0];
 
-    
-    
+    individual_data = data
+      .filter((d) => d["hadm_id"] == stay_id)
+      .map((d) => ({
+        hadm_id: +d["hadm_id"],
+        item_id: +d["itemid"],
+        valuenum: +d["valuenum"],
+        charttime: parseTime(d["charttime"]),
+      }));
+    selected_data = individual_data;
+    // console.log("Selected id data : ", selected_data);
+
+    d3.csv(medicatons_path).then((data1) => {
+      individual_data1 = data1
+        .filter((d1) => d1["hadm_id"] == stay_id)
+        .map((d1) => ({
+          hadm_id: +d1["hadm_id"],
+          ordercategoryname: d1["ordercategoryname"],
+
+          starttime: parseTime(d1["starttime"]),
+        }));
+      medications_data = individual_data1;
+      drawHeartChart();
+      drawOxygenChart();
+      drawRespChart();
+
+    });
+  });
 }
-const categories = Array.from(new Set(medications_data.map(d1=>d1[ordercategoryname])))
-// console.log("Categories: ", categories)
-const color_scale=d3.scaleOrdinal()
-.domain(categories)
-.range(d3.schemeCategory10)
+const categories = Array.from(
+  new Set(medications_data.map((d1) => d1[ordercategoryname]))
+);
+const color_scale = d3
+  .scaleOrdinal()
+  .domain(categories)
+  .range(d3.schemeCategory10);
 
-
-
-function drawHeartChart(){
-    // console.log('here!');
-    var margin = {top: 20, right: 50, bottom: 20, left: 60},
+function drawHeartChart() {
+  var margin = { top: 20, right: 50, bottom: 20, left: 60 },
     width = 800 - margin.left - margin.right, //changed value from 1050 to 800
-    height = 175 - margin.top - margin.bottom; 
-    const filtered_data = selected_data.filter(data=>data["item_id"]==220045)
-    .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));;
-    // console.log("Heart Rate : " , filtered_data);
-    d3.select("#heart_value").text(filtered_data[0].valuenum)
-    
-    // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
+    height = 175 - margin.top - margin.bottom;
+  const filtered_data = selected_data
+    .filter((data) => data["item_id"] == 220045)
+    .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
+  // console.log("Heart Rate : " , filtered_data);
+  d3.select("#heart_value").text(filtered_data[0].valuenum);
 
-    var svg = d3.select("#hr_chart")
-    svg.selectAll("*").remove() 
-    svg=svg.append("g")
-        .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
-        
-    var x = d3.scaleTime()
-        .domain(d3.extent(filtered_data, function(d) { return d.charttime; }))
-        .range([ 0, width ]);
-    svg.append("g")
-        .attr("transform", "translate(0 ," + height + ")")
-        .attr("stroke","white")
-        .call(d3.axisBottom(x))
-        .selectAll("path")
-        .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
-      
+  // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
-    
-    var y = d3.scaleLinear()
-        .domain([d3.min(filtered_data, function(d) { return +d.valuenum; }), d3.max(filtered_data, function(d) { return +d.valuenum; })])
-        .range([ height, 0 ]);
-    svg.append("g")
-    .attr("stroke","white")
+  var svg = d3.select("#hr_chart");
+  svg.selectAll("*").remove();
+  svg = svg
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var x = d3
+    .scaleTime()
+    .domain(
+      d3.extent(filtered_data, function (d) {
+        return d.charttime;
+      })
+    )
+    .range([0, width]);
+  svg
+    .append("g")
+    .attr("transform", "translate(0 ," + height + ")")
+    .attr("stroke", "white")
+    .call(d3.axisBottom(x))
+    .selectAll("path")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
+
+  var y = d3
+    .scaleLinear()
+    .domain([
+      d3.min(filtered_data, function (d) {
+        return +d.valuenum;
+      }),
+      d3.max(filtered_data, function (d) {
+        return +d.valuenum;
+      }),
+    ])
+    .range([height, 0]);
+  svg
+    .append("g")
+    .attr("stroke", "white")
     .call(d3.axisLeft(y))
     .selectAll("path")
-    .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
 
-    //Joins Modification 1
-    const heart_line = d3.line()
-    .x(d=>x(d.charttime))
-    .y(d=>y(d.valuenum))
+  //Joins Modification 1
+  const heart_line = d3
+    .line()
+    .x((d) => x(d.charttime))
+    .y((d) => y(d.valuenum));
 
-    svg.selectAll("path.line")
-    .data([filtered_data],d=>d.charttime)
-    .join(
-        enter=>enter.append("path")
-        .attr("class","line")
-        .attr("fill","none")
-        .attr("stroke","white")
+  svg
+    .selectAll("path.line")
+    .data([filtered_data], (d) => d.charttime)
+    .join((enter) =>
+      enter
+        .append("path")
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "white")
         .attr("stroke-width", 1)
         .attr("d", heart_line)
         // .call(enter=>enter.transition().duration(1000)),
-        .attr("stroke-dasharray", function(){
-            const length = this.getTotalLength();
-            return `${length} ${length}`;
+        .attr("stroke-dasharray", function () {
+          const length = this.getTotalLength();
+          return `${length} ${length}`;
         })
-        .attr("stroke-dashoffset", function(){
-            return this.getTotalLength();
+        .attr("stroke-dashoffset", function () {
+          return this.getTotalLength();
         })
 
-        .transition().duration(15000)
-        .attr("stroke-dashoffset",0)                                                                                                                            
+        .transition()
+        .duration(15000)
+        .attr("stroke-dashoffset", 0)
+    );
 
-       
+  // Created a lookup function to get valuenum for a specific charttime
+  function getValuenumForTime(time) {
+    // Find the data point with the closest `charttime` to the given `time`
+    const closest = filtered_data.reduce((prev, curr) => {
+      return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
+        ? curr
+        : prev;
+    });
+    return closest.valuenum;
+  }
 
-    )
-
-
-    // Created a lookup function to get valuenum for a specific charttime
-    function getValuenumForTime(time) {
-        // Find the data point with the closest `charttime` to the given `time`
-        const closest = filtered_data.reduce((prev, curr) => {
-            return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time) ? curr : prev;
-        });
-        return closest.valuenum;
-    }
-
- //New Circles with animations..
- // Animate circles representing data points with matching y-attribute from the first graph
-setTimeout(()=>{svg.selectAll("circle.data-point")
-.data(medications_data, d1 => d1.starttime)
-.join(
-    enter => enter.append("circle")
-        .attr("class", "data-point")
-        .attr("r", 5)
-        .attr("fill", d1 => color_scale(d1.ordercategoryname))
-        .attr("cx", d1 => x(d1.starttime))
-        .attr("cy", d1 => {
+  //New Circles with animations..
+  // Animate circles representing data points with matching y-attribute from the first graph
+  setTimeout(() => {
+    svg
+      .selectAll("circle.data-point")
+      .data(medications_data, (d1) => d1.starttime)
+      .join((enter) =>
+        enter
+          .append("circle")
+          .attr("class", "data-point")
+          .attr("r", 5)
+          .attr("fill", (d1) => color_scale(d1.ordercategoryname))
+          .attr("cx", (d1) => x(d1.starttime))
+          .attr("cy", (d1) => {
             const matchingValuenum = getValuenumForTime(d1.starttime);
             return matchingValuenum ? y(matchingValuenum) : null;
-        })
-        .style("opacity",0)
-        .transition()
-        
-        
-        .duration(1000)
-        .style("opacity",1)
+          })
+          .style("opacity", 0)
+          .transition()
 
-   
-)
-.on("mouseover", function(event,d1){
-    heart_tooltip.style("display","block").text(d1.ordercategoryname);
-})
+          .duration(1000)
+          .style("opacity", 1)
+      )
+      .on("mouseover", function (event, d1) {
+        heart_tooltip
+          .style("display", "block")
+          .text(d1.ordercategoryname.substring(3));
+      })
 
-.on("mousemove", function(event){
-    heart_tooltip.style("left", (event.pageX+5)+"px")
-    .style("top",(event.pageY-5)+"px");
+      .on("mousemove", function (event) {
+        heart_tooltip
+          .style("left", event.pageX + 5 + "px")
+          .style("top", event.pageY - 5 + "px");
+      })
 
-})
+      .on("mouseout", function (event) {
+        heart_tooltip.style("display", "none");
+      })
+      .attr("class", (d1) =>
+        color_scale(d1.ordercategoryname) ? "meds-circle" : " "
+      );
+  }, 15000);
 
-
-.on("mouseout", function(event){
-    heart_tooltip.style("display","none");
-})
-.attr("class",d1=>color_scale(d1.ordercategoryname)?"meds-circle":" ")
-},15000)
-
-    //Click Circle
-    const click_circle = svg.selectAll("click_circle")
-    .data(filtered_data )
+  //Click Circle
+  const click_circle = svg
+    .selectAll("click_circle")
+    .data(filtered_data)
     .enter()
     .append("circle")
-    .attr("cx", d=>x(d.charttime))
-    .attr("cy", d=>y(d.valuenum))
-    .attr("r",2)
-    .attr("fill", "blue")
-    //.attr("opacity",0)
-    click_circle.on("click", function(event, d){
-        d3.select("#heart_value").text(d.valuenum)
-        // console.log(d)
-        d3.select(this)
-        .transition()
-        .duration(10)
-        .attr("r",4)
-        .attr("fill","yellow")
+    .attr("cx", (d) => x(d.charttime))
+    .attr("cy", (d) => y(d.valuenum))
+    .attr("r", 3)
+    .attr("fill", "blue");
+  click_circle.on("mouseover", function (event, d) {
+    d3.select(this)
+      .transition()
+      .duration(10)
+      .attr("r", 4)
+      .attr("fill", "cyan")
 
-        .transition()
-        .duration(1000)
-        .attr("r",2)
-        .attr("fill","blue")
-    })
+      .transition()
+      .duration(2000)
+      .attr("r", 3)
+      .attr("fill", "blue");
+  });
+  click_circle.on("click", function (event, d) {
+    d3.select("#heart_value").text(d.valuenum);
+  });
 
-
-    //Tooltip 
-    const heart_tooltip = d3.select("body").append("div")
-    .style("position","absolute")
-    .style("background","white")
-    .style("padding","5px")
-    .style("border-radius","5px")
-    .style("border","1px solid black")
-    .style("display","none");
-
-
-    
-
-
-
-    
+  //Tooltip
+  const heart_tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background", "white")
+    .style("padding", "5px")
+    .style("border-radius", "5px")
+    .style("border", "1px solid black")
+    .style("display", "none");
 }
 
-
-function drawOxygenChart(){
-    var margin = {top: 20, right: 50, bottom: 20, left: 60},
+function drawOxygenChart() {
+  var margin = { top: 20, right: 50, bottom: 20, left: 60 },
     width = 800 - margin.left - margin.right, //changed value from 1050 to 800
-    height = 175 - margin.top - margin.bottom; 
-    const filtered_data = selected_data.filter(data=>data["item_id"]==220277)
+    height = 175 - margin.top - margin.bottom;
+  const filtered_data = selected_data
+    .filter((data) => data["item_id"] == 220277)
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
-    // console.log("Oxygen Rate : " , filtered_data);
-    d3.select("#oxygen_value").text(filtered_data[0].valuenum);
-    
-    // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
+  // console.log("Oxygen Rate : " , filtered_data);
+  d3.select("#oxygen_value").text(filtered_data[0].valuenum);
 
-    var svg = d3.select("#o2_chart")
-    svg.selectAll("*").remove()
-    svg=svg.append("g")
-        .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-        
-    var x = d3.scaleTime()
-        .domain(d3.extent(filtered_data, function(d) { return d.charttime; }))
-        .range([ 0, width ]);
-    svg.append("g")
-        .attr("transform", "translate(0," + (height-5) + ")")
-        .attr("stroke","white")
-        .call(d3.axisBottom(x))
-        .selectAll("path")
-        .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
+  // console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
-    
-    var y = d3.scaleLinear()
-        .domain([d3.min(filtered_data, function(d) { return +d.valuenum; }), d3.max(filtered_data, function(d) { return +d.valuenum; })])
-        .range([ height-5, 0 ]);
-    svg.append("g")
-        .attr("stroke","white")
-        .call(d3.axisLeft(y))
-        .selectAll("path")
-        .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
+  var svg = d3.select("#o2_chart");
+  svg.selectAll("*").remove();
+  svg = svg
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //Line Chart
-    const o2_line = d3.line()
-    .x(d=>x(d.charttime))
-    .y(d=>y(d.valuenum))
-    .curve(d3.curveMonotoneX)
+  var x = d3
+    .scaleTime()
+    .domain(
+      d3.extent(filtered_data, function (d) {
+        return d.charttime;
+      })
+    )
+    .range([0, width]);
+  svg
+    .append("g")
+    .attr("transform", "translate(0," + (height - 5) + ")")
+    .attr("stroke", "white")
+    .call(d3.axisBottom(x))
+    .selectAll("path")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
 
-    svg.selectAll("path.line")
-    .data([filtered_data],d=>d.charttime)
+  var y = d3
+    .scaleLinear()
+    .domain([
+      d3.min(filtered_data, function (d) {
+        return +d.valuenum;
+      }),
+      d3.max(filtered_data, function (d) {
+        return +d.valuenum;
+      }),
+    ])
+    .range([height - 5, 0]);
+  svg
+    .append("g")
+    .attr("stroke", "white")
+    .call(d3.axisLeft(y))
+    .selectAll("path")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
+
+  //Line Chart
+  const o2_line = d3
+    .line()
+    .x((d) => x(d.charttime))
+    .y((d) => y(d.valuenum))
+    .curve(d3.curveMonotoneX);
+
+  svg
+    .selectAll("path.line")
+    .data([filtered_data], (d) => d.charttime)
     .join(
-        enter=>enter.append("path")
-        .attr("class","line")
-        .attr("fill","none")
-        .attr("stroke","white")
-        .attr("stroke-width", 1)
-        .attr("d", o2_line)
-        .attr("stroke-dasharray", function(){
+      (enter) =>
+        enter
+          .append("path")
+          .attr("class", "line")
+          .attr("fill", "none")
+          .attr("stroke", "white")
+          .attr("stroke-width", 1)
+          .attr("d", o2_line)
+          .attr("stroke-dasharray", function () {
             const length = this.getTotalLength();
             return `${length} ${length}`;
-        })
-        .attr("stroke-dashoffset", function(){
+          })
+          .attr("stroke-dashoffset", function () {
             return this.getTotalLength();
-        })
+          })
 
-        .transition().duration(15000)
-        .attr("stroke-dashoffset",0),
+          .transition()
+          .duration(15000)
+          .attr("stroke-dashoffset", 0),
 
-        //update
-        update=>update
-        .attr("stroke", "black")
-        .transition().duration(5000)
-        .attr("d", o2_line),
+      //update
+      (update) =>
+        update
+          .attr("stroke", "black")
+          .transition()
+          .duration(5000)
+          .attr("d", o2_line),
 
-        //exit
-        exit=>exit
-        .attr("stroke","brown")
-        .transition().duration(1000)
-        .attr("stroke-dashoffset", function(){
+      //exit
+      (exit) =>
+        exit
+          .attr("stroke", "brown")
+          .transition()
+          .duration(1000)
+          .attr("stroke-dashoffset", function () {
             return -this.getTotalLength();
-        })
-        .remove()
+          })
+          .remove()
+    );
 
-    )
-    
-    
-        
-        function getValuenumForTime(time) {
-            // Find the data point with the closest `charttime` to the given `time`
-            const closest = filtered_data.reduce((prev, curr) => {
-                return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time) ? curr : prev;
-            });
-            return closest.valuenum;
-        }
-        
-    
-    // Circles representing data points with matching y-attribute from the first graph
-    setTimeout(()=>{svg.selectAll("circle.data-point")
-        .data(medications_data, d1 => d1.starttime)
-        .join(
-            enter => enter.append("circle")
-                .attr("class", "data-point")
-                .attr("r", 5)
-                .attr("fill", d1 => color_scale(d1.ordercategoryname))
-                .attr("cx", d1 => x(d1.starttime))
-                .attr("cy", d1 => {
-                    const matchingValuenum = getValuenumForTime(d1.starttime);
-                    return matchingValuenum ? y(matchingValuenum) : null;
-                })
-                .style("opacity",0)
-                .transition()
-                
-                
-                .duration(1000)
-                .style("opacity",1)
-        
-           
-        )
-        .on("mouseover", function(event,d1){
-            oxygen_tooltip.style("display","block").text(d1.ordercategoryname);
-        })
-        
-        .on("mousemove", function(event){
-            oxygen_tooltip.style("left", (event.pageX+5)+"px")
-            .style("top",(event.pageY-5)+"px");
-        
-        })
-        
-        
-        .on("mouseout", function(event){
-            oxygen_tooltip.style("display","none");
-        })
-        .attr("class",d1=>color_scale(d1.ordercategoryname)?"meds-circle":" ")
-        },15000)
+  function getValuenumForTime(time) {
+    // Find the data point with the closest `charttime` to the given `time`
+    const closest = filtered_data.reduce((prev, curr) => {
+      return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
+        ? curr
+        : prev;
+    });
+    return closest.valuenum;
+  }
 
-        const oxygen_tooltip = d3.select("body").append("div")
-        .style("position","absolute")
-        .style("background","white")
-        .style("padding","5px")
-        .style("border-radius","5px")
-        .style("border","1px solid black")
-        .style("display","none");
-    
+  // Circles representing data points with matching y-attribute from the first graph
+  setTimeout(() => {
+    svg
+      .selectAll("circle.data-point")
+      .data(medications_data, (d1) => d1.starttime)
+      .join((enter) =>
+        enter
+          .append("circle")
+          .attr("class", "data-point")
+          .attr("r", 5)
+          .attr("fill", (d1) => color_scale(d1.ordercategoryname))
+          .attr("cx", (d1) => x(d1.starttime))
+          .attr("cy", (d1) => {
+            const matchingValuenum = getValuenumForTime(d1.starttime);
+            return matchingValuenum ? y(matchingValuenum) : null;
+          })
+          .style("opacity", 0)
+          .transition()
 
-    //Circles for representing the datapoint and adding on click event
-    const o2_click = svg.selectAll("oxygen_circle")
+          .duration(1000)
+          .style("opacity", 1)
+      )
+      .on("mouseover", function (event, d1) {
+        oxygen_tooltip
+          .style("display", "block")
+          .text(d1.ordercategoryname.substring(3));
+      })
+
+      .on("mousemove", function (event) {
+        oxygen_tooltip
+          .style("left", event.pageX + 5 + "px")
+          .style("top", event.pageY - 5 + "px");
+      })
+
+      .on("mouseout", function (event) {
+        oxygen_tooltip.style("display", "none");
+      })
+      .attr("class", (d1) =>
+        color_scale(d1.ordercategoryname) ? "meds-circle" : " "
+      );
+  }, 15000);
+
+  const oxygen_tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background", "white")
+    .style("padding", "5px")
+    .style("border-radius", "5px")
+    .style("border", "1px solid black")
+    .style("display", "none");
+
+  //Circles for representing the datapoint and adding on click event
+  const o2_click = svg
+    .selectAll("oxygen_circle")
     .data(filtered_data)
     .enter()
     .append("circle")
     .attr("fill", "blue")
     //.attr("opacity",0)
-    .attr("r",2)
-    
-    .attr("cx", d=>x(d.charttime))
-    .attr("cy", d=>y(d.valuenum))
-    
-    o2_click.on("click", function(event,d){
-        d3.select("#oxygen_value").text(d.valuenum)
-        d3.select(this)
-        .transition()
-        .duration(10)
-        .attr("r",4)
-        .attr("fill","yellow")
+    .attr("r", 3)
 
-        .transition()
-        .duration(1000)
-        .attr("r",2)
-        .attr("fill","blue")
-    })
+    .attr("cx", (d) => x(d.charttime))
+    .attr("cy", (d) => y(d.valuenum));
+  o2_click.on("mouseover", function (event, d) {
+    d3.select(this)
+      .transition()
+      .duration(10)
+      .attr("r", 4)
+      .attr("fill", "cyan")
 
-    
+      .transition()
+      .duration(2000)
+      .attr("r", 3)
+      .attr("fill", "blue");
+  });
+  o2_click.on("click", function (event, d) {
+    d3.select("#oxygen_value").text(d.valuenum);
+  });
 }
 
-
-
-
-function drawRespChart(){
-    var margin = {top: 20, right: 50, bottom: 20, left: 60},
+function drawRespChart() {
+  var margin = { top: 20, right: 50, bottom: 20, left: 60 },
     width = 800 - margin.left - margin.right, //changed value from 1050 to 800
     height = 175 - margin.top - margin.bottom; //changed value from 200 to 175
-    const filtered_data = selected_data.filter(data=>data["item_id"]==220179 || data["item_id"]==220180 )
-    
+  const filtered_data = selected_data
+    .filter((data) => data["item_id"] == 220179 || data["item_id"] == 220180)
+
     .sort((a, b) => new Date(a["charttime"]) - new Date(b["charttime"]));
-    // console.log("Resp_Chart Filtered Data: ", filtered_data);
-    d3.select("#syst_value").text(filtered_data[0].valuenum)
-    d3.select("#dias_value").text(filtered_data[1].valuenum)
-    
-    
-    //console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
+  // console.log("Resp_Chart Filtered Data: ", filtered_data);
+  d3.select("#syst_value").text(filtered_data[0].valuenum);
+  d3.select("#dias_value").text(filtered_data[1].valuenum);
 
-    
-    var svg = d3.select("#bp_chart")
-    svg.selectAll("*").remove() 
-    svg=svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
-    var x = d3.scaleTime()
-        .domain(d3.extent(filtered_data, function(d) { return d.charttime; }))
-        .range([ 0, width ]);
-    svg.append("g")
-        .attr("transform", "translate(-10," + (height) + ")")
-        .attr("stroke","white")
-        .call(d3.axisBottom(x))
-        .selectAll("path")
-        .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
+  //console.log(d3.extent(filtered_data, function(d) { return d.charttime; }));
 
-    
-    var y = d3.scaleLinear()
-        .domain([0, d3.max(filtered_data, function(d) { return +d.valuenum; })])
-        
-        .range([ height, 0 ]);
-    svg.append("g")
-        .attr("transform",`translate(-10)`)
-        .attr("stroke","white")
-        .call(d3.axisLeft(y))
-        .selectAll("path")
-        .style("stroke","white")
-    svg.selectAll(".tick line")
-    .style("stroke","white")
-    
+  var svg = d3.select("#bp_chart");
+  svg.selectAll("*").remove();
+  svg = svg
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //Line Chart..
-    const resp_line = d3.line()
-    .x(d=>x(d.charttime))
-    .y(d=>y(d.valuenum))
-    .curve(d3.curveMonotoneX)
+  var x = d3
+    .scaleTime()
+    .domain(
+      d3.extent(filtered_data, function (d) {
+        return d.charttime;
+      })
+    )
+    .range([0, width]);
+  svg
+    .append("g")
+    .attr("transform", "translate(-10," + height + ")")
+    .attr("stroke", "white")
+    .call(d3.axisBottom(x))
+    .selectAll("path")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
 
-    svg.selectAll("path.line")
-    .data([filtered_data],d=>d.charttime)
+  var y = d3
+    .scaleLinear()
+    .domain([
+      0,
+      d3.max(filtered_data, function (d) {
+        return +d.valuenum;
+      }),
+    ])
+
+    .range([height, 0]);
+  svg
+    .append("g")
+    .attr("transform", `translate(-10)`)
+    .attr("stroke", "white")
+    .call(d3.axisLeft(y))
+    .selectAll("path")
+    .style("stroke", "white");
+  svg.selectAll(".tick line").style("stroke", "white");
+
+  //Line Chart..
+  const resp_line = d3
+    .line()
+    .x((d) => x(d.charttime))
+    .y((d) => y(d.valuenum))
+    .curve(d3.curveMonotoneX);
+
+  svg
+    .selectAll("path.line")
+    .data([filtered_data], (d) => d.charttime)
     .join(
-        enter=>enter.append("path")
-        .attr("class","line")
-        .attr("fill","none")
-        .attr("stroke","white")
-        .attr("stroke-width", 1)
-        .attr("d", resp_line)
-        .attr("stroke-dasharray", function(){
+      (enter) =>
+        enter
+          .append("path")
+          .attr("class", "line")
+          .attr("fill", "none")
+          .attr("stroke", "white")
+          .attr("stroke-width", 1)
+          .attr("d", resp_line)
+          .attr("stroke-dasharray", function () {
             const length = this.getTotalLength();
             return `${length} ${length}`;
-        })
-        .attr("stroke-dashoffset", function(){
+          })
+          .attr("stroke-dashoffset", function () {
             return this.getTotalLength();
-        })
+          })
 
-        .transition().duration(15000)
-        .attr("stroke-dashoffset",0),
+          .transition()
+          .duration(15000)
+          .attr("stroke-dashoffset", 0),
 
-        //update
-        update=>update
-        .attr("stroke", "black")
-        .transition().duration(5000)
-        .attr("d", resp_line),
+      //update
+      (update) =>
+        update
+          .attr("stroke", "black")
+          .transition()
+          .duration(5000)
+          .attr("d", resp_line),
 
-        //exit
-        exit=>exit
-        .attr("stroke","brown")
-        .transition().duration(1000)
-        .attr("stroke-dashoffset", function(){
+      //exit
+      (exit) =>
+        exit
+          .attr("stroke", "brown")
+          .transition()
+          .duration(1000)
+          .attr("stroke-dashoffset", function () {
             return -this.getTotalLength();
-        })
-        .remove()
+          })
+          .remove()
+    );
 
-    )
-    
-    
+  function getValuenumForTime(time) {
+    // Find the data point with the closest `charttime` to the given `time`
+    const closest = filtered_data.reduce((prev, curr) => {
+      return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
+        ? curr
+        : prev;
+    });
+    return closest.valuenum;
+  }
 
-            function getValuenumForTime(time) {
-                // Find the data point with the closest `charttime` to the given `time`
-                const closest = filtered_data.reduce((prev, curr) => {
-                    return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time) ? curr : prev;
-                });
-                return closest.valuenum;
-            }
-            
-        
-        // Circles representing data points with matching y-attribute from the first graph
-        setTimeout(()=>{svg.selectAll("circle.data-point")
-            .data(medications_data, d1 => d1.starttime)
-            .join(
-                enter => enter.append("circle")
-                    .attr("class", "data-point")
-                    .attr("r", 5)
-                    .attr("fill", d1 => color_scale(d1.ordercategoryname))
-                    .attr("cx", d1 => x(d1.starttime))
-                    .attr("cy", d1 => {
-                        const matchingValuenum = getValuenumForTime(d1.starttime);
-                        return matchingValuenum ? y(matchingValuenum) : null;
-                    })
-                    .style("opacity",0)
-                    //Remove circles that go outside the x-axis.
-                    .filter(function(d1){
-                        const x_position = x(d1.starttime);
-                        return x_position >=0 && x_position<=width;
-                    })
-                    .transition()
-                    
-                    
-                    .duration(1000)
-                    .style("opacity",1)
-            
-               
-            )
-            .on("mouseover", function(event,d1){
-                resp_tooltip.style("display","block").text(d1.ordercategoryname);
-            })
-            
-            .on("mousemove", function(event){
-                resp_tooltip.style("left", (event.pageX+5)+"px")
-                .style("top",(event.pageY-5)+"px");
-            
-            })
-            
-            
-            .on("mouseout", function(event){
-                resp_tooltip.style("display","none");
-            })
-            .attr("class",d1=>color_scale(d1.ordercategoryname)?"meds-circle":" ")
-            },15000)
-    
-            const  resp_tooltip = d3.select("body").append("div")
-            .style("position","absolute")
-            .style("background","white")
-            .style("padding","5px")
-            .style("border-radius","5px")
-            .style("border","1px solid black")
-            .style("display","none");
-      
-    
-    //Clicking circle
-    const resp_click = svg.selectAll("resp_circle")
+  // Circles representing data points with matching y-attribute from the first graph
+  setTimeout(() => {
+    svg
+      .selectAll("circle.data-point")
+      .data(medications_data, (d1) => d1.starttime)
+      .join((enter) =>
+        enter
+          .append("circle")
+          .attr("class", "data-point")
+          .attr("r", 5)
+          .attr("fill", (d1) => color_scale(d1.ordercategoryname))
+          .attr("cx", (d1) => x(d1.starttime))
+          .attr("cy", (d1) => {
+            const matchingValuenum = getValuenumForTime(d1.starttime);
+            return matchingValuenum ? y(matchingValuenum) : null;
+          })
+          .style("opacity", 0)
+          //Remove circles that go outside the x-axis.
+          .filter(function (d1) {
+            const x_position = x(d1.starttime);
+            return x_position >= 0 && x_position <= width;
+          })
+          .transition()
+
+          .duration(1000)
+          .style("opacity", 1)
+      )
+      .on("mouseover", function (event, d1) {
+        resp_tooltip
+          .style("display", "block")
+          .text(d1.ordercategoryname.substring(3));
+      })
+
+      .on("mousemove", function (event) {
+        resp_tooltip
+          .style("left", event.pageX + 5 + "px")
+          .style("top", event.pageY - 5 + "px");
+      })
+
+      .on("mouseout", function (event) {
+        resp_tooltip.style("display", "none");
+      })
+      .attr("class", (d1) =>
+        color_scale(d1.ordercategoryname) ? "meds-circle" : " "
+      );
+  }, 15000);
+
+  const resp_tooltip = d3
+    .select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("background", "white")
+    .style("padding", "5px")
+    .style("border-radius", "5px")
+    .style("border", "1px solid black")
+    .style("display", "none");
+
+  //Clicking circle
+  const resp_click = svg
+    .selectAll("resp_circle")
     .data(filtered_data)
     .enter()
     .append("circle")
-    .attr("cx",d=>x(d.charttime))
-    .attr("cy",d=>y(d.valuenum))
-    .attr("fill","blue")
+    .attr("cx", (d) => x(d.charttime))
+    .attr("cy", (d) => y(d.valuenum))
+    .attr("fill", "blue")
     // .attr("opacity",0)
-    .attr("r","2")
-    resp_click.on("click",function(event,d){  
-        if(d.item_id==220179){
-        d3.select("#syst_value").text(d.valuenum)
-        //Added animation for click wbent.
-        d3.select(this)
-        .transition()
-        .duration(10)
-        .attr("r",4)
-        .attr("fill","yellow")
-        .transition()
-        .duration(1000)
-        .attr("r",2)
-        .attr("fill","blue")
-        }
+    .attr("r", "3");
 
-        if(d.item_id==220180){
-        d3.select("#dias_value").text(d.valuenum)
-        //Added animation for click vent.
-        d3.select(this)
+  resp_click.on("mouseover", function (event, d) {
+    if (d.item_id == 220179) {
+      d3.select(this)
         .transition()
         .duration(10)
-        .attr("r",4)
-        .attr("fill","yellow")
+        .attr("r", 4)
+        .attr("fill", "cyan")
         .transition()
-        .duration(1000)
-        .attr("r",2)
-        .attr("fill","blue")
-        }
-        
-    })
+        .duration(2000)
+        .attr("r", 3)
+        .attr("fill", "blue");
+    }
+
+    if (d.item_id == 220180) {
+      d3.select(this)
+        .transition()
+        .duration(10)
+        .attr("r", 4)
+        .attr("fill", "cyan")
+        .transition()
+        .duration(2000)
+        .attr("r", 3)
+        .attr("fill", "blue");
+    }
+  });
+  resp_click.on("click", function (event, d) {
+    if (d.item_id == 220179) {
+      d3.select("#syst_value").text(d.valuenum);
+    }
+
+    if (d.item_id == 220180) {
+      d3.select("#dias_value").text(d.valuenum);
+    }
+  });
 }
-

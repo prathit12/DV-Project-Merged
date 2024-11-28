@@ -122,9 +122,7 @@
       </div>
     </div>
     <div class="networkChart">
-      <svg id="networkSvg" width="1200" height="700">
-        <!-- <image x="250" y="50" width="50" height="50" href="./images/hospitalisation.png" style="z-index: 10;" /> -->
-      </svg>
+      <svg id="networkSvg" width="1200" height="700"></svg>
     </div>
     <div class="networkChartIntro">
       <div class="introInfo">
@@ -135,7 +133,7 @@
           tailored nutritional support. The diversity and intensity of these
           treatments reflect the complexities of managing critical illnesses and
           highlight the collaborative effort of healthcare providers to meet
-          individual needs, illustrated by the bubble chart below. 
+          individual needs, illustrated by the bubble chart below.
         </h3>
         <br />
         <h3 class="introInfoText">
@@ -145,19 +143,23 @@
           the difference ICU care makes in saving lives and accelerate recovery.
         </h3>
         <div id="stat_div">
-        <span id="stat_number">20,400</span><span id="stat_text"> treatments provided</span>
-      </div>
-      <div id="stat_div">
-        <span id="stat_number">4,000</span><span id="stat_text"> unique treatments</span>
-      </div>
-      <div id="stat_div">
-        <span id="stat_number">16</span><span id="stat_text"> Categories of treatments</span>
-      </div>
+          <span id="stat_number">20,400</span
+          ><span id="stat_text"> treatments provided</span>
+        </div>
+        <div id="stat_div">
+          <span id="stat_number">4,000</span
+          ><span id="stat_text"> unique treatments</span>
+        </div>
+        <div id="stat_div">
+          <span id="stat_number">16</span
+          ><span id="stat_text"> Categories of treatments</span>
+        </div>
       </div>
     </div>
     <div class="bubbleChart">
       <div class="controls-container">
         <div class="stay-selector">
+          <span class = "is_dead" id = "bubbleDead">Dead</span>
           <label for="stayDropdown"><b>Monitor Patient:</b></label>
           <select id="stayDropdown">
             <option value="overall">Overall Frequency</option>
@@ -191,35 +193,32 @@
     <div class="networkChartIntro">
       <div class="introInfo">
         <h3 class="introInfoText">
-          The ICU is a battlefield where every decision can mean the difference
-          between life and death. Tracking and responding to vital signs—heart
-          rate, oxygen levels, and blood pressure—enable clinicians to act
-          swiftly in stabilizing critically ill patients. These metrics are not
-          just numbers; they’re a window into the body’s response to life-saving
-          interventions.
+          Tracking and responding to vital signs — heart rate, oxygen levels,
+          and blood pressure enable clinicians to act swiftly in stabilizing
+          critically ill patients. These metrics are not just numbers; they
+          provide a critical window into the body’s response to life-saving
+          interventions, guiding precise and timely medical decisions.
         </h3>
+        <br /><br />
         <h3 class="introInfoText">
-          The charts below demonstrate this connection. Visualized as heart
-          monitors, they depict the interplay between vital signs and medical
-          treatments for each patient. Circles mark points where medications
-          were administered, showing how these interventions impact stability
-          and recovery. This visualization underscores the ICU’s effectiveness
-          in saving lives. By closely monitoring changes and tailoring
-          treatments in real time, healthcare providers can prevent critical
-          conditions from escalating, restore vital functions, and offer
-          patients a fighting chance. As you explore, notice how timely
-          interventions correlate with improvements in vital metrics, a
+          The line charts below demonstrate this connection. Visualized as a
+          heart monitor, they depict the interplay between vital signs and
+          medical treatments for each patient. This visualization underscores
+          the ICU’s effectiveness in saving lives. By closely monitoring changes
+          and tailoring treatments in real time, healthcare providers can
+          prevent critical conditions from escalating, restore vital functions,
+          and offer patients a fighting chance. As you explore, notice how
+          timely interventions correlate with improvements in vital metrics, a
           testament to the ICU's pivotal role in patient survival.
         </h3>
       </div>
     </div>
     <div class="lineChartContainer">
       <div class="myContainer">
-        <!-- <h3 class="chart-title">Line Chart</h3>
-                <hr> -->
         <div id="linechart_div">
           <div id="controlpanel_div">
-            <label for="stay_options">Choose the stay_id: </label>
+            <span class = "is_dead" id = "lineDead">Dead</span>
+            <label for="stay_options"><b>Monitor Patient: </b></label>
             <select
               id="stay_select"
               name="stay_options"
@@ -260,6 +259,14 @@
                   <span id="resp_m">mmHg</span>
                 </div>
               </div>
+              <div class="button-group">
+                <div class="monitor-button3"></div>
+                <div class="monitor-button2"></div>
+                <div class="monitor-button2"></div>
+                <div class="monitor-button2"></div>
+                <div class="monitor-button2"></div>
+                <div class="monitor-button1"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -268,30 +275,35 @@
     <div class="networkChartIntro">
       <div class="introInfo">
         <h3 class="introInfoText">
-          As the data reveals, age is a key factor influencing ICU outcomes,
-          with older patients showing longer stays and higher mortality rates.
-          This is not an indication of ICU ineffectiveness but reflects the
-          natural decline in physiological reserves that comes with aging. Older
-          individuals often face multiple comorbidities and a slower recovery
-          rate, which can lengthen their ICU stay. interventions.
+          Age emerges as a profound factor in the story of ICU care. For older
+          patients, the journey through critical illness often comes with
+          greater challenges — longer stays, heightened risks, and more complex
+          recoveries. With diminishing physiological
+          reserves and the presence of multiple comorbidities, elderly patients
+          face a steeper uphill battle.
         </h3>
+          <br><br>
         <h3 class="introInfoText">
           While a longer length of stay may seem concerning, it can also be
           beneficial. Extended monitoring and care offer critical opportunities
           to manage complications, stabilize vital functions, and provide
-          patients with the best chance for recovery. This reinforces that the
-          ICU’s role is not only to treat but to support patients through
-          extended recovery processes, especially as age-related challenges
-          arise. Thus, while longer stays may correlate with higher mortality
+          patients with the best chance for recovery. While longer stays may correlate with higher mortality
           rates, they also highlight the ICU's essential role in providing
           comprehensive, sustained care.
+        </h3>
+        <br>
+        <div id="death_boxplot_metric">
+        <span id="death_metric">14/15</span> <span id="death_age_metric">deaths in people over <b>60</b>.</span>
+      </div>
+        <h3 class="introInfoText">
+          This is not a reflection of ICU inefficiency but a
+          testament to the realities of aging. 
         </h3>
       </div>
     </div>
     <div class="boxPlotContainer">
       <header>
-        <!-- <h1>Box Plot - Age Group vs Length of Stays</h1> -->
-        <!-- <hr> -->
+       
       </header>
       <div class="controls-row">
         <div class="toggle-container">
