@@ -15,11 +15,11 @@ d3.csv('/Dataset/Processed/final_data_heatmap.csv').then(function(data) {
     function renderHeatmap(filterType = "all") {
         const categoryData = [
             { severity: 'Low Severity Dead', counts: Array(7).fill(0) },
-            { severity: 'Low Severity Cured', counts: Array(7).fill(0) },
+            { severity: 'Low Severity Alive', counts: Array(7).fill(0) },
             { severity: 'Medium Severity Dead', counts: Array(7).fill(0) },
-            { severity: 'Medium Severity Cured', counts: Array(7).fill(0) },
+            { severity: 'Medium Severity Alive', counts: Array(7).fill(0) },
             { severity: 'High Severity Dead', counts: Array(7).fill(0) },
-            { severity: 'High Severity Cured', counts: Array(7).fill(0) },
+            { severity: 'High Severity Alive', counts: Array(7).fill(0) },
         ];
 
         data.forEach(d => {
@@ -98,9 +98,7 @@ d3.csv('/Dataset/Processed/final_data_heatmap.csv').then(function(data) {
                     .on("mouseover", (event) => showTooltip(event, `${row.severity}: ${procedures[colIndex]} - ${count} cases`))
                     .on("mousemove", moveTooltip)
                     .on("mouseout", hideTooltip)
-                    .style("grid-row", `${rowIndex + 1}`)
-                    .style("border", count > 0 ? "2px solid #B3C7C6" : "1px solid #ccc") // Highlight high-count cells
-.style("box-shadow", count > 0 ? "2px 2px 10px #B3C7C6" : "none");;
+                    .style("grid-row", `${rowIndex + 1}`);
 
                 cell.transition()
                     .duration(2000)

@@ -159,7 +159,7 @@
     <div class="bubbleChart">
       <div class="controls-container">
         <div class="stay-selector">
-          <span class = "is_dead" id = "bubbleDead">Dead</span>
+          <span class="is_dead" id="bubbleDead">Dead</span>
           <label for="stayDropdown"><b>Monitor Patient:</b></label>
           <select id="stayDropdown">
             <option value="overall">Overall Frequency</option>
@@ -201,23 +201,31 @@
         </h3>
         <br /><br />
         <h3 class="introInfoText">
-          The line charts below demonstrate this connection. Visualized as a
-          heart monitor, they depict the interplay between vital signs and
-          medical treatments for each patient. This visualization underscores
-          the ICU’s effectiveness in saving lives. By closely monitoring changes
-          and tailoring treatments in real time, healthcare providers can
-          prevent critical conditions from escalating, restore vital functions,
-          and offer patients a fighting chance. As you explore, notice how
-          timely interventions correlate with improvements in vital metrics, a
-          testament to the ICU's pivotal role in patient survival.
+          The line charts, visualized as a heart monitor, depict the interplay
+          between vital signs and medical treatments for each patient. This
+          visualization underscores the ICU’s effectiveness in saving lives. By
+          closely monitoring changes and tailoring treatments in real time,
+          healthcare providers can prevent critical conditions from escalating,
+          restore vital functions, and offer patients a fighting chance. As you
+          explore, notice how timely interventions correlate with improvements
+          in vital metrics, a testament to the ICU's pivotal role in patient
+          survival.
         </h3>
+        <div id="stat_div">
+          <span id="stat_number">8,900</span
+          ><span id="stat_text"> medications provided</span>
+        </div>
+        <div id="stat_div">
+          <span id="stat_number">44,000</span
+          ><span id="stat_text"> vitals monitored</span>
+        </div>
       </div>
     </div>
     <div class="lineChartContainer">
       <div class="myContainer">
         <div id="linechart_div">
           <div id="controlpanel_div">
-            <span class = "is_dead" id = "lineDead">Dead</span>
+            <span class="is_dead" id="lineDead">Dead</span>
             <label for="stay_options"><b>Monitor Patient: </b></label>
             <select
               id="stay_select"
@@ -278,36 +286,35 @@
           Age emerges as a profound factor in the story of ICU care. For older
           patients, the journey through critical illness often comes with
           greater challenges — longer stays, heightened risks, and more complex
-          recoveries. With diminishing physiological
-          reserves and the presence of multiple comorbidities, elderly patients
-          face a steeper uphill battle.
+          recoveries. With diminishing physiological reserves and the presence
+          of multiple comorbidities, elderly patients face a steeper uphill
+          battle.
         </h3>
-          <br><br>
+        <br /><br />
         <h3 class="introInfoText">
           While a longer length of stay may seem concerning, it can also be
           beneficial. Extended monitoring and care offer critical opportunities
           to manage complications, stabilize vital functions, and provide
-          patients with the best chance for recovery. While longer stays may correlate with higher mortality
-          rates, they also highlight the ICU's essential role in providing
-          comprehensive, sustained care.
+          patients with the best chance for recovery. While longer stays may
+          correlate with higher mortality rates, they also highlight the ICU's
+          essential role in providing comprehensive, sustained care.
         </h3>
-        <br>
+        <br />
         <div id="death_boxplot_metric">
-        <span id="death_metric">14/15</span> <span id="death_age_metric">deaths in people over <b>60</b>.</span>
-      </div>
+          <span id="death_metric">13/14</span>
+          <span id="death_age_metric">deaths in people over <b>60</b>.</span>
+        </div>
         <h3 class="introInfoText">
-          This is not a reflection of ICU inefficiency but a
-          testament to the realities of aging. 
+          This is not a reflection of ICU inefficiency but a testament to the
+          realities of aging.
         </h3>
       </div>
     </div>
     <div class="boxPlotContainer">
-      <header>
-       
-      </header>
+      <header></header>
       <div class="controls-row">
         <div class="toggle-container">
-          <label for="genderToggle">Show Gender Distribution:</label>
+          <label for="genderToggle"><b>Show Gender Distribution </b></label>
           <input type="checkbox" id="genderToggle" />
         </div>
         <div id="color-key-container"></div>
@@ -317,22 +324,30 @@
     <div class="networkChartIntro">
       <div class="introInfo">
         <h3 class="introInfoText">
-          In the ICU, high-severity procedures are often necessary to save
-          critically ill patients. However, these procedures carry inherent
-          risks that can lead to higher mortality rates. It’s important to note
-          that the link between severe procedures and patient outcomes is not a
-          reflection of ICU care quality, but rather the complexity and severity
-          of the conditions being treated. The data shows that patients
-          undergoing the most intense procedures face the highest risks,
-          underscoring the importance of ICU support in managing such critical
-          cases.
+          High-severity procedures in the ICU are often necessary to save
+          critically ill patients, but these interventions come with significant
+          risks, leading to higher mortality rates. The patients undergoing the
+          most complex and critical procedures face the highest risks,
+          underscoring the ICU’s essential role in supporting the management of
+          such cases.
         </h3>
+
+        <div id="death_heatmap_metric">
+          <span id="death_metric">13/14</span>
+          <span id="death_age_metric"
+            >deaths from <b>High Severity</b> procedures.</span
+          >
+        </div>
+        <div id="cured_heatmap_metric">
+          <span id="cured_metric">11x</span>
+          <span id="death_age_metric">
+            more cures in <b>High Severity</b> procedures.</span
+          >
+        </div>
         <h3 class="introInfoText">
-          While the ICU plays a crucial role in supporting recovery, the
-          severity of the procedures, rather than the quality of care, is a key
-          factor in patient outcomes. This highlights the ICU’s role in managing
-          the most critical cases but also points to the unavoidable risks
-          associated with high-severity procedures.
+          The relationship between these intense procedures and patient outcomes
+          reflects the severity of the medical conditions being treated, not the
+          quality of ICU care.
         </h3>
       </div>
     </div>
@@ -342,14 +357,14 @@
 
       <div class="container mt-4">
         <div id="controls">
-          <div class="col-md-2">
-            <label for="filter" class="form-label">Filter:</label>
-            <select id="filter" class="form-select">
-              <option value="all">All</option>
-              <option value="alive">Cured</option>
-              <option value="dead">Dead</option>
-            </select>
-          </div>
+          <label for="filter" id="proc_label" class="form-label"
+            ><b>Patient Outcomes</b></label
+          >
+          <select id="filter" class="form-select">
+            <option value="all">All</option>
+            <option value="alive">Cured</option>
+            <option value="dead">Dead</option>
+          </select>
           <div id="aliveScale" class="scale-container">
             <span>Cured Scale:</span>
             <svg></svg>
@@ -369,25 +384,37 @@
         <div class="x-axis-labels"></div>
       </div>
     </div>
+    <div class="networkChartIntro">
+      <div class="introInfo">
+        <h3 class="concludingText">
+          The data highlights that ICU effectiveness is demonstrated through
+          various factors such as patient transfers, a wide range of treatments,
+          and the careful tracking of medications. Timely transfers and targeted
+          interventions help stabilize patients and prevent complications,
+          showcasing the ICU's critical role. While age and the severity of
+          procedures contribute to higher mortality rates, these factors reflect
+          the complexity of the cases rather than the quality of ICU care.
+          Overall, the ICU’s ability to manage critical conditions, tailor
+          treatments, and monitor vital signs underscores its essential role in
+          saving lives.
+        </h3>
+
+      </div>
+    </div>
 
     <script>
-      // Set up the SVG and number container
       const counter = d3.select("#counter");
 
-      // The starting and ending values for the counter
       const startValue = 0;
       const endValue = 56;
-      const duration = 2000; // Duration for the animation in milliseconds
-
-      // Create a transition to animate the number increase
+      const duration = 2000;
+      e;
       d3.transition()
-        .duration(duration) // Duration of the transition
+        .duration(duration)
         .tween("text", function () {
-          // Define the transition
           const interpolate = d3.interpolateNumber(startValue, endValue);
 
           return function (t) {
-            // Interpolate the number at each step
             counter.text(Math.round(interpolate(t)));
           };
         });

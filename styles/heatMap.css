@@ -110,3 +110,27 @@ body {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
     z-index: 2; /* Ensure the cell appears above others */
 }
+.blinking {
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+.y-label {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 50px;
+}
+.outer-label{
+    margin-left: -50px;
+    margin-top: 20px;
+}
+.inner-label {
+    font-size: 1rem;
+    text-align: center; 
+}

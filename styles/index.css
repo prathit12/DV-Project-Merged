@@ -176,6 +176,12 @@ body {
   .introInfoText{
     text-align: center;
   }
+  .concludingText{
+    text-align: center;
+    margin-top: 5%;
+    font-size: 2rem;
+    line-height: 50px;
+  }
   #death_metric{
     color: rgb(188, 0, 0);
     font-size: 4rem;
@@ -189,3 +195,28 @@ body {
     margin-left: 20%;
     margin-bottom: 50px;
   }
+  #death_heatmap_metric{
+    margin-left: 7%;
+    margin-bottom: 10px;
+    margin-top: 50px;
+  }
+  #cured_heatmap_metric{
+    margin-left: 7%;
+    margin-bottom: 50px;
+  }
+  #cured_metric{
+    font-size: 4rem;
+    color: rgb(4, 4, 161);
+    margin-right: 20px;
+  }
+  #filter{
+    width: 100px;
+    margin-left: -75px;
+    border: none;
+    background-color: transparent;
+    margin-top: 20px;
+  }
+  #proc_label{
+    margin-left:210px;
+    margin-top: 30px;
+}
