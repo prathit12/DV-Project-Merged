@@ -384,3 +384,7 @@ function collectData1() {
     });
   });
 }
+
+window.addEventListener('page4Active', function() {
+  drawGraph();
+});

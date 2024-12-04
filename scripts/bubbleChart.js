@@ -692,3 +692,7 @@ function debounce(func, wait) {
     timeout = setTimeout(later, wait);
   };
 }
+
+window.addEventListener('page6Active', function() {
+  showOverallChart();
+});

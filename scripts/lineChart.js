@@ -697,3 +697,9 @@ function drawRespChart() {
     }
   });
 }
+
+window.addEventListener('page8Active', function() {
+  drawHeartChart()
+  drawOxygenChart()
+  drawRespChart()
+}); 
