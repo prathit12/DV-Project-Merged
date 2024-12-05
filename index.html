@@ -25,11 +25,11 @@
   <body>
     <!-- <img 
       src="./images/bg1.png"> -->
-    
+
     <div id="scroll-indicator">
       <div id="scroll-indicator-progress"></div>
     </div>
-    
+
     <div class="page active" id="page1">
       <div class="intro">
         <h1 id="title">
@@ -42,8 +42,8 @@
               has transformed patient outcomes, offering a remarkable second
               chance to those facing critical illnesses. As per NIH, more than
               <b>5.7 million</b> patients are admitted annually to an ICU in the
-              United States, accounting for approximately <b>20%</b> of all acute
-              care admissions.
+              United States, accounting for approximately <b>20%</b> of all
+              acute care admissions.
             </h3>
           </div>
           <div class="subdivgraphic">
@@ -60,14 +60,18 @@
               <h3 class="introInfoText">
                 <br />
                 In this story, we use the Medical Information Mart for Intensive
-                Care (MIMIC)-IV database, a publicly available database consisting
-                of 100 patients admitted to the Beth Israel Deaconess Medical
-                Center from 2011 - 2016. Here we demonstrate the effectivess of
-                ICUs in improving patient recovery and how they provide a second
-                chance to life.
+                Care (MIMIC)-IV database, a publicly available database
+                consisting of 100 patients admitted to the Beth Israel Deaconess
+                Medical Center from 2011 - 2016. Here we demonstrate the
+                effectivess of ICUs in improving patient recovery and how they
+                provide a second chance to life.
               </h3>
             </div>
-            <img src="./images/hospital_image.png" width="500px" height="300px" />
+            <img
+              src="./images/hospital_image.png"
+              width="500px"
+              height="300px"
+            />
           </div>
           <div class="grid-container">
             <!-- First row: Icons -->
@@ -75,10 +79,18 @@
               <img src="./images/patient_icon.png" alt="Icon 1" class="icon" />
             </div>
             <div class="grid-item">
-              <img src="./images/hospitalisation.png" alt="Icon 2" class="icon" />
+              <img
+                src="./images/hospitalisation.png"
+                alt="Icon 2"
+                class="icon"
+              />
             </div>
             <div class="grid-item">
-              <img src="./images/hospitalization.png" alt="Icon 3" class="icon" />
+              <img
+                src="./images/hospitalization.png"
+                alt="Icon 3"
+                class="icon"
+              />
             </div>
             <div class="grid-item">
               <h1>100</h1>
@@ -113,11 +125,11 @@
             eventual outcomes—reveal the intricate web of care pathways designed
             to maximize recovery. These transitions, however, are not without
             challenges. A delay in transfer or misstep in coordination can
-            significantly affect patient outcomes. Tracking these movements is key
-            to evaluating ICU efficiency and effectiveness. <br /><br />
-            ICU's and Care Units have further subdivisons amongst them. Continous
-            patient monitoring and transfer to the right subdivision can help
-            expediate patient recovery.
+            significantly affect patient outcomes. Tracking these movements is
+            key to evaluating ICU efficiency and effectiveness. <br /><br />
+            ICU's and Care Units have further subdivisons amongst them.
+            Continous patient monitoring and transfer to the right subdivision
+            can help expediate patient recovery.
           </h3>
           <div id="early_transfer_stat">
             According to an article from the NIH,<br /><br />
@@ -143,18 +155,20 @@
           <h3 class="introInfoText">
             In the ICU, personalized treatment plans are the cornerstone of
             patient recovery. Each patient’s journey is shaped by a unique
-            combination of interventions, from lifesaving drips and antibiotics to
-            tailored nutritional support. The diversity and intensity of these
-            treatments reflect the complexities of managing critical illnesses and
-            highlight the collaborative effort of healthcare providers to meet
-            individual needs, illustrated by the bubble chart below.
+            combination of interventions, from lifesaving drips and antibiotics
+            to tailored nutritional support. The diversity and intensity of
+            these treatments reflect the complexities of managing critical
+            illnesses and highlight the collaborative effort of healthcare
+            providers to meet individual needs, illustrated by the bubble chart
+            below.
           </h3>
           <br />
           <h3 class="introInfoText">
             Here are some staggering statistics from the dataset that further
-            underline the remarkable scale and complexity of critical care. These
-            numbers give us insight into the breadth of interventions required and
-            the difference ICU care makes in saving lives and accelerate recovery.
+            underline the remarkable scale and complexity of critical care.
+            These numbers give us insight into the breadth of interventions
+            required and the difference ICU care makes in saving lives and
+            accelerate recovery.
           </h3>
           <div id="stat_div">
             <span id="stat_number">20,400</span
@@ -193,8 +207,12 @@
             />
             <div class="time-labels">
               <span><b>Start: </b><span id="minTime"></span></span>
-              <span style="margin-left: 20px"><b>Current: </b><span id="CurrTime"></span></span>
-              <span style="margin-left: 20px"><b>End: </b><span id="maxTime" class="current-time"></span></span>
+              <span style="margin-left: 20px"
+                ><b>Current: </b><span id="CurrTime"></span
+              ></span>
+              <span style="margin-left: 20px"
+                ><b>End: </b><span id="maxTime" class="current-time"></span
+              ></span>
             </div>
           </div>
         </div>
@@ -220,13 +238,13 @@
           <h3 class="introInfoText">
             The line charts, visualized as a heart monitor, depict the interplay
             between vital signs and medical treatments for each patient. This
-            visualization underscores the ICU’s effectiveness in saving lives. By
-            closely monitoring changes and tailoring treatments in real time,
-            healthcare providers can prevent critical conditions from escalating,
-            restore vital functions, and offer patients a fighting chance. As you
-            explore, notice how timely interventions correlate with improvements
-            in vital metrics, a testament to the ICU's pivotal role in patient
-            survival.
+            visualization underscores the ICU’s effectiveness in saving lives.
+            By closely monitoring changes and tailoring treatments in real time,
+            healthcare providers can prevent critical conditions from
+            escalating, restore vital functions, and offer patients a fighting
+            chance. As you explore, notice how timely interventions correlate
+            with improvements in vital metrics, a testament to the ICU's pivotal
+            role in patient survival.
           </h3>
           <div id="stat_div">
             <span id="stat_number">8,900</span
@@ -294,6 +312,7 @@
                   <div class="monitor-button2"></div>
                   <div class="monitor-button1"></div>
                 </div>
+                <div class="tooltipLine" id="tooltipLine"></div>
               </div>
             </div>
           </div>
@@ -306,19 +325,19 @@
           <h3 class="introInfoText">
             Age emerges as a profound factor in the story of ICU care. For older
             patients, the journey through critical illness often comes with
-            greater challenges — longer stays, heightened risks, and more complex
-            recoveries. With diminishing physiological reserves and the presence
-            of multiple comorbidities, elderly patients face a steeper uphill
-            battle.
+            greater challenges — longer stays, heightened risks, and more
+            complex recoveries. With diminishing physiological reserves and the
+            presence of multiple comorbidities, elderly patients face a steeper
+            uphill battle.
           </h3>
           <br /><br />
           <h3 class="introInfoText">
             While a longer length of stay may seem concerning, it can also be
-            beneficial. Extended monitoring and care offer critical opportunities
-            to manage complications, stabilize vital functions, and provide
-            patients with the best chance for recovery. While longer stays may
-            correlate with higher mortality rates, they also highlight the ICU's
-            essential role in providing comprehensive, sustained care.
+            beneficial. Extended monitoring and care offer critical
+            opportunities to manage complications, stabilize vital functions,
+            and provide patients with the best chance for recovery. While longer
+            stays may correlate with higher mortality rates, they also highlight
+            the ICU's essential role in providing comprehensive, sustained care.
           </h3>
           <br />
           <div id="death_boxplot_metric">
@@ -343,7 +362,10 @@
           <div id="color-key-container"></div>
         </div>
         <div id="boxPlot"></div>
-        <div id="tooltip" style="position: absolute; opacity: 0; pointer-events: none;"></div>
+        <div
+          id="tooltip"
+          style="position: absolute; opacity: 0; pointer-events: none"
+        ></div>
       </div>
     </div>
     <div class="page" id="page11">
@@ -351,11 +373,11 @@
         <div class="introInfo">
           <h3 class="introInfoText">
             High-severity procedures in the ICU are often necessary to save
-            critically ill patients, but these interventions come with significant
-            risks, leading to higher mortality rates. The patients undergoing the
-            most complex and critical procedures face the highest risks,
-            underscoring the ICU’s essential role in supporting the management of
-            such cases.
+            critically ill patients, but these interventions come with
+            significant risks, leading to higher mortality rates. The patients
+            undergoing the most complex and critical procedures face the highest
+            risks, underscoring the ICU’s essential role in supporting the
+            management of such cases.
           </h3>
 
           <div id="death_heatmap_metric">
@@ -371,9 +393,9 @@
             >
           </div>
           <h3 class="introInfoText">
-            The relationship between these intense procedures and patient outcomes
-            reflects the severity of the medical conditions being treated, not the
-            quality of ICU care.
+            The relationship between these intense procedures and patient
+            outcomes reflects the severity of the medical conditions being
+            treated, not the quality of ICU care.
           </h3>
         </div>
       </div>
@@ -381,7 +403,6 @@
     <div class="page" id="page12">
       <div class="heatMapContainer">
         <!-- <h2 class="text-center">Heatmap</h2> -->
-        <div class="tooltip" id="tooltip"></div>
 
         <div class="container mt-4">
           <div id="controls">
@@ -411,6 +432,7 @@
 
           <div class="x-axis-labels"></div>
         </div>
+        <div class="tooltipHeatMap" id="tooltipHeatMap"></div>
       </div>
     </div>
     <div class="page" id="page13">
@@ -418,22 +440,22 @@
         <div class="introInfo">
           <h3 class="concludingText">
             The data highlights that ICU effectiveness is demonstrated through
-            various factors such as patient transfers, a wide range of treatments,
-            and the careful tracking of medications. Timely transfers and targeted
-            interventions help stabilize patients and prevent complications,
-            showcasing the ICU's critical role. While age and the severity of
-            procedures contribute to higher mortality rates, these factors reflect
-            the complexity of the cases rather than the quality of ICU care.
-            Overall, the ICU’s ability to manage critical conditions, tailor
-            treatments, and monitor vital signs underscores its essential role in
-            saving lives.
+            various factors such as patient transfers, a wide range of
+            treatments, and the careful tracking of medications. Timely
+            transfers and targeted interventions help stabilize patients and
+            prevent complications, showcasing the ICU's critical role. While age
+            and the severity of procedures contribute to higher mortality rates,
+            these factors reflect the complexity of the cases rather than the
+            quality of ICU care. Overall, the ICU’s ability to manage critical
+            conditions, tailor treatments, and monitor vital signs underscores
+            its essential role in saving lives.
           </h3>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-      $('body').css('overflow', 'hidden');
+      $("body").css("overflow", "hidden");
     </script>
     <script src="./scripts/bubbleChart.js"></script>
     <script src="./scripts/networkdiagram.js"></script>

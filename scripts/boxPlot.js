@@ -37,7 +37,6 @@ function removeOutliersAndAdjustYAxis(losValues) {
 
 function processData(patients, icustays, processedData) {
     const ageGroups = [
-        {name: "18 and younger", min: 0, max: 18},
         {name: "18-35", min: 18, max: 35},
         {name: "35-60", min: 35, max: 60},
         {name: "60-75", min: 60, max: 75},
@@ -62,7 +61,7 @@ function processData(patients, icustays, processedData) {
 }
 
 function createBoxPlot(svg, data, width, height, showGender = false) {
-    const ageGroups = ["18 and younger", "18-35", "35-60", "60-75", "75 & older"];
+    const ageGroups = ["18-35", "35-60", "60-75", "75 & older"];
 
     const x = d3.scaleBand()
         .domain(ageGroups)
@@ -104,7 +103,7 @@ function createBoxPlot(svg, data, width, height, showGender = false) {
 }
 
 function updateBoxPlot(svg, data, width, height, showGender = false) {
-    const ageGroups = ["18 and younger", "18-35", "35-60", "60-75", "75 & older"];
+    const ageGroups = ["18-35", "35-60", "60-75", "75 & older"];
 
     const x = d3.scaleBand()
         .domain(ageGroups)
@@ -174,7 +173,18 @@ const sorted = losValues.sort(d3.ascending);
 const q1 = d3.quantile(sorted, 0.25);
 const median = d3.quantile(sorted, 0.5);
 const q3 = d3.quantile(sorted, 0.75);
+const ageGroup = groupData[0].ageGroup
 
+let assigned_gender;
+if (gender==undefined){
+    assigned_gender = "none"
+}
+else if (gender=="M"){
+    assigned_gender = "Males"
+}
+else if (gender=="F"){
+    assigned_gender = "Females"
+}
 const deceasedCount = groupData.filter(d => d.status === 'deceased').length;
 const totalCount = groupData.length;
 const deceasedProportion = deceasedCount / totalCount;
@@ -307,14 +317,14 @@ tubeTopGradient.append("stop")
     .attr('fill', `url(#${gradientId})`)
     .attr('opacity', 0)
     .on('mouseover', function(event) {
-        const tooltip = d3.select('#tooltip');
-        tooltip.transition().duration(200).style('opacity', 1);
-        tooltip.html(`
-            <div style="font-weight: bold; margin-bottom: 5px;">Patient Status</div>
-            <div>Deceased: ${deceasedCount}</div>
-            <div>Alive: ${totalCount - deceasedCount}</div>
-            <div>Total: ${totalCount}</div>
-        `)
+        if(assigned_gender=="none"){
+            text = `Age Group <b>${ageGroup}</b> had <b>${deceasedCount}</b> deceased cases`
+        }else{
+            text = `<b>${assigned_gender}</b> in the age group <b>${ageGroup}</b> had <b>${deceasedCount}</b> deceased cases`
+        }
+        const tooltipBoxPlot = d3.select('#tooltip');
+        tooltipBoxPlot.transition().duration(200).style('opacity', 1);
+        tooltipBoxPlot.html(text)
         .style('left', (event.pageX + 10) + 'px')
         .style('top', (event.pageY - 28) + 'px');
     })

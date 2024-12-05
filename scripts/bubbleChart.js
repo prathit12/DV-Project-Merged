@@ -43,7 +43,7 @@ const svg = d3
   .attr("transform", `translate(${margin.left}-10,${margin.top})`); 
 
 
-const tooltip = d3
+const tooltipBubble = d3
   .select("body")
   .append("div")
   .attr("class", "bubble-tooltip")
@@ -341,7 +341,7 @@ function updateChart(stayId) {
                 </div>
             `;
 
-      tooltip
+            tooltipBubble
         .html(stats)
         .style("left", event.pageX + 15 + "px")
         .style("top", event.pageY - 30 + "px")
@@ -351,11 +351,11 @@ function updateChart(stayId) {
     })
     .on("mouseout", function () {
       d3.select(this).attr("stroke", null);
-      tooltip.transition().duration(200).style("opacity", 0);
+      tooltipBubble.transition().duration(200).style("opacity", 0);
     });
     
-  tooltip.on("mouseleave", function () {
-    tooltip.transition().duration(200).style("opacity", 0);
+    tooltipBubble.on("mouseleave", function () {
+      tooltipBubble.transition().duration(200).style("opacity", 0);
   });
 
   simulation.alpha(1).restart();
@@ -459,14 +459,14 @@ function showOverallChart() {
                 <p><strong>Product Description:</strong> ${d.abbreviation}</p>
                 <p><strong>Frequency:</strong> ${d.frequency}</p>
             `;
-      tooltip.transition().duration(200).style("opacity", 1);
-      tooltip
+            tooltipBubble.transition().duration(200).style("opacity", 1);
+            tooltipBubble
         .html(stats)
         .style("left", event.pageX + 15 + "px")
         .style("top", event.pageY - 30 + "px");
     })
     .on("mouseout", function () {
-      tooltip.transition().duration(500).style("opacity", 0);
+      tooltipBubble.transition().duration(500).style("opacity", 0);
     });
 
   function float() {

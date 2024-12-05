@@ -157,7 +157,6 @@ function drawHeartChart() {
     .style("stroke", "white");
   svg.selectAll(".tick line").style("stroke", "white");
 
-  //Joins Modification 1
   const heart_line = d3
     .line()
     .x((d) => x(d.charttime))
@@ -174,7 +173,6 @@ function drawHeartChart() {
         .attr("stroke", "white")
         .attr("stroke-width", 1)
         .attr("d", heart_line)
-        // .call(enter=>enter.transition().duration(1000)),
         .attr("stroke-dasharray", function () {
           const length = this.getTotalLength();
           return `${length} ${length}`;
@@ -188,9 +186,7 @@ function drawHeartChart() {
         .attr("stroke-dashoffset", 0)
     );
 
-  // Created a lookup function to get valuenum for a specific charttime
   function getValuenumForTime(time) {
-    // Find the data point with the closest `charttime` to the given `time`
     const closest = filtered_data.reduce((prev, curr) => {
       return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
         ? curr
@@ -199,8 +195,6 @@ function drawHeartChart() {
     return closest.valuenum;
   }
 
-  //New Circles with animations..
-  // Animate circles representing data points with matching y-attribute from the first graph
   setTimeout(() => {
     svg
       .selectAll("circle.data-point")
@@ -223,26 +217,27 @@ function drawHeartChart() {
           .style("opacity", 1)
       )
       .on("mouseover", function (event, d1) {
-        heart_tooltip
-          .style("display", "block")
-          .text(d1.ordercategoryname.substring(3));
+          const tooltipLine = d3.select('#tooltipLine');
+          tooltipLine.transition().duration(200).style('opacity', 1);
+          tooltipLine.html(d1.ordercategoryname.substring(3))
+          .style('left', (event.pageX + 10) + 'px')
+          .style('top', (event.pageY - 30) + 'px');
       })
 
       .on("mousemove", function (event) {
-        heart_tooltip
-          .style("left", event.pageX + 5 + "px")
-          .style("top", event.pageY - 5 + "px");
+        d3.select('#tooltipLine')
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
       })
 
       .on("mouseout", function (event) {
-        heart_tooltip.style("display", "none");
+        d3.select('#tooltipLine').transition().duration(500).style('opacity', 0);
       })
       .attr("class", (d1) =>
         color_scale(d1.ordercategoryname) ? "meds-circle" : " "
       );
   }, 15000);
 
-  //Click Circle
   const click_circle = svg
     .selectAll("click_circle")
     .data(filtered_data)
@@ -268,21 +263,11 @@ function drawHeartChart() {
     d3.select("#heart_value").text(d.valuenum);
   });
 
-  //Tooltip
-  const heart_tooltip = d3
-    .select("body")
-    .append("div")
-    .style("position", "absolute")
-    .style("background", "white")
-    .style("padding", "5px")
-    .style("border-radius", "5px")
-    .style("border", "1px solid black")
-    .style("display", "none");
 }
 
 function drawOxygenChart() {
   var margin = { top: 20, right: 50, bottom: 20, left: 60 },
-    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
+    width = 800 - margin.left - margin.right, 
     height = 175 - margin.top - margin.bottom;
   const filtered_data = selected_data
     .filter((data) => data["item_id"] == 220277)
@@ -334,7 +319,6 @@ function drawOxygenChart() {
     .style("stroke", "white");
   svg.selectAll(".tick line").style("stroke", "white");
 
-  //Line Chart
   const o2_line = d3
     .line()
     .x((d) => x(d.charttime))
@@ -365,7 +349,6 @@ function drawOxygenChart() {
           .duration(15000)
           .attr("stroke-dashoffset", 0),
 
-      //update
       (update) =>
         update
           .attr("stroke", "black")
@@ -373,7 +356,6 @@ function drawOxygenChart() {
           .duration(5000)
           .attr("d", o2_line),
 
-      //exit
       (exit) =>
         exit
           .attr("stroke", "brown")
@@ -386,7 +368,6 @@ function drawOxygenChart() {
     );
 
   function getValuenumForTime(time) {
-    // Find the data point with the closest `charttime` to the given `time`
     const closest = filtered_data.reduce((prev, curr) => {
       return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
         ? curr
@@ -395,7 +376,6 @@ function drawOxygenChart() {
     return closest.valuenum;
   }
 
-  // Circles representing data points with matching y-attribute from the first graph
   setTimeout(() => {
     svg
       .selectAll("circle.data-point")
@@ -418,36 +398,29 @@ function drawOxygenChart() {
           .style("opacity", 1)
       )
       .on("mouseover", function (event, d1) {
-        oxygen_tooltip
-          .style("display", "block")
-          .text(d1.ordercategoryname.substring(3));
+        const tooltipLine = d3.select('#tooltipLine');
+          tooltipLine.transition().duration(200).style('opacity', 1);
+          tooltipLine.html(d1.ordercategoryname.substring(3))
+          .style('left', (event.pageX + 10) + 'px')
+          .style('top', (event.pageY - 28) + 'px');
       })
 
       .on("mousemove", function (event) {
-        oxygen_tooltip
-          .style("left", event.pageX + 5 + "px")
-          .style("top", event.pageY - 5 + "px");
+        d3.select('#tooltipLine')
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
       })
 
       .on("mouseout", function (event) {
-        oxygen_tooltip.style("display", "none");
+        d3.select('#tooltipLine').transition().duration(500).style('opacity', 0);
       })
       .attr("class", (d1) =>
         color_scale(d1.ordercategoryname) ? "meds-circle" : " "
       );
   }, 15000);
 
-  const oxygen_tooltip = d3
-    .select("body")
-    .append("div")
-    .style("position", "absolute")
-    .style("background", "white")
-    .style("padding", "5px")
-    .style("border-radius", "5px")
-    .style("border", "1px solid black")
-    .style("display", "none");
 
-  //Circles for representing the datapoint and adding on click event
+
   const o2_click = svg
     .selectAll("oxygen_circle")
     .data(filtered_data)
@@ -478,8 +451,8 @@ function drawOxygenChart() {
 
 function drawRespChart() {
   var margin = { top: 20, right: 50, bottom: 20, left: 60 },
-    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
-    height = 175 - margin.top - margin.bottom; //changed value from 200 to 175
+    width = 800 - margin.left - margin.right, 
+    height = 175 - margin.top - margin.bottom; 
   const filtered_data = selected_data
     .filter((data) => data["item_id"] == 220179 || data["item_id"] == 220180)
 
@@ -532,7 +505,6 @@ function drawRespChart() {
     .style("stroke", "white");
   svg.selectAll(".tick line").style("stroke", "white");
 
-  //Line Chart..
   const resp_line = d3
     .line()
     .x((d) => x(d.charttime))
@@ -563,7 +535,6 @@ function drawRespChart() {
           .duration(15000)
           .attr("stroke-dashoffset", 0),
 
-      //update
       (update) =>
         update
           .attr("stroke", "black")
@@ -571,7 +542,6 @@ function drawRespChart() {
           .duration(5000)
           .attr("d", resp_line),
 
-      //exit
       (exit) =>
         exit
           .attr("stroke", "brown")
@@ -621,36 +591,28 @@ function drawRespChart() {
           .style("opacity", 1)
       )
       .on("mouseover", function (event, d1) {
-        resp_tooltip
-          .style("display", "block")
-          .text(d1.ordercategoryname.substring(3));
+        const tooltipLine = d3.select('#tooltipLine');
+          tooltipLine.transition().duration(200).style('opacity', 1);
+          tooltipLine.html(d1.ordercategoryname.substring(3))
+          .style('left', (event.pageX + 10) + 'px')
+          .style('top', (event.pageY - 30) + 'px');
       })
 
       .on("mousemove", function (event) {
-        resp_tooltip
-          .style("left", event.pageX + 5 + "px")
-          .style("top", event.pageY - 5 + "px");
+        d3.select('#tooltipLine')
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
       })
 
       .on("mouseout", function (event) {
-        resp_tooltip.style("display", "none");
+        d3.select('#tooltipLine').transition().duration(500).style('opacity', 0);
       })
       .attr("class", (d1) =>
         color_scale(d1.ordercategoryname) ? "meds-circle" : " "
       );
   }, 15000);
 
-  const resp_tooltip = d3
-    .select("body")
-    .append("div")
-    .style("position", "absolute")
-    .style("background", "white")
-    .style("padding", "5px")
-    .style("border-radius", "5px")
-    .style("border", "1px solid black")
-    .style("display", "none");
 
-  //Clicking circle
   const resp_click = svg
     .selectAll("resp_circle")
     .data(filtered_data)
@@ -659,7 +621,6 @@ function drawRespChart() {
     .attr("cx", (d) => x(d.charttime))
     .attr("cy", (d) => y(d.valuenum))
     .attr("fill", "blue")
-    // .attr("opacity",0)
     .attr("r", "3");
 
   resp_click.on("mouseover", function (event, d) {

@@ -166,7 +166,7 @@ function drawGraph() {
       div.transition().duration(100).style("opacity", 0.9);
       div
         .html(
-          `${d.value} patients are transferred from ${d.source} to ${d.target}`
+          `<b>${d.value}</b> patients are transferred from <b>${d.source}</b> to <b>${d.target}</b>`
         )
         .style("left", event.pageX - 20 + "px")
         .style("top", event.pageY - 28 + "px");

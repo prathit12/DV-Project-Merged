@@ -1,5 +1,5 @@
 d3.csv("/Dataset/Processed/final_data_heatmap.csv").then(function (data) {
-  const tooltip = d3.select("#tooltip");
+  const tooltipHeatMap = d3.select("#tooltipHeatMap");
 
   data.forEach((d) => {
     d.surgery_type_index = +d.surgery_type_index;
@@ -158,10 +158,17 @@ d3.csv("/Dataset/Processed/final_data_heatmap.csv").then(function (data) {
           )
           .style("opacity", 0)
           .on("mouseover", (event) =>
+          {
+            let op_type = procedures[colIndex].charAt(0).toUpperCase() + procedures[colIndex].slice(1).toLowerCase();
+            let severity =  row.severity.split(' ')
+            let severity_type = (severity[0] + " " +severity[1]).toLowerCase();
+            let operation = (severity[2]==="Alive")?"cured":"deceased";
             showTooltip(
               event,
-              `${row.severity}: ${procedures[colIndex]} - ${count} cases`
+              `<b>${op_type}'s ${severity_type}</b> procedures have <b>${count} ${operation}</b> cases`
             )
+          }
+            
           )
           .on("mousemove", moveTooltip)
           .on("mouseout", hideTooltip)
@@ -259,21 +266,24 @@ d3.csv("/Dataset/Processed/final_data_heatmap.csv").then(function (data) {
   }
 
   function showTooltip(event, text) {
-    tooltip
+    console.log("showing!");
+    tooltipHeatMap
       .style("opacity", 1)
-      .text(text)
-      .style("left", event.pageX + 10 + "px")
-      .style("top", event.pageY - 10 + "px");
+      .html(text)
+      .style("left", event.pageX + 15 + "px")
+      .style("top", event.pageY - 30 + "px");
   }
 
   function moveTooltip(event) {
-    tooltip
-      .style("left", event.pageX + 10 + "px")
-      .style("top", event.pageY - 10 + "px");
+    console.log("move");
+    tooltipHeatMap
+      .style("left", event.pageX + 15 + "px")
+      .style("top", event.pageY - 30 + "px");
   }
 
   function hideTooltip() {
-    tooltip.style("opacity", 0);
+    console.log("hidden");
+    tooltipHeatMap.style("opacity", 0);
   }
 
   renderHeatmap();
