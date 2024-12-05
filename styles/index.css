@@ -9,33 +9,18 @@ body {
   align-items: center;
 }
 .page {
-  padding-top: 10vh; 
   justify-content: flex-start; 
   box-sizing: border-box; 
 }
 .intro {
   margin-left: 10%;
   margin-right: 10%;
-  margin-top: 5%;
+  margin-top: 0%;
 }
 .networkChartIntro{
   margin-top: 10%;
 }
-.intro,
-.networkChart,
-.bubbleChart,
-.lineChartContainer,
-.boxPlotContainer,
-.heatMapContainer {
-  height: 100vh;
-}
-.intro,
-.networkChart,
-.bubbleChart,
-.lineChartContainer,
-.boxPlotContainer,
-.heatMapContainer,
-.networkChartIntro {
+.page {
   height: 100vh;
 }
 .introInfo {
@@ -314,4 +299,29 @@ body {
   width: 5px;
   height: 200px;
   background-color: #e0e0e0;
+}
+
+#page2 .networkChartIntro{
+  margin-top:15%;
+}
+#page3 .networkChartIntro{
+  margin-top: 15%;
+}
+#page5 .networkChartIntro{
+  margin-top: 20%;
+}
+#page7 .networkChartIntro{
+  margin-top: 20%;
+}
+#page8 .lineChartContainer{
+  margin-top: 2.5%;
+}
+#page9 .networkChartIntro{
+  margin-top: 20%;
+}
+#page11 .networkChartIntro{
+  margin-top: 20%;
+}
+#page13 .networkChartIntro{
+  margin-top: 12.5%;
 }
