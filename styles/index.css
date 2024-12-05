@@ -1,7 +1,7 @@
 body {
   font-family: "Orbitron", sans-serif;
   background-color: #fbfbfb;
-  color: #1a1a1a; /* Dark text color */
+  color: #1a1a1a; 
   margin: 0;
   padding: 0;
   display: flex;
@@ -86,14 +86,14 @@ body {
 }
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-    grid-template-rows: auto auto auto; /* 2 rows */
-    gap: 10px; /* Space between items */
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: auto auto auto;
+    gap: 10px; 
     padding: 20px;
     margin-top: 50px;
   }
   
-  /* Styling for each grid item */
+
   .grid-item {
     display: flex;
     justify-content: center;
@@ -102,12 +102,11 @@ body {
   }
   
   .icon {
-    width: 100px; /* Adjust icon size */
-    height: 100px; /* Adjust icon size */
+    width: 100px; 
+    height: 100px; 
     margin-bottom: 10px;
   }
   
-  /* Optional: Styling for the text */
   .grid-item p {
     font-size: 16px;
     color: #333;
@@ -242,19 +241,19 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100vh; /* Ensure each page is at least the height of the viewport */
-  opacity: 0; /* Initially hidden */
+  min-height: 100vh; 
+  opacity: 0;
   transform: translateY(30px);
   transition: transform 1s ease, opacity 0.5s ease;
   /* transition: opacity 0.8s ease-in-out, visibility 0.8s; */
   z-index: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  align-items: center;     /* Center content horizontally if needed */
+  justify-content: center; 
+  align-items: center;    
 }
 
-/* Improved page transitions */
+
 .page {
   position: fixed;
   top: 0;
@@ -278,14 +277,13 @@ body {
   transition-delay: 0s;
 }
 
-/* Active Page */
+
 .page.active {
   opacity: 1;
   z-index: 1;
   transform: translateY(0);
 }
 
-/* Scroll indicator style */
 #scroll-indicator {
   position: fixed;
   left: 20px;
@@ -308,7 +306,6 @@ body {
   transition: height 0.3s ease-out;
 }
 
-/* Scroll indicator style */
 #scroll-indicator {
   position: fixed;
   left: 10px;

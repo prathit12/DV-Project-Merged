@@ -4,26 +4,26 @@ body {
 
 .heatmap-container {
     display: grid;
-    grid-template-columns: auto 1fr; /* First column for labels, second for heatmap */
-    grid-template-rows: auto 1fr; /* First row for labels, second for heatmap */
+    grid-template-columns: auto 1fr; 
+    grid-template-rows: auto 1fr; 
     width: 100%;
-    gap: 10px; /* Adds space between heatmap and labels */
+    gap: 10px;
 }
 
 .x-axis-labels {
     display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Same as heatmap */
+    grid-template-columns: repeat(7, 1fr); 
     text-align: center;
     font-weight: bold;
     text-transform: capitalize;
     padding-top: 5px;
-    grid-column: 2; /* Ensure labels appear under the heatmap */
+    grid-column: 2;
 }
 
 .heatmap {
     display: grid;
     grid-template-rows: repeat(6, 1fr); 
-    grid-template-columns: repeat(7, 1fr); /* Ensure columns match labels */
+    grid-template-columns: repeat(7, 1fr); 
     gap: 1px;
     width: 100%;
     height: 500px;
@@ -40,12 +40,12 @@ body {
 
 .y-axis-labels {
     display: grid;
-    grid-template-rows: repeat(6, 1fr); /* Align with heatmap rows */
+    grid-template-rows: repeat(6, 1fr);
     text-align: right;
     font-weight: bold;
-    align-items: center; /* Center the labels vertically */
-    justify-content: center; /* Ensure labels are centered horizontally */
-    grid-row: 1 / 2; /* Ensure labels align with the top row */
+    align-items: center;
+    justify-content: center; 
+    grid-row: 1 / 2; 
 }
 
 
@@ -70,23 +70,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 100px; /* Space between elements */
+    gap: 100px; 
     margin-bottom: 20px;
 }
 
 #filter {
-    flex-shrink: 0; /* Prevent dropdown from resizing */
+    flex-shrink: 0;
 }
 
 .scale-container {
     display: flex;
     align-items: center;
-    gap: 10px; /* Space between the label and gradient */
+    gap: 10px; 
     margin-top: 25px;
 }
 
 .scale-container span {
-    white-space: nowrap; /* Prevent line breaks for labels */
+    white-space: nowrap; 
 }
 
 .scale-container svg {
@@ -100,9 +100,9 @@ body {
 }
 
 .cell:hover {
-    transform: scale(1.1); /* Slight zoom-in effect */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow */
-    z-index: 2; /* Ensure the cell appears above others */
+    transform: scale(1.1); 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 2;
 }
 .blinking {
     animation: blink 2s infinite;

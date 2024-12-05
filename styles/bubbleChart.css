@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"); /* Import futuristic font */
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap");
 body {
-  font-family: "Orbitron", sans-serif; /* Updated font style */
-  background-color: #ffffff; /* Light background for reversed theme */
-  color: #1a1a1a; /* Dark text color */
+  font-family: "Orbitron", sans-serif;
+  background-color: #ffffff; 
+  color: #1a1a1a;
   margin: 0;
   padding: 0;
   display: flex;
@@ -11,7 +11,7 @@ body {
 }
 .legend {
   font-size: 12px;
-  color: #1a1a1a; /* Dark text color */
+  color: #1a1a1a;
 }
 .legend rect {
   cursor: pointer;
@@ -37,8 +37,8 @@ body {
 }
 .sticky select,
 .sticky input[type="range"] {
-  background-color: #fff; /* White background */
-  color: #000; /* Black text color */
+  background-color: #fff; 
+  color: #000;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 5px;
@@ -67,15 +67,15 @@ body {
 }
 .details-box {
   width: 100%;
-  background-color: #f4f4f9; /* Light background for details box */
-  color: #1a1a1a; /* Dark text color */
+  background-color: #f4f4f9; 
+  color: #1a1a1a;
   border: none;
   padding: 20px;
   box-shadow: none;
   display: none;
   overflow-y: auto;
   z-index: 20;
-  margin-top: 20px; /* Added margin to separate from chart */
+  margin-top: 20px; 
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -105,8 +105,8 @@ body {
 .legend-container {
   margin-left: 20px;
   padding: 10px;
-  background-color: #f4f4f9; /* Light background for legend */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+  background-color: #f4f4f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   border-radius: 5px;
 }
 
@@ -164,7 +164,7 @@ body {
   font-family: monospace;
 } */
 
-/* Hover states */
+
 .sticky select:hover {
   border-color: #999;
 }
@@ -175,7 +175,7 @@ body {
   outline: none;
 }
 
-/* Dark mode consideration */
+
 @media (prefers-color-scheme: dark) {
   .sticky {
     background-color: #222;
@@ -229,50 +229,50 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
-    width: 170px;  /* Reduced width */
+    width: 170px; 
     background: rgba(255, 255, 255, 0.95);
     padding: 6px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 10px;  /* Smaller font */
+    font-size: 10px; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-height: none;  /* Remove max-height */
-    overflow-y: visible;  /* Remove scrolling */
+    max-height: none; 
+    overflow-y: visible; 
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    padding: 2px 0;  /* Reduced padding */
-    margin-bottom: 2px;  /* Reduced margin */
+    padding: 2px 0;  
+    margin-bottom: 2px; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.legend-item div {  /* Color box */
-    min-width: 12px !important;  /* Smaller color box */
+.legend-item div { 
+    min-width: 12px !important; 
     height: 12px !important;
     flex-shrink: 0;
 }
 
 .legend-item span {
     margin-left: 4px;
-    font-size: 9px;  /* Smaller text */
+    font-size: 9px; 
 }
 
 .details-box {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    width: 200px;  /* Reduced from default */
+    width: 200px;
     background: rgba(255, 255, 255, 0.95);
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    max-height: 200px;  /* Reduced height */
+    max-height: 200px; 
     overflow-y: auto;
-    font-size: 11px;  /* Smaller font size */
+    font-size: 11px; 
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
