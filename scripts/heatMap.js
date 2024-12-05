@@ -173,7 +173,7 @@ d3.csv("/Dataset/Processed/final_data_heatmap.csv").then(function (data) {
           .on("mousemove", moveTooltip)
           .on("mouseout", hideTooltip)
           .style("grid-row", `${rowIndex + 1}`)
-          .style("border", count > 0 ? "2px solid #B3C7C6" : "1px solid #ccc") // Highlight high-count cells
+          .style("border", count > 0 ? "2px solid #B3C7C6" : "1px solid #ccc")
           .style("box-shadow", count > 0 ? "2px 5px 10px #B3C7C6" : "none");
 
         cell.transition().duration(2000).style("opacity", 1);

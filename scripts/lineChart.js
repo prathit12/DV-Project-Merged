@@ -105,7 +105,7 @@ const color_scale = d3
 
 function drawHeartChart() {
   var margin = { top: 20, right: 50, bottom: 20, left: 60 },
-    width = 800 - margin.left - margin.right, //changed value from 1050 to 800
+    width = 800 - margin.left - margin.right,
     height = 175 - margin.top - margin.bottom;
   const filtered_data = selected_data
     .filter((data) => data["item_id"] == 220045)
@@ -554,7 +554,6 @@ function drawRespChart() {
     );
 
   function getValuenumForTime(time) {
-    // Find the data point with the closest `charttime` to the given `time`
     const closest = filtered_data.reduce((prev, curr) => {
       return Math.abs(curr.charttime - time) < Math.abs(prev.charttime - time)
         ? curr
@@ -563,7 +562,6 @@ function drawRespChart() {
     return closest.valuenum;
   }
 
-  // Circles representing data points with matching y-attribute from the first graph
   setTimeout(() => {
     svg
       .selectAll("circle.data-point")
@@ -580,7 +578,6 @@ function drawRespChart() {
             return matchingValuenum ? y(matchingValuenum) : null;
           })
           .style("opacity", 0)
-          //Remove circles that go outside the x-axis.
           .filter(function (d1) {
             const x_position = x(d1.starttime);
             return x_position >= 0 && x_position <= width;

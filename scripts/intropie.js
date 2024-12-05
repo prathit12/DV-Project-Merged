@@ -1,9 +1,7 @@
-// const width_pie = 300;
-// const height2_pie = 300;
 const radius = 150;
 
-const data = [20, 80]; // 20% ICU admissions, 80% other
-const colors = ["#FF6B6B", "#EDEDED"]; // Highlighted slice and background
+const data = [20, 80];
+const colors = ["#FF6B6B", "#EDEDED"];
 
 const svg_pie_group = d3.select("#intropiechart");
 const svg_pie = svg_pie_group
@@ -30,7 +28,7 @@ const arcs = svg_pie
     this._current = d;
   });
 
-// Animate the 20% slice
+
 arcs
   .transition()
   .duration(2000)
