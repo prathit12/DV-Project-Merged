@@ -8,9 +8,17 @@ body {
   flex-direction: column;
   align-items: center;
 }
+.page {
+  padding-top: 10vh; 
+  justify-content: flex-start; 
+  box-sizing: border-box; 
+}
 .intro {
   margin-left: 10%;
   margin-right: 10%;
+  margin-top: 5%;
+}
+.networkChartIntro{
   margin-top: 10%;
 }
 .intro,
@@ -34,7 +42,7 @@ body {
   margin: 100px;
   padding: 50px;
   border-radius: 50px;
-  margin-top: 0px;
+  margin-top: -250px;
 }
 /* .lineChartContainer{
     width: 1200px;

@@ -289,10 +289,8 @@ tubeTopGradient.append("stop")
   .delay(delay)
   .duration(500)
   .attr('opacity', 1);
-  
 
-
-g.selectAll('.liquid-level')
+    g.selectAll('.liquid-level')
     .data([1])
     .join('path')
     .attr('class', 'liquid-level')
@@ -308,6 +306,26 @@ g.selectAll('.liquid-level')
     `)
     .attr('fill', `url(#${gradientId})`)
     .attr('opacity', 0)
+    .on('mouseover', function(event) {
+        const tooltip = d3.select('#tooltip');
+        tooltip.transition().duration(200).style('opacity', 1);
+        tooltip.html(`
+            <div style="font-weight: bold; margin-bottom: 5px;">Patient Status</div>
+            <div>Deceased: ${deceasedCount}</div>
+            <div>Alive: ${totalCount - deceasedCount}</div>
+            <div>Total: ${totalCount}</div>
+        `)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 28) + 'px');
+    })
+    .on('mousemove', function(event) {
+        d3.select('#tooltip')
+            .style('left', (event.pageX + 10) + 'px')
+            .style('top', (event.pageY - 28) + 'px');
+    })
+    .on('mouseout', function() {
+        d3.select('#tooltip').transition().duration(500).style('opacity', 0);
+    })
     .transition()
     .delay(delay + 250)
     .duration(500)
@@ -378,6 +396,8 @@ g.selectAll('.median-line')
     .delay(delay + 750)
     .duration(500)
     .style("opacity", 1);
+
+
 }
 
 function updateAxis(svg, xScale, yScale, height) {
