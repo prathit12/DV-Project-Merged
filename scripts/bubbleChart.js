@@ -131,11 +131,11 @@ Promise.all([
         const maxTime = d3.max(filteredData, (d) => new Date(d.endtime));
 
         const timeSlider = d3.select("#timeRange");
-        timeSlider.property("value", 0);
-        d3.select("#timeOutput").text("0");
+        timeSlider.property("value", 100);
+        d3.select("#timeOutput").text("100");
 
         d3.select("#minTime").text(minTime.toLocaleString());
-        d3.select("#CurrTime").text(minTime.toLocaleString());
+        d3.select("#CurrTime").text(maxTime.toLocaleString());
         d3.select("#maxTime").text(maxTime.toLocaleString());
 
         timeRangeContainer
@@ -585,7 +585,7 @@ d3.select("#timeRange").on(
 function updateMinMaxTime() {
   const selectedStayId = d3.select("#stayDropdown").property("value");
   const timeRangeValue = +d3.select("#timeRange").property("value");
-
+  console.log(timeRangeValue)
   if (!selectedStayId || selectedStayId === "overall") return;
 
   const filteredData = inputEvents.filter((d) => d.hadm_id === selectedStayId);
@@ -675,7 +675,6 @@ styleSheet.textContent = `
     .current-time {
         text-align: center;
         font-weight: bold;
-        color: #2c5282;
         margin: 5px 0;
     }
 `;
